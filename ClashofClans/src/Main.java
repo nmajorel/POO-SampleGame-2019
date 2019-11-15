@@ -1,4 +1,3 @@
-package SampleGame;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -27,9 +26,9 @@ public class Main extends Application {
 	private Image enemyImage;
 	private Image missileImage;
 
-	private Player player;
-	private List<Enemy> enemies = new ArrayList<>();
-	private List<Missile> missiles = new ArrayList<>();
+	private List<Castle> castles = new ArrayList<Castle>();
+	private ArrayList<Land> lands = new ArrayList<Land>(); 
+	private Castle castle;
 
 	private Text scoreMessage = new Text();
 	private int scoreValue = 0;
@@ -46,7 +45,7 @@ public class Main extends Application {
 
 		root = new Group();
 		scene = new Scene(root, Settings.SCENE_WIDTH, Settings.SCENE_HEIGHT + Settings.STATUS_BAR_HEIGHT);
-		scene.getStylesheets().add(getClass().getResource("/css/application.css").toExternalForm());
+		//scene.getStylesheets().add(getClass().getResource("/css/application.css").toExternalForm());
 		primaryStage.setScene(scene);
 		primaryStage.setResizable(false);
 		primaryStage.show();
@@ -68,34 +67,35 @@ public class Main extends Application {
 				}
 
 				// player input
-				player.processInput();
+				//player.processInput();
+				//castle.processInput();
 
 				// add random enemies
-				spawnEnemies(true);
+				//spawnEnemies(true);
 
 				// movement
-				player.move();
-				enemies.forEach(sprite -> sprite.move());
-				missiles.forEach(sprite -> sprite.move());
+				//player.move();
+				//enemies.forEach(sprite -> sprite.move());
+				//missiles.forEach(sprite -> sprite.move());
 
 				// check collisions
-				checkCollisions();
+				//checkCollisions();
 
 				// update sprites in scene
-				player.updateUI();
-				enemies.forEach(sprite -> sprite.updateUI());
-				missiles.forEach(sprite -> sprite.updateUI());
+				//player.updateUI();
+				//enemies.forEach(sprite -> sprite.updateUI());
+				//missiles.forEach(sprite -> sprite.updateUI());
 
 				// check if sprite can be removed
-				enemies.forEach(sprite -> sprite.checkRemovability());
-				missiles.forEach(sprite -> sprite.checkRemovability());
+				//enemies.forEach(sprite -> sprite.checkRemovability());
+				//missiles.forEach(sprite -> sprite.checkRemovability());
 
 				// remove removables from list, layer, etc
-				removeSprites(enemies);
-				removeSprites(missiles);
+				//removeSprites(enemies);
+				//removeSprites(missiles);
 
 				// update score, health, etc
-				update();
+				//update();
 			}
 
 			private void processInput(Input input, long now) throws InterruptedException {
@@ -107,7 +107,7 @@ public class Main extends Application {
 					Thread.sleep(3000);
 				}
 				else if (input.isFire()) {
-					fire(now);
+					//fire(now);
 				}
 
 			}
@@ -117,24 +117,48 @@ public class Main extends Application {
 	}
 
 	private void loadGame() {
-		playerImage = new Image(getClass().getResource("/images/alien.png").toExternalForm(), 100, 100, true, true);
-		enemyImage = new Image(getClass().getResource("/images/enemy.png").toExternalForm(), 50, 50, true, true);
-		missileImage = new Image(getClass().getResource("/images/pinapple.png").toExternalForm(), 20, 20, true, true);
+		//playerImage = new Image(getClass().getResource("/images/alien.png").toExternalForm(), 100, 100, true, true);
+		//enemyImage = new Image(getClass().getResource("/images/enemy.png").toExternalForm(), 50, 50, true, true);
+		//missileImage = new Image(getClass().getResource("/images/pinapple.png").toExternalForm(), 20, 20, true, true);
 
 		input = new Input(scene);
 		input.addListeners();
 
-		createPlayer();
-		createStatusBar();
+		//createPlayer();
+		//createStatusBar();
 		
-		scene.setOnMousePressed(e -> {
+		createLand();
+		createCastle();
+		
+		
+		
+		/*scene.setOnMousePressed(e -> {
 			player.setX(e.getX() - (player.getWidth() / 2));
 			player.setY(e.getY() - (player.getHeight() / 2));
-		});
+		});*/
 	}
+	
+	private void createCastle() {
+		castles.add(new Castle(playfieldLayer, new Point2D(50, 50), 100, Settings.SIZE_CASTLE, Settings.SIZE_CASTLE));
+		castle = new Castle(playfieldLayer, new Point2D(150, 70), 100, Settings.SIZE_CASTLE, Settings.SIZE_CASTLE);
+		
+		
+	}
+	
+	private void createLand() {
+		
+		for(double x = 50; x < Settings.SCENE_WIDTH ; x = x + Settings.SIZE_LAND + Settings.DISTANCE_BETWEEN_CASTLES) {
+			for(double y = 50; y < Settings.SCENE_HEIGHT; y = y + Settings.SIZE_LAND + Settings.DISTANCE_BETWEEN_CASTLES) {
+				lands.add(new Land(x, y, true));
+			}
+		}
+		
+	}
+	
+	
 
 
-	public void createStatusBar() {
+	/*public void createStatusBar() {
 		HBox statusBar = new HBox();
 		scoreMessage.setText("Score : 0          Life : " + player.getHealth());
 		statusBar.getChildren().addAll(scoreMessage);
@@ -243,7 +267,7 @@ public class Main extends Application {
 		if (collision) {
 			scoreMessage.setText("Score : " + scoreValue + "          Life : " + player.getHealth());
 		}
-	}
+	}*/
 
 	public static void main(String[] args) {
 		launch(args);

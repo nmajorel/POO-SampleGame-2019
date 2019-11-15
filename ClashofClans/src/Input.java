@@ -1,4 +1,3 @@
-package SampleGame;
 
 import java.util.BitSet;
 
