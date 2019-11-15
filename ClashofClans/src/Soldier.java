@@ -15,7 +15,7 @@ public class Soldier extends Sprite {
 	}
 	
 	public Soldier(Pane layer, Point2D point, int health, double w, double h) {
-		super(layer, point, health, w, h);
+		super(layer, point, health, Color.RED, w, h);
 		this.color = Color.YELLOW;
 		this.production_cost = 100;
 		this.production_time = 5;

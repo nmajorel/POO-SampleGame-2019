@@ -13,26 +13,28 @@ public abstract class Sprite {
 
     private int health;
     
-    protected Color color = Color.BLACK;
+    protected Color color;
 
     private boolean removable = false;
 
     private double w;
     private double h;
 
-    public Sprite(Pane layer, Point2D point, int health, double w, double h) {
+    public Sprite(Pane layer, Point2D point, int health, Color c, double w, double h) {
 
         this.layer = layer;
         
         this.p = new Point2D(point);
         
         this.health = health;
-
-        this.imageView = toShapeFX(this.color);
-        this.imageView.relocate(p.getX(), p.getY());
+        
+        this.color = c;
 
         this.w = w; 
         this.h = h; 
+
+        this.imageView = toShapeFX(this.color);
+        this.imageView.relocate(p.getX(), p.getY());
 
         addToLayer();
 
@@ -116,5 +118,9 @@ public abstract class Sprite {
     	r.setFill(c);
     	return r;
     }
+
+	public Shape getImageView() {
+		return imageView;
+	}
 
 }

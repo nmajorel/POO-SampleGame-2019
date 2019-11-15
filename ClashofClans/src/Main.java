@@ -65,6 +65,7 @@ public class Main extends Application {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				
 
 				// player input
 				//player.processInput();
@@ -139,8 +140,26 @@ public class Main extends Application {
 	}
 	
 	private void createCastle() {
-		castles.add(new Castle(playfieldLayer, new Point2D(50, 50), 100, Settings.SIZE_CASTLE, Settings.SIZE_CASTLE));
-		castle = new Castle(playfieldLayer, new Point2D(150, 70), 100, Settings.SIZE_CASTLE, Settings.SIZE_CASTLE);
+		
+		
+		Iterator itr = lands.iterator();
+
+		
+		while(itr.hasNext() ) {
+			
+			Land element = (Land) itr.next();
+	        if(element.isAvailable()) {
+	        	castles.add(new Castle(playfieldLayer, element.getPoint(), 100, Settings.SIZE_CASTLE, Settings.SIZE_CASTLE));
+	        	element.setAvailable(false);
+	        	
+	        }
+	        
+	        
+	    }
+		/*castles.add(new Castle(playfieldLayer, new Point2D(150, 50), 100, Settings.SIZE_CASTLE, Settings.SIZE_CASTLE));
+		castles.add(new Castle(playfieldLayer, new Point2D(400, 90), 100, Settings.SIZE_CASTLE, Settings.SIZE_CASTLE));
+		castles.add(new Castle(playfieldLayer, new Point2D(150, 50), 100, Settings.SIZE_CASTLE, Settings.SIZE_CASTLE));
+		castles.add(new Castle(playfieldLayer, new Point2D(400, 90), 100, Settings.SIZE_CASTLE, Settings.SIZE_CASTLE));*/
 		
 		
 	}

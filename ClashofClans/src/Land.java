@@ -1,5 +1,4 @@
 
-
 public class Land {
 	
 
@@ -21,6 +20,10 @@ public class Land {
 
 	public void setAvailable(boolean available) {
 		this.available = available;
+	}
+
+	public Point2D getPoint() {
+		return point;
 	}
 	
 
