@@ -28,13 +28,20 @@ public abstract class Castle extends Sprite{
 	private Order order;
 	private Door door;
 	
+	private int nb_piquiers;
+	private int nb_chevaliers;
+	private int nb_onagre;
+	
 	public Castle(Pane layer, Point2D point, Color c, double w, double h) {
 		
 		super(layer, point, c, w, h);
 		this.duke = "Peter";
 		this.gold = 0;
 		this.level = Settings.LEVEL_1;
-		this.nb_troops = 10;
+		this.nb_piquiers = 9;
+		this.nb_chevaliers = 4;
+		this.nb_onagre = 2;
+		this.nb_troops = nb_piquiers + nb_chevaliers + nb_onagre;
 		
 		int pick = new Random().nextInt(Directions.values().length);
 		this.dir = Directions.values()[pick]; 
@@ -90,6 +97,9 @@ public abstract class Castle extends Sprite{
 		// TODO Auto-generated method stub
 		
 	}
+	public void move() {
+		
+    }
 	
 	public String getDuke() {
 		return duke;
@@ -121,6 +131,41 @@ public abstract class Castle extends Sprite{
 
 	public Directions getDir() {
 		return dir;
+	}
+
+	public void setOrder(Order order) {
+		this.order = order;
 	}	
+	public void doOrder() {
+		this.order.ost_move();
+	}
+
+	public Point2D getDoorPoint() {
+		return door.getP();
+	}
+
+	public int getNb_piquiers() {
+		return nb_piquiers;
+	}
+
+	public void setNb_piquiers(int nb_piquiers) {
+		this.nb_piquiers = nb_piquiers;
+	}
+
+	public int getNb_chevaliers() {
+		return nb_chevaliers;
+	}
+
+	public void setNb_chevaliers(int nb_chevaliers) {
+		this.nb_chevaliers = nb_chevaliers;
+	}
+
+	public int getNb_onagre() {
+		return nb_onagre;
+	}
+
+	public void setNb_onagre(int nb_onagre) {
+		this.nb_onagre = nb_onagre;
+	}
 
 }

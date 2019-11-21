@@ -28,7 +28,7 @@ public class Point2D {
 		this.y = y;
 	}
 
-	public void translate(int dx, int dy) {
+	public void translate(double dx, double dy) {
 		x = x + dx;
 		y = y + dy;
 	}

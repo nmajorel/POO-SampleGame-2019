@@ -125,7 +125,28 @@ public abstract class Sprite {
 	public void setImageView(Shape imageView) {
 		this.imageView = imageView;
 	}
+
+	public Point2D getP() {
+		return p;
+	}
 	
+	public boolean inside(Point2D p) {
+		double x = p.getX(),
+				y = p.getY(),
+				this_x = getX(),
+				this_y = getY();
+		double w = getWidth();
+		return (x >= this_x && x <= this_x +w ) && (y >= this_y && y <= this_y +w ); 
+	}
+	
+	public boolean inside(Sprite s) {
+		double x = s.getX(),
+				y = s.getY(),
+				this_x = getX(),
+				this_y = getY();
+		double w = s.getWidth();
+		return  (x + w >= this_x && x <= this_x + this.w ) && (y + w >= this_y && y <= this_y + this.w ); 
+	}
 	
 	
 

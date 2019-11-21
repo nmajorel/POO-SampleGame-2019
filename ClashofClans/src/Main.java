@@ -10,11 +10,13 @@ import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.stage.Stage;
 import management.Land;
+import management.Order;
 import settings.Settings;
 import sprite.Sprite;
 import sprite.castle.Castle;
 import sprite.castle.Neutral;
 import sprite.castle.Taken;
+import sprite.soldier.Soldier;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -40,6 +42,7 @@ public class Main extends Application {
 	private Image missileImage;
 
 	private List<Castle> castles = new ArrayList<Castle>();
+	private List<Soldier> soldiers = new ArrayList<Soldier>();
 	private ArrayList<Land> lands = new ArrayList<Land>(); 
 	private Castle castle;
 
@@ -82,7 +85,10 @@ public class Main extends Application {
 				}
 				
 				castles.forEach(sprite -> sprite.move());
+				castles.get(0).doOrder();
 				castles.forEach(sprite -> sprite.updateUI());
+				soldiers.forEach(sprite -> sprite.updateUI());
+				/*
 				castles.forEach(sprite -> sprite.remove());
 				
 				removeSprites(castles);
@@ -91,7 +97,7 @@ public class Main extends Application {
 					//startNanoTime = currentNanoTime;
 					System.out.println("coucou");
 					
-				}
+				}*/
 
 				// player input
 				//player.processInput();
@@ -214,9 +220,10 @@ public class Main extends Application {
 	        	element.setAvailable(false);
 	        	
 	        }
-	        
-	        
 	    }
+		castles.get(0).setOrder(new Order(castles.get(0), castles.get(2), 9, 4, 2));
+		
+		soldiers = castles.get(0).getOrder().getTroops();
 		/*castles.add(new Castle(playfieldLayer, new Point2D(150, 50), 100, Settings.SIZE_CASTLE, Settings.SIZE_CASTLE));
 		castles.add(new Castle(playfieldLayer, new Point2D(400, 90), 100, Settings.SIZE_CASTLE, Settings.SIZE_CASTLE));
 		castles.add(new Castle(playfieldLayer, new Point2D(150, 50), 100, Settings.SIZE_CASTLE, Settings.SIZE_CASTLE));

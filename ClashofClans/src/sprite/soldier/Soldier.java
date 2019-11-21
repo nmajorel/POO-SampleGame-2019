@@ -12,29 +12,57 @@ public class Soldier extends Sprite {
     private int production_time;
     protected double speed;
     private int damage;
-    
-	@Override
+    //static final double SPEED = 0.1;   Pour faire un define
+	private boolean left_the_castle = false;
+
 	public void checkRemovability() {
-		// TODO Auto-generated method stub
 		
 	}
 	
-	public Soldier(Pane layer, Point2D point, int health, double w, double h) {
-		super(layer, point, Color.RED, w, h);
+	public Soldier(Pane layer, Point2D point, int health, double w, double h, int production_cost, int production_time, int speed, int damage, Color c) {
+		super(layer, point, c, w, h);
 		this.health = health;
-		this.color = Color.YELLOW;
-		this.production_cost = 100;
-		this.production_time = 5;
-		this.speed = 2;
-		this.damage = 1;
+		this.color = c;
+		this.production_cost = production_cost;
+		this.production_time = production_time;
+		this.speed = speed;
+		this.damage = damage;
 		
-		
-			// TODO Auto-generated constructor stub
-		}
+	}
+	
+	public void move(Point2D destination) {
+		double x = destination.getX(),
+		y = destination.getY(),
+		px = getX(), py = getY();
+		double speed = getSpeed();
+		if(px + speed< x){
+        	p.setX(px + speed);
+        }else{
+        	if(px - speed> x){
+        		p.setX(px - speed);
+        	}
+        }
+        if(py + speed< y){
+        	p.setY(py + speed);
+        }else{
+        	if(py - speed> y){
+        		p.setY(py - speed);
+        	}
+        }
+    }
 
-    
-    
-   
+	public double getSpeed() {
+		return speed;
+	}
+
+	public boolean isLeft_the_castle() {
+		return left_the_castle;
+	}
+
+	public void setLeft_the_castle(boolean left_the_castle) {
+		this.left_the_castle = left_the_castle;
+	}
+	
     
     
 

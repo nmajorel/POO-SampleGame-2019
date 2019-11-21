@@ -17,4 +17,9 @@ public class Settings {
 	public static final int LEVEL_4 = 4;
 	public static final int LEVEL_5 = 5;
 	
+	// Size of soldiers
+	public static final double SIZE_PIQUIER = 15;
+	public static final double SIZE_CHEVALIER = 18;
+	public static final double SIZE_Onagre = 26;
+	
 }
