@@ -92,4 +92,7 @@ public class Input {
 	public boolean isP() {
 		return is(P);
 	}
+	public boolean isC() {
+		return is(C);
+	}
 }

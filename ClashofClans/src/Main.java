@@ -49,6 +49,7 @@ public class Main extends Application {
 	private Text scoreMessage = new Text();
 	private int scoreValue = 0;
 	private boolean collision = false;
+	private boolean paused = false;
 
 	private Scene scene;
 	private Input input;
@@ -83,12 +84,13 @@ public class Main extends Application {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
-				castles.forEach(sprite -> sprite.move());
-				castles.get(0).doOrder();
-				castles.forEach(sprite -> sprite.updateUI());
-				soldiers.forEach(sprite -> sprite.updateUI());
-				/*
+				if(!paused){				
+					castles.forEach(sprite -> sprite.move());
+					castles.get(0).doOrder();
+					castles.forEach(sprite -> sprite.updateUI());
+					soldiers.forEach(sprite -> sprite.updateUI());
+				}
+					/*
 				castles.forEach(sprite -> sprite.remove());
 				
 				removeSprites(castles);
@@ -138,12 +140,15 @@ public class Main extends Application {
 					System.exit(0);
 				} 
 				else if(input.isP()) {
-					Thread.sleep(3000);
+					paused = true;
+				}
+				else if(input.isC()){
+					paused = false;
 				}
 				else if (input.isFire()) {
 					//fire(now);
 				}
-
+				
 			}
 
 		};
