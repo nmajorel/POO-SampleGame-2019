@@ -45,9 +45,20 @@ public class Player {
 		}*/
 
 	}
+
+	public List<Castle> getCastles() {
+		return castles;
+	}
+
+	public void setCastles(List<Castle> castles) {
+		this.castles = castles;
+	}
+	
 	
 
 }
+
+
 
 /*
 

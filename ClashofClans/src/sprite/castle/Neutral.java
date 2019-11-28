@@ -11,12 +11,8 @@ public class Neutral extends Castle {
 		// TODO Auto-generated constructor stub
 	}
 
-	@Override
-	public void income() {
-		
-		this.gold = getGold() + getLevel();
-		// TODO Auto-generated method stub
-		
+	public  int getIncome() {
+		 return getLevel() ;
 	}
 
 }

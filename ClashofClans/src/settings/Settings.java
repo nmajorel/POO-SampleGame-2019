@@ -4,7 +4,7 @@ public class Settings {
 
 	public static enum Directions { N, E, S, W};
 	
-	public static final double SCENE_WIDTH = 800;
+	public static final double SCENE_WIDTH = 1000;
     public static final double SCENE_HEIGHT = 800;
     public static final double SIZE_LAND = 300;
     public static final double SIZE_CASTLE = 150;

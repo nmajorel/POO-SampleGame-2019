@@ -11,12 +11,8 @@ public class Taken extends Castle {
 		// TODO Auto-generated constructor stub
 	}
 
-	@Override
-	public void income() {
-		
-		this.gold = getGold() + getLevel()*10;
-		// TODO Auto-generated method stub
-		
+	public  int getIncome() {
+		 return getLevel() * 10;
 	}
-
+	
 }

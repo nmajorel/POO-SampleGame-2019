@@ -34,25 +34,22 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 public class Main extends Application {
+	
 	private Random rnd = new Random();
 
 	private Pane playfieldLayer;
 
-	private Image playerImage;
-	private Image enemyImage;
-	private Image missileImage;
-
-	private List<Castle> castles = new ArrayList<Castle>();
-	private List<Soldier> soldiers = new ArrayList<Soldier>();
+	private List<Castle> other_castles = new ArrayList<Castle>();
 	private ArrayList<Land> lands = new ArrayList<Land>(); 
-	private Castle castle;
-
-	private Text scoreMessage = new Text();
-	private int scoreValue = 0;
+	
 	private boolean collision = false;
+
+	//private Text scoreMessage = new Text();
+	//private int scoreValue = 0;
+	
+	private Player player;
 	
 	private boolean paused = false;
-	private boolean paused_window = false;
 	private Window window;
 
 	private Scene scene;
@@ -65,8 +62,7 @@ public class Main extends Application {
 	public void start(Stage primaryStage) {
 
 		root = new Group();
-		scene = new Scene(root, Settings.SCENE_WIDTH, Settings.SCENE_HEIGHT + Settings.STATUS_BAR_HEIGHT);
-		//scene.getStylesheets().add(getClass().getResource("/css/application.css").toExternalForm());
+		scene = new Scene(root, Settings.SCENE_WIDTH, Settings.SCENE_HEIGHT );
 		primaryStage.setScene(scene);
 		primaryStage.setResizable(false);
 		primaryStage.show();
@@ -85,41 +81,22 @@ public class Main extends Application {
 				try {
 					processInput(input, currentNanoTime);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				if(!paused){				
-					castles.forEach(sprite -> sprite.move());
-					castles.get(0).doOrder();
-					castles.forEach(sprite -> sprite.updateUI());
-					soldiers.forEach(sprite -> sprite.updateUI());
+					other_castles.forEach(sprite -> sprite.move());
+					//other_castles.get(0).doOrder();
+					other_castles.forEach(sprite -> sprite.updateUI());
 				}
-					/*
-				castles.forEach(sprite -> sprite.remove());
 				
-				removeSprites(castles);
-				double t = (currentNanoTime - startNanoTime);
-				if(t>10000000000.0) {
-					//startNanoTime = currentNanoTime;
-					System.out.println("coucou");
-					
-				}*/
 
-				// player input
 				//player.processInput();
 				//castle.processInput();
-
-				// add random enemies
-				//spawnEnemies(true);
 
 				// movement
 				//player.move();
 				//enemies.forEach(sprite -> sprite.move());
 				//missiles.forEach(sprite -> sprite.move());
-
-				// check collisions
-				//checkCollisions();
-
 				
 				// update sprites in scene
 				//player.updateUI();
@@ -149,9 +126,6 @@ public class Main extends Application {
 				else if(input.isC()){
 					paused = false;
 				}
-				else if (input.isFire()) {
-					//fire(now);
-				}
 				
 			}
 
@@ -160,56 +134,57 @@ public class Main extends Application {
 	}
 
 	private void loadGame() {
-		//playerImage = new Image(getClass().getResource("/images/alien.png").toExternalForm(), 100, 100, true, true);
-		//enemyImage = new Image(getClass().getResource("/images/enemy.png").toExternalForm(), 50, 50, true, true);
-		//missileImage = new Image(getClass().getResource("/images/pinapple.png").toExternalForm(), 20, 20, true, true);
 
 		input = new Input(scene);
 		input.addListeners();
+		
+		createLands();
+		
+		player = new Player(playfieldLayer, input, new Taken(playfieldLayer, nextAvailableLand(), Settings.SIZE_CASTLE, Settings.SIZE_CASTLE));
 
-		//createPlayer();
-		//createStatusBar();
+		createOtherCastles();
 		
-		createLand();
-		createCastle();
-		
-		Canvas canvas = new Canvas( 500, 500 );
-	        //Image restart = new Image("restart.png");
-		
+		Canvas canvas = new Canvas( 500, 500 );	
 	    
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 
 	    root.getChildren().add( canvas );
-	    
-	
-	    
+	       
 	    
 	    Font theFont = Font.font( "Helvetica", FontWeight.BOLD, 24 );
-        //gc.setFont( theFont );
-        //gc.setStroke( Color.BLACK );
-        //gc.setLineWidth(1);
-		
+
         scene.setOnMouseClicked(
                 new EventHandler<MouseEvent>()
 				{
 					public void handle(MouseEvent e) {
 
 						if (!paused) {
-							for (Castle castle : castles) {
+							for (Castle castle : other_castles) {
 								if (castle.getImageView().contains(e.getX(), e.getY())) {
 
-									//System.out.println(castle.getGold());
-
-									//gc.setFill(Color.BLUE);
 
 									String pointsText = "Points: ";
-									//gc.fillText(pointsText, 360, 36);
-									//gc.strokeText(pointsText, 360, 36);
+		
 									System.out.println("paused = false");
 									paused = true;
-									createWindow();
+									window = new Window(playfieldLayer, new Point2D(200, 200), 400, 400, castle);
 
 								}
+							
+							}
+							for (Castle castle : player.getCastles()) {
+								if (castle.getImageView().contains(e.getX(), e.getY())) {
+
+
+									String pointsText = "Points: ";
+		
+									System.out.println("paused = false");
+									window = new Window(playfieldLayer, new Point2D(200, 200), 400, 400, castle);
+									paused = true;
+							
+
+								}
+							
 							}
 						} else {
 							
@@ -228,49 +203,28 @@ public class Main extends Application {
 				});
 		
 		
-		/*scene.setOnMousePressed(e -> {
-			player.setX(e.getX() - (player.getWidth() / 2));
-			player.setY(e.getY() - (player.getHeight() / 2));
-		});*/
 	}
 	
-	private void createWindow() {
+	private void removeWindow(Window window) {
+		window.getSuppr().removeFromLayer();
+		window.removeFromLayer();
+		window.removeTexts();
 		
-		window = new Window(playfieldLayer, new Point2D(200, 200), 400, 400);
-
 		
 	}
 
 
-	private void createCastle() {
+	private void createOtherCastles() {
 		
-		
-		Iterator itr = lands.iterator();
-
-
-		Land element = (Land) itr.next();
-		castles.add(new Taken(playfieldLayer, element.getPoint(), Settings.SIZE_CASTLE, Settings.SIZE_CASTLE));
-		element.setAvailable(false);
-		while(itr.hasNext() ) {
-			element = (Land) itr.next();
-	        if(element.isAvailable()) {
-	        	castles.add(new Neutral(playfieldLayer, element.getPoint(), Settings.SIZE_CASTLE, Settings.SIZE_CASTLE));
-	        	element.setAvailable(false);
-	        	
-	        }
-	    }
-		castles.get(0).setOrder(new Order(castles.get(0), castles.get(2), 9, 4, 2));
-		
-		soldiers = castles.get(0).getOrder().getTroops();
-		/*castles.add(new Castle(playfieldLayer, new Point2D(150, 50), 100, Settings.SIZE_CASTLE, Settings.SIZE_CASTLE));
-		castles.add(new Castle(playfieldLayer, new Point2D(400, 90), 100, Settings.SIZE_CASTLE, Settings.SIZE_CASTLE));
-		castles.add(new Castle(playfieldLayer, new Point2D(150, 50), 100, Settings.SIZE_CASTLE, Settings.SIZE_CASTLE));
-		castles.add(new Castle(playfieldLayer, new Point2D(400, 90), 100, Settings.SIZE_CASTLE, Settings.SIZE_CASTLE));*/
-		
+		Point2D p = nextAvailableLand();
+		while(p!=null ) {
+			other_castles.add(new Neutral(playfieldLayer, p, Settings.SIZE_CASTLE, Settings.SIZE_CASTLE));	 
+			p = nextAvailableLand();
+	    }		
 		
 	}
 	
-	private void createLand() {
+	private void createLands() {
 		
 		for(double x = 50; x < Settings.SCENE_WIDTH ; x = x + Settings.SIZE_LAND + Settings.DISTANCE_BETWEEN_CASTLES) {
 			for(double y = 50; y < Settings.SCENE_HEIGHT; y = y + Settings.SIZE_LAND + Settings.DISTANCE_BETWEEN_CASTLES) {
@@ -280,64 +234,18 @@ public class Main extends Application {
 		
 	}
 	
+	private Point2D nextAvailableLand () {
+		Iterator itr = lands.iterator();
+		while(itr.hasNext() ) {
+			Land element = (Land) itr.next();
+	        if(element.isAvailable()) {
+	        	element.setAvailable(false);
+	        	return element.getPoint();
+	        }
+	    }
+		return null;
+	}
 	
-
-
-	/*public void createStatusBar() {
-		HBox statusBar = new HBox();
-		scoreMessage.setText("Score : 0          Life : " + player.getHealth());
-		statusBar.getChildren().addAll(scoreMessage);
-		statusBar.getStyleClass().add("statusBar");
-		statusBar.relocate(0, Settings.SCENE_HEIGHT);
-		statusBar.setPrefSize(Settings.SCENE_WIDTH, Settings.STATUS_BAR_HEIGHT);
-		root.getChildren().add(statusBar);
-	}
-
-	private void createPlayer() {
-		double x = (Settings.SCENE_WIDTH - playerImage.getWidth()) / 2.0;
-		double y = Settings.SCENE_HEIGHT * 0.7;
-		player = new Player(playfieldLayer, playerImage, x, y, Settings.PLAYER_HEALTH, Settings.PLAYER_DAMAGE,
-				Settings.PLAYER_SPEED, input);
-		
-		player.getView().setOnMousePressed(e -> {
-			System.out.println("Click on player");
-			e.consume();
-		});
-		
-		player.getView().setOnContextMenuRequested(e -> {
-			ContextMenu contextMenu = new ContextMenu();
-			MenuItem low = new MenuItem("Slow");
-			MenuItem medium= new MenuItem("Regular");
-			MenuItem high= new MenuItem("Fast");
-			low.setOnAction(evt -> player.setFireFrequencyLow());
-			medium.setOnAction(evt -> player.setFireFrequencyMedium());
-			high.setOnAction(evt -> player.setFireFrequencyHigh());
-			contextMenu.getItems().addAll(low, medium, high);
-			contextMenu.show(player.getView(), e.getScreenX(), e.getScreenY());
-		});
-	}
-
-	private void spawnEnemies(boolean random) {
-		if (random && rnd.nextInt(Settings.ENEMY_SPAWN_RANDOMNESS) != 0) {
-			return;
-		}
-		double speed = rnd.nextDouble() * 3 + 1.0;
-		double x = rnd.nextDouble() * (Settings.SCENE_WIDTH - enemyImage.getWidth());
-		double y = -enemyImage.getHeight();
-		int health = 1 + rnd.nextInt(5 - 1);
-		Enemy enemy = new Enemy(playfieldLayer, enemyImage, x, y, health, 1, speed);
-		enemies.add(enemy);
-	}
-
-	private void fire(long now) {
-		if (player.canFire(now)) {
-			Missile missile = new Missile(playfieldLayer, missileImage, player.getCenterX(), player.getY(),
-					Settings.MISSILE_DAMAGE, Settings.MISSILE_SPEED);
-			missiles.add(missile);
-			player.fire(now);
-		}
-	}
-*/ 
 	private void removeSprites(List<? extends Sprite> spriteList) {
 		Iterator<? extends Sprite> iter = spriteList.iterator();
 		while (iter.hasNext()) {
@@ -353,12 +261,7 @@ public class Main extends Application {
 			
 	}
 	
-	private void removeWindow(Window window) {
-		window.getSuppr().removeFromLayer();
-		window.removeFromLayer();
-		
-		
-	}
+
 /*
 	private void checkCollisions() {
 		collision = false;
@@ -384,22 +287,6 @@ public class Main extends Application {
 
 	}
 
-	private void gameOver() {
-		HBox hbox = new HBox();
-		hbox.setPrefSize(Settings.SCENE_WIDTH, Settings.SCENE_HEIGHT);
-		hbox.getStyleClass().add("message");
-		Text message = new Text();
-		message.getStyleClass().add("message");
-		message.setText("Game over");
-		hbox.getChildren().add(message);
-		root.getChildren().add(hbox);
-		gameLoop.stop();
-	}
-
-	private void update() {
-		if (collision) {
-			scoreMessage.setText("Score : " + scoreValue + "          Life : " + player.getHealth());
-		}
 	}*/
 
 	public static void main(String[] args) {

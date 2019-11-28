@@ -51,7 +51,11 @@ public abstract class Castle extends Sprite{
 
 	}
 	
-	public abstract void income();
+	public void income() {
+		this.gold = this.gold + getIncome();
+	}
+	
+	public abstract int getIncome();
 	
 	public boolean isCastleEmpty() {
 		
