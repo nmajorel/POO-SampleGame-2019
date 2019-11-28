@@ -56,7 +56,8 @@ public class Main extends Application {
 	private Window window;
 
 	private Scene scene;
-	private Input input;
+	private Input input; 
+	
 	private AnimationTimer gameLoop;
 	
 	Group root;
@@ -240,6 +241,13 @@ public class Main extends Application {
 
 		
 	}
+	
+	private void removeWindow(Window window) {
+		window.getSuppr().removeFromLayer();
+		window.removeFromLayer();
+		
+		
+	}
 
 
 	private void createCastle() {
@@ -353,12 +361,7 @@ public class Main extends Application {
 			
 	}
 	
-	private void removeWindow(Window window) {
-		window.getSuppr().removeFromLayer();
-		window.removeFromLayer();
-		
-		
-	}
+
 /*
 	private void checkCollisions() {
 		collision = false;

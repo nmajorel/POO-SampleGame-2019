@@ -101,7 +101,16 @@ public abstract class Castle extends Sprite{
 	public void move() {
 		
     }
+
+	public void doOrder() {
+		this.order.ost_move();
+	}
 	
+
+	public Point2D getDoorPoint() {
+		return door.getP();
+	}
+
 	public String getDuke() {
 		return duke;
 	}
@@ -126,47 +135,29 @@ public abstract class Castle extends Sprite{
 		return lab;
 	}
 
-	public Order getOrder() {
-		return order;
-	}
-
 	public Directions getDir() {
 		return dir;
 	}
 
-	public void setOrder(Order order) {
-		this.order = order;
-	}	
-	public void doOrder() {
-		this.order.ost_move();
+	public Order getOrder() {
+		return order;
 	}
 
-	public Point2D getDoorPoint() {
-		return door.getP();
+	public Rectangle getDoor() {
+		return door;
 	}
 
 	public int getNb_piquiers() {
 		return nb_piquiers;
 	}
 
-	public void setNb_piquiers(int nb_piquiers) {
-		this.nb_piquiers = nb_piquiers;
-	}
-
 	public int getNb_chevaliers() {
 		return nb_chevaliers;
-	}
-
-	public void setNb_chevaliers(int nb_chevaliers) {
-		this.nb_chevaliers = nb_chevaliers;
 	}
 
 	public int getNb_onagre() {
 		return nb_onagre;
 	}
 
-	public void setNb_onagre(int nb_onagre) {
-		this.nb_onagre = nb_onagre;
-	}
-
+	
 }
