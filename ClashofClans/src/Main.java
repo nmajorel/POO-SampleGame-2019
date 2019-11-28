@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 import management.Land;
 import management.Order;
 import settings.Settings;
+import shape.Point2D;
 import sprite.Sprite;
 import sprite.castle.Castle;
 import sprite.castle.Neutral;
@@ -49,7 +50,10 @@ public class Main extends Application {
 	private Text scoreMessage = new Text();
 	private int scoreValue = 0;
 	private boolean collision = false;
+	
 	private boolean paused = false;
+	private boolean paused_window = false;
+	private Window window;
 
 	private Scene scene;
 	private Input input;
@@ -171,33 +175,54 @@ public class Main extends Application {
 		
 		Canvas canvas = new Canvas( 500, 500 );
 	        //Image restart = new Image("restart.png");
+		
+	    
+		GraphicsContext gc = canvas.getGraphicsContext2D();
 
 	    root.getChildren().add( canvas );
 	    
-	    GraphicsContext gc = canvas.getGraphicsContext2D();
+	
 	    
 	    
 	    Font theFont = Font.font( "Helvetica", FontWeight.BOLD, 24 );
-        gc.setFont( theFont );
-        gc.setStroke( Color.BLACK );
-        gc.setLineWidth(1);
+        //gc.setFont( theFont );
+        //gc.setStroke( Color.BLACK );
+        //gc.setLineWidth(1);
 		
         scene.setOnMouseClicked(
                 new EventHandler<MouseEvent>()
-                {
+				{
 					public void handle(MouseEvent e) {
-						for (Castle castle : castles ) {
-							if (castle.getImageView().contains(e.getX(), e.getY())) {
 
-								System.out.println(castle.getGold());
-								
-								gc.setFill( Color.BLUE );
+						if (!paused) {
+							for (Castle castle : castles) {
+								if (castle.getImageView().contains(e.getX(), e.getY())) {
 
-					            String pointsText = "Points: ";
-					            gc.fillText( pointsText, 360, 36 );
-					            gc.strokeText( pointsText, 360, 36 );
-								
-							} 
+									//System.out.println(castle.getGold());
+
+									//gc.setFill(Color.BLUE);
+
+									String pointsText = "Points: ";
+									//gc.fillText(pointsText, 360, 36);
+									//gc.strokeText(pointsText, 360, 36);
+									System.out.println("paused = false");
+									paused = true;
+									createWindow();
+
+								}
+							}
+						} else {
+							
+							
+							if(window.getSuppr().getImageView().contains(e.getX(), e.getY())) {
+								System.out.println("paused = true");
+								removeWindow(window);
+								paused = false;
+							}
+							
+							
+							
+
 						}
 					}
 				});
@@ -209,6 +234,14 @@ public class Main extends Application {
 		});*/
 	}
 	
+	private void createWindow() {
+		
+		window = new Window(playfieldLayer, new Point2D(200, 200), 400, 400);
+
+		
+	}
+
+
 	private void createCastle() {
 		
 		
@@ -317,6 +350,14 @@ public class Main extends Application {
 				iter.remove();
 			}
 		}
+			
+	}
+	
+	private void removeWindow(Window window) {
+		window.getSuppr().removeFromLayer();
+		window.removeFromLayer();
+		
+		
 	}
 /*
 	private void checkCollisions() {
