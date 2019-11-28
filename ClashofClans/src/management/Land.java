@@ -1,4 +1,8 @@
 package management;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import settings.Settings;
 import shape.Point2D;
 
 public class Land {
@@ -8,11 +12,15 @@ public class Land {
 	private Point2D point;
 	private static double w;
 	private static double h;
-	 
-	private boolean available;
+	private boolean available; 
 	
 	public Land(double x, double y, boolean available) {
 		this.point = new Point2D(x, y);
+		this.available = available;
+	}
+	
+	public Land(Point2D p, boolean available) {
+		this.point = new Point2D(p);
 		this.available = available;
 	}
 
