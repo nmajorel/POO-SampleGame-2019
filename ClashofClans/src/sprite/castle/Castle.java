@@ -159,5 +159,51 @@ public abstract class Castle extends Sprite{
 		return nb_onagre;
 	}
 
+	public void setDuke(String duke) {
+		this.duke = duke;
+	}
+
+	public void setGold(int gold) {
+		this.gold = gold;
+	}
+
+	public void setLevel(int level) {
+		this.level = level;
+	}
+
+	public void setTroops(List<Soldier> troops) {
+		this.troops = troops;
+	}
+
+	public void setNb_troops(int nb_troops) {
+		this.nb_troops = nb_troops;
+	}
+
+	public void setLab(Laboratory lab) {
+		this.lab = lab;
+	}
+
+	public void setDir(Directions dir) {
+		this.dir = dir;
+	}
+
+	public void setOrder(Order order) {
+		this.order = order;
+	}
+
+	public void setNb_piquiers(int nb_piquiers) {
+		this.nb_piquiers = nb_piquiers;
+	}
+
+	public void setNb_chevaliers(int nb_chevaliers) {
+		this.nb_chevaliers = nb_chevaliers;
+	}
+
+	public void setNb_onagre(int nb_onagre) {
+		this.nb_onagre = nb_onagre;
+	}
+	
+	
+
 	
 }

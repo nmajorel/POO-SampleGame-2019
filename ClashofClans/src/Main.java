@@ -1,5 +1,4 @@
 
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -45,17 +44,19 @@ public class Main extends Application {
 
 	private List<Castle> castles = new ArrayList<Castle>();
 	private List<Soldier> soldiers = new ArrayList<Soldier>();
+	private ArrayList<Land> lands = new ArrayList<Land>(); 
 	private Castle castle;
-	private ArrayList<Land> lands = createLand();
+
 	private Text scoreMessage = new Text();
 	private int scoreValue = 0;
 	private boolean collision = false;
 	
 	private boolean paused = false;
-	
+	private boolean paused_window = false;
+	private Window window;
+
 	private Scene scene;
-	private Input input; 
-	
+	private Input input;
 	private AnimationTimer gameLoop;
 	
 	Group root;
@@ -239,13 +240,6 @@ public class Main extends Application {
 
 		
 	}
-	
-	private void removeWindow(Window window) {
-		window.getSuppr().removeFromLayer();
-		window.removeFromLayer();
-		
-		
-	}
 
 
 	private void createCastle() {
@@ -276,28 +270,17 @@ public class Main extends Application {
 		
 	}
 	
-	public ArrayList<Land> createLand() {
-		ArrayList<Land> tmp_land = new ArrayList<Land>(); 
+	private void createLand() {
+		
 		for(double x = 50; x < Settings.SCENE_WIDTH ; x = x + Settings.SIZE_LAND + Settings.DISTANCE_BETWEEN_CASTLES) {
 			for(double y = 50; y < Settings.SCENE_HEIGHT; y = y + Settings.SIZE_LAND + Settings.DISTANCE_BETWEEN_CASTLES) {
-				tmp_land.add(new Land(x, y, true));
+				lands.add(new Land(x, y, true));
 			}
 		}
-		return tmp_land;		
+		
 	}
 	
-	public shape.Point2D nextAvailaibleLand(){
-		Iterator itr = lands.iterator();
-		Land element;
-		while(itr.hasNext()){
-			element = (Land) itr.next();
-	        if(element.isAvailable()) {
-	        	element.setAvailable(false);
-	        	return element.getPoint();	        	
-	        }
-		}
-		return null;
-	}
+	
 
 
 	/*public void createStatusBar() {
@@ -370,7 +353,12 @@ public class Main extends Application {
 			
 	}
 	
-
+	private void removeWindow(Window window) {
+		window.getSuppr().removeFromLayer();
+		window.removeFromLayer();
+		
+		
+	}
 /*
 	private void checkCollisions() {
 		collision = false;
@@ -417,6 +405,5 @@ public class Main extends Application {
 	public static void main(String[] args) {
 		launch(args);
 	}
-
 
 }

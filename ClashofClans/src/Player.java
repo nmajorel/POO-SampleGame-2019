@@ -49,6 +49,8 @@ public class Player {
 
 }
 
+/*
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,7 +73,7 @@ public class Player {
 
 	}
 
-	/*
+	
 	private void init() {
 		// calculate movement bounds of the player ship
 		// allow half of the player to be outside of the screen
@@ -142,7 +144,7 @@ public class Player {
 	public void setFireFrequencyHigh() {
 		this.fireFrequency = Settings.FIRE_FREQUENCY_HIGH;
 	}
-	*/
+	
 	
 	public List<Castle> getOwned() {
 		return owned;
@@ -162,4 +164,4 @@ public class Player {
 	
 	
 
-}
+}*/
