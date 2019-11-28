@@ -12,6 +12,7 @@ import management.Order;
 import settings.Settings;
 import settings.Settings.Directions;
 import shape.Point2D;
+import shape.Rectangle;
 import sprite.Sprite;
 import sprite.soldier.Soldier;
 
@@ -26,7 +27,7 @@ public abstract class Castle extends Sprite{
 	private Laboratory lab;
 	private Directions dir;
 	private Order order;
-	private Door door;
+	private Rectangle door;
 	
 	private int nb_piquiers;
 	private int nb_chevaliers;
@@ -58,7 +59,7 @@ public abstract class Castle extends Sprite{
 		
 	}
 	
-	public Door createDoor() {
+	public Rectangle createDoor() {
 		
 		double x;
 		double y;
@@ -68,24 +69,24 @@ public abstract class Castle extends Sprite{
 			case N :
 				x = (getX() + getWidth()/2) - getWidth()/6;
 				y = getY();
-				return new Door(getLayer(), new Point2D(x,y), getWidth()/3, getHeight()/12);
+				return new Rectangle(getLayer(), new Point2D(x,y), Color.BLACK, getWidth()/3, getHeight()/12);
 			
 			case E :
 				
 				x = (getX() + getWidth()) - getWidth()/12;
 				y = (getY() + getHeight()/2) - getHeight()/6;
-				return new Door(getLayer(), new Point2D(x,y), getWidth()/12, getHeight()/3);
+				return new Rectangle(getLayer(), new Point2D(x,y), Color.BLACK, getWidth()/12, getHeight()/3);
 				
 			case S :
 				x = (getX() + getWidth()/2) - getWidth()/6;
 				y = (getY() + getHeight()) - getHeight()/12;
-				return new Door(getLayer(), new Point2D(x,y), getWidth()/3, getHeight()/12);
+				return new Rectangle(getLayer(), new Point2D(x,y), Color.BLACK, getWidth()/3, getHeight()/12);
 				
 			case W :
 				
 				x = getX();
 				y = (getY() + getHeight()/2) - getHeight()/6;
-				return new Door(getLayer(), new Point2D(x,y), getWidth()/12, getHeight()/3);
+				return new Rectangle(getLayer(), new Point2D(x,y), Color.BLACK, getWidth()/12, getHeight()/3);
 		}
 		
 		return null;
