@@ -5,7 +5,7 @@ import javafx.scene.paint.Color;
 import settings.Settings;
 import shape.Point2D;
 
-public class Chevalier extends Soldier {
+public class Knight extends Soldier {
 	
 	private static final int HEALTH = 3;
 	private static final int COST = 500;
@@ -13,7 +13,7 @@ public class Chevalier extends Soldier {
 	private static final int SPEED = 3;
 	private static final int DAMAGE = 5;
 	
-	public Chevalier(Pane layer, Point2D point) {
+	public Knight(Pane layer, Point2D point) {
 		super(layer, point, HEALTH, Settings.SIZE_CHEVALIER, Settings.SIZE_CHEVALIER, COST, TIME_PRODUCTION, SPEED, DAMAGE, Color.DARKGRAY);
 	}
 	

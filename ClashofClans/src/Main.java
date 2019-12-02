@@ -7,6 +7,7 @@ import java.util.Random;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.stage.Stage;
 import management.Land;
@@ -18,6 +19,9 @@ import sprite.castle.Castle;
 import sprite.castle.Neutral;
 import sprite.castle.Taken;
 import sprite.soldier.Soldier;
+import window.NotOwnedCastleWindow;
+import window.OwnedCastleWindow;
+import window.Window;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -49,8 +53,9 @@ public class Main extends Application {
 	
 	private Player player;
 	
-	private boolean paused = false;
-	private Window window;
+	public static boolean paused = false;
+	private OwnedCastleWindow ownedCastleWindow;
+	private NotOwnedCastleWindow notOwnedCastleWindow;
 
 	private Scene scene;
 	private Input input;
@@ -62,7 +67,7 @@ public class Main extends Application {
 	public void start(Stage primaryStage) {
 
 		root = new Group();
-		scene = new Scene(root, Settings.SCENE_WIDTH, Settings.SCENE_HEIGHT );
+		scene = new Scene(root, Settings.SCENE_WIDTH, Settings.SCENE_HEIGHT, Color.FORESTGREEN );
 		primaryStage.setScene(scene);
 		primaryStage.setResizable(false);
 		primaryStage.show();
@@ -163,11 +168,10 @@ public class Main extends Application {
 								if (castle.getImageView().contains(e.getX(), e.getY())) {
 
 
-									String pointsText = "Points: ";
-		
-									System.out.println("paused = false");
 									paused = true;
-									window = new Window(playfieldLayer, new Point2D(200, 200), 400, 400, castle);
+									notOwnedCastleWindow = new NotOwnedCastleWindow(playfieldLayer, new Point2D((Settings.SCENE_WIDTH/2) -300, (Settings.SCENE_HEIGHT/2) -300), 600, 600, castle);
+					
+							
 
 								}
 							
@@ -176,11 +180,10 @@ public class Main extends Application {
 								if (castle.getImageView().contains(e.getX(), e.getY())) {
 
 
-									String pointsText = "Points: ";
-		
-									System.out.println("paused = false");
-									window = new Window(playfieldLayer, new Point2D(200, 200), 400, 400, castle);
+							
 									paused = true;
+									ownedCastleWindow = new OwnedCastleWindow(playfieldLayer, new Point2D((Settings.SCENE_WIDTH/2) -300, (Settings.SCENE_HEIGHT/2) -300), 600, 600, castle);
+									
 							
 
 								}
@@ -188,12 +191,10 @@ public class Main extends Application {
 							}
 						} else {
 							
-							
-							if(window.getSuppr().getImageView().contains(e.getX(), e.getY())) {
-								System.out.println("paused = true");
-								removeWindow(window);
+							if(notOwnedCastleWindow.keepPlaying()) {
 								paused = false;
 							}
+			
 							
 							
 							
@@ -201,17 +202,14 @@ public class Main extends Application {
 						}
 					}
 				});
+        
+        
+
 		
 		
 	}
 	
-	private void removeWindow(Window window) {
-		window.getSuppr().removeFromLayer();
-		window.removeFromLayer();
-		window.removeTexts();
-		
-		
-	}
+
 
 
 	private void createOtherCastles() {

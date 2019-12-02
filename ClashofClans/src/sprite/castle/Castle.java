@@ -29,9 +29,9 @@ public abstract class Castle extends Sprite{
 	private Order order;
 	private Rectangle door;
 	
-	private int nb_piquiers;
-	private int nb_chevaliers;
-	private int nb_onagre;
+	private int nbPikers;
+	private int nbKnights;
+	private int nbCatapults;
 	
 	public Castle(Pane layer, Point2D point, Color c, double w, double h) {
 		
@@ -39,10 +39,10 @@ public abstract class Castle extends Sprite{
 		this.duke = "Peter";
 		this.gold = 0;
 		this.level = Settings.LEVEL_1;
-		this.nb_piquiers = 9;
-		this.nb_chevaliers = 4;
-		this.nb_onagre = 2;
-		this.nb_troops = nb_piquiers + nb_chevaliers + nb_onagre;
+		this.nbPikers = 9;
+		this.nbKnights = 4;
+		this.nbCatapults = 2;
+		this.nb_troops = nbPikers + nbKnights + nbCatapults;
 		
 		int pick = new Random().nextInt(Directions.values().length);
 		this.dir = Directions.values()[pick]; 
@@ -50,7 +50,7 @@ public abstract class Castle extends Sprite{
 		this.door = createDoor();
 
 	}
-	
+
 	public void income() {
 		this.gold = this.gold + getIncome();
 	}
@@ -106,7 +106,7 @@ public abstract class Castle extends Sprite{
 		
     }
 
-	public void doOrder() {
+	public void makeAnOrder() {
 		this.order.ost_move();
 	}
 	
@@ -151,16 +151,18 @@ public abstract class Castle extends Sprite{
 		return door;
 	}
 
-	public int getNb_piquiers() {
-		return nb_piquiers;
+	
+
+	public int getNbPikers() {
+		return nbPikers;
 	}
 
-	public int getNb_chevaliers() {
-		return nb_chevaliers;
+	public int getNbKnights() {
+		return nbKnights;
 	}
 
-	public int getNb_onagre() {
-		return nb_onagre;
+	public int getNbCatapults() {
+		return nbCatapults;
 	}
 
 	public void setDuke(String duke) {
@@ -196,15 +198,15 @@ public abstract class Castle extends Sprite{
 	}
 
 	public void setNb_piquiers(int nb_piquiers) {
-		this.nb_piquiers = nb_piquiers;
+		this.nbPikers = nb_piquiers;
 	}
 
 	public void setNb_chevaliers(int nb_chevaliers) {
-		this.nb_chevaliers = nb_chevaliers;
+		this.nbKnights = nb_chevaliers;
 	}
 
 	public void setNb_onagre(int nb_onagre) {
-		this.nb_onagre = nb_onagre;
+		this.nbCatapults = nb_onagre;
 	}
 	
 	

@@ -6,9 +6,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import shape.Point2D;
 import sprite.castle.Castle;
-import sprite.soldier.Chevalier;
-import sprite.soldier.Onagre;
-import sprite.soldier.Piquier;
+import sprite.soldier.Knight;
+import sprite.soldier.Catapult;
+import sprite.soldier.Piker;
 import sprite.soldier.Soldier;
 
 public class Order {
@@ -16,9 +16,9 @@ public class Order {
 	private List<Soldier> troops = new ArrayList<Soldier>();
 	private Castle source, target;
 	private int nb_troops;
-	private int nb_piquiers;
-	private int nb_chevaliers;
-	private int nb_onagre;
+	private int nbPikers;
+	private int nbKnights;
+	private int nbCatapults;
 	boolean moved;
 	
 	private static final int PIQUIER = 0;
@@ -28,9 +28,9 @@ public class Order {
 	public Order(Castle source, Castle target, int nb_piquiers, int nb_chevaliers, int nb_onagre) {
 		this.source = source;
 		this.target = target;
-		this.nb_piquiers = nb_piquiers;
-		this.nb_chevaliers = nb_chevaliers;
-		this.nb_onagre = nb_onagre;
+		this.nbPikers = nb_piquiers;
+		this.nbKnights = nb_chevaliers;
+		this.nbCatapults = nb_onagre;
 		this.nb_troops = nb_chevaliers + nb_onagre + nb_piquiers;
 		this.moved = false;
 		
@@ -38,9 +38,9 @@ public class Order {
 	
 	public void ost_move() {
 		if(!moved){
-			create_soldier(PIQUIER, nb_piquiers);
-			create_soldier(CHEVALIER, nb_chevaliers);
-			create_soldier(ONAGRE, nb_onagre);
+			create_soldier(PIQUIER, nbPikers);
+			create_soldier(CHEVALIER, nbKnights);
+			create_soldier(ONAGRE, nbCatapults);
 			moved = true;
 		}
 		leave_the_castle();
@@ -95,13 +95,13 @@ public class Order {
 		for(int i = 0; i < nb_soldiers; i++) {
 			switch(type){
 				case PIQUIER : 
-					troops.add(new Piquier(source.getLayer(),source.getDoorPoint()));
+					troops.add(new Piker(source.getLayer(),source.getDoorPoint()));
 					break;
 				case CHEVALIER : 
-					troops.add(new Chevalier(source.getLayer(),source.getDoorPoint()));
+					troops.add(new Knight(source.getLayer(),source.getDoorPoint()));
 					break;
 				case ONAGRE : 
-					troops.add(new Onagre(source.getLayer(),source.getDoorPoint()));
+					troops.add(new Catapult(source.getLayer(),source.getDoorPoint()));
 					break;
 				default: break;
 			}
