@@ -16,7 +16,7 @@ import sprite.castle.Castle;
 
 public class NotOwnedCastleWindow extends Window {
 
-	
+	private boolean makeAnOrderWindow;
 	
 	public enum enumButton{
 
@@ -71,7 +71,7 @@ public class NotOwnedCastleWindow extends Window {
 	public NotOwnedCastleWindow(Pane layer, Point2D point, double w, double h, Castle c) {
 		super(layer, point, w, h, c);
 		
-		
+		this.makeAnOrderWindow = false;
 		for(enumButton button : enumButton.values()) {
 			
 			
@@ -171,15 +171,25 @@ public class NotOwnedCastleWindow extends Window {
 		
 	}
 	
-	
 	public void buttonConfirmPressed(Castle c) {
 		
-		
+		setMakeAnOrder(true);
 		
 		removeWindow();
 		
 	}
 	
+	
+	
+	public boolean isMakeAnOrderWindow() {
+		return makeAnOrderWindow;
+	}
+
+	public void setMakeAnOrder(boolean makeAnOrder) {
+		this.makeAnOrderWindow = makeAnOrder;
+	}
+
+
 	
 
 

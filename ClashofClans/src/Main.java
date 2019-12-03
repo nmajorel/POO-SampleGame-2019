@@ -90,8 +90,17 @@ public class Main extends Application {
 				}
 				if(!paused){				
 					other_castles.forEach(sprite -> sprite.move());
-					//other_castles.get(0).doOrder();
 					other_castles.forEach(sprite -> sprite.updateUI());
+					player.getCastles().forEach(sprite -> sprite.move());
+					
+					if(player.getCastles().get(0).getOrder()!=null) {
+						player.getCastles().get(0).makeAnOrder();
+						player.getCastles().get(0).getOrder().getTroops().forEach(sprite -> sprite.updateUI());
+					}
+					
+					//player.getCastles().forEach(sprite -> sprite.updateUI());
+					
+					
 				}
 				
 
@@ -191,8 +200,18 @@ public class Main extends Application {
 							}
 						} else {
 							
-							if(notOwnedCastleWindow.keepPlaying()) {
+							if(notOwnedCastleWindow.isKeepPlaying()) {
 								paused = false;
+								if(notOwnedCastleWindow.isMakeAnOrderWindow()) {
+									
+									List<Integer> nbSoldiersTmp = notOwnedCastleWindow.getNbSoldiersTmp();
+									
+									player.getCastles().get(0).setOrder(new Order(player.getCastles().get(0),notOwnedCastleWindow.getCastleClicked(), nbSoldiersTmp.get(0),nbSoldiersTmp.get(1),nbSoldiersTmp.get(2)));
+									
+								
+								}
+								
+								
 							}
 			
 							
@@ -202,9 +221,6 @@ public class Main extends Application {
 						}
 					}
 				});
-        
-        
-
 		
 		
 	}

@@ -97,6 +97,8 @@ public abstract class Castle extends Sprite{
 		
 	}
 	
+	
+	
 	@Override
 	public void checkRemovability() {
 		// TODO Auto-generated method stub
@@ -147,12 +149,6 @@ public abstract class Castle extends Sprite{
 		return order;
 	}
 
-	public Rectangle getDoor() {
-		return door;
-	}
-
-	
-
 	public int getNbPikers() {
 		return nbPikers;
 	}
@@ -165,6 +161,11 @@ public abstract class Castle extends Sprite{
 		return nbCatapults;
 	}
 
+	
+	
+	
+	
+	
 	public void setDuke(String duke) {
 		this.duke = duke;
 	}
@@ -197,18 +198,18 @@ public abstract class Castle extends Sprite{
 		this.order = order;
 	}
 
-	public void setNb_piquiers(int nb_piquiers) {
-		this.nbPikers = nb_piquiers;
+	public void setNbPikers(int nbPikers) {
+		this.nbPikers = nbPikers;
 	}
 
-	public void setNb_chevaliers(int nb_chevaliers) {
-		this.nbKnights = nb_chevaliers;
+	public void setNbKnights(int nbKnights) {
+		this.nbKnights = nbKnights;
 	}
 
-	public void setNb_onagre(int nb_onagre) {
-		this.nbCatapults = nb_onagre;
+	public void setNbCatapults(int nbCatapults) {
+		this.nbCatapults = nbCatapults;
 	}
-	
+
 	
 
 	

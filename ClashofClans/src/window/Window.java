@@ -44,6 +44,8 @@ public abstract class Window extends Sprite{
 
 	private List<Integer> nbSoldiersTmp = new ArrayList<Integer>();
 	
+	private Castle castleClicked;
+	
 	
 	public enum enumSoldiers{
 
@@ -94,6 +96,8 @@ public abstract class Window extends Sprite{
 		nbSoldiersTmp.add(enumSoldiers.Pikers.getIndexSoldiers(), 0);
 		nbSoldiersTmp.add(enumSoldiers.Knights.getIndexSoldiers(), 0);
 		nbSoldiersTmp.add(enumSoldiers.Catapults.getIndexSoldiers(), 0);
+		
+		this.castleClicked = c;
 
 	}
 
@@ -159,18 +163,33 @@ public abstract class Window extends Sprite{
 		removeSuppr();
 		removeTexts();
 		this.removeFromLayer();
-		this.keepPlaying = true;
+		setKeepPlaying(true);
 		
 		
 	}
-	
-	public boolean keepPlaying() {
-		
-		return keepPlaying;
-	}
-	
+
+
+
 	public Button getSuppr() {
 		return suppr;
+	}
+
+
+
+	public HBox getHboxSuppr() {
+		return hboxSuppr;
+	}
+
+
+
+	public List<HBox> getHboxAttackList() {
+		return hboxAttackList;
+	}
+
+
+
+	public List<Button> getButtonAttackPressedList() {
+		return buttonAttackPressedList;
 	}
 
 
@@ -179,17 +198,16 @@ public abstract class Window extends Sprite{
 		return texts;
 	}
 
-	public void setTexts(List<Text> texts) {
-		this.texts = texts;
-	}
-	
-	
+
+
 	public VBox getStatusBar() {
 		return statusBar;
 	}
 
-	public void setStatusBar(VBox statusBar) {
-		this.statusBar = statusBar;
+
+
+	public boolean isKeepPlaying() {
+		return keepPlaying;
 	}
 
 
@@ -197,6 +215,74 @@ public abstract class Window extends Sprite{
 	public List<Integer> getNbSoldiersTmp() {
 		return nbSoldiersTmp;
 	}
+
+	
+
+
+	public Castle getCastleClicked() {
+		return castleClicked;
+	}
+	
+	
+
+
+
+	public void setSuppr(Button suppr) {
+		this.suppr = suppr;
+	}
+
+
+
+	public void setHboxSuppr(HBox hboxSuppr) {
+		this.hboxSuppr = hboxSuppr;
+	}
+
+
+
+	public void setHboxAttackList(List<HBox> hboxAttackList) {
+		this.hboxAttackList = hboxAttackList;
+	}
+
+
+
+	public void setButtonAttackPressedList(List<Button> buttonAttackPressedList) {
+		this.buttonAttackPressedList = buttonAttackPressedList;
+	}
+
+
+
+	public void setTexts(List<Text> texts) {
+		this.texts = texts;
+	}
+
+
+
+	public void setStatusBar(VBox statusBar) {
+		this.statusBar = statusBar;
+	}
+
+
+
+	public void setKeepPlaying(boolean keepPlaying) {
+		this.keepPlaying = keepPlaying;
+	}
+
+
+
+	public void setNbSoldiersTmp(List<Integer> nbSoldiersTmp) {
+		this.nbSoldiersTmp = nbSoldiersTmp;
+	}
+
+
+
+
+	public void setCastleClicked(Castle castleClicked) {
+		this.castleClicked = castleClicked;
+	}
+	
+	
+	
+	
 	
 	
 	
