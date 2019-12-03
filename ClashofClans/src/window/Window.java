@@ -128,10 +128,10 @@ public abstract class Window extends Sprite{
 	}
 	
 	public void initText() {
-		double y = getY()+getHeight()/12;
+		double y = getY()+getHeight()/14;
 		double x = getX() + getWidth()/1.5;
 		statusBar.relocate(x, y);
-		statusBar.setSpacing(getHeight()/12);
+		statusBar.setSpacing(getHeight()/14);
 		statusBar.setPrefSize(getWidth() , getHeight());
 		for (Text text : texts) {
 			text.setFont(Font.font("Verdana", FontWeight.LIGHT, 16));
