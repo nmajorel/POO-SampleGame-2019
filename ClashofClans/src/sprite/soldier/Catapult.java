@@ -14,7 +14,7 @@ public class Catapult extends Soldier {
 	private static final int DAMAGE = 10;
 	
 	public Catapult(Pane layer, Point2D point) {
-		super(layer, point,  HEALTH, Settings.SIZE_Onagre, Settings.SIZE_Onagre, COST, TIME_PRODUCTION, SPEED, DAMAGE, Color.CRIMSON);
+		super(layer, point,  HEALTH, Settings.SIZE_CATAPULT, Settings.SIZE_CATAPULT, COST, TIME_PRODUCTION, SPEED, DAMAGE, Color.CRIMSON);
 	}
 	
 }

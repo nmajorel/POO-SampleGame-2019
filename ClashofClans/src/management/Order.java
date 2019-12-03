@@ -21,26 +21,26 @@ public class Order {
 	private int nbCatapults;
 	boolean moved;
 	
-	private static final int PIQUIER = 0;
-	private static final int CHEVALIER = 1;
-	private static final int ONAGRE = 2;
+	private static final int PIKER = 0;
+	private static final int KNIGHT = 1;
+	private static final int CATAPULT = 2;
 	
-	public Order(Castle source, Castle target, int nb_piquiers, int nb_chevaliers, int nb_onagre) {
+	public Order(Castle source, Castle target, int nbPikers, int nbKnights, int nbCatapults) {
 		this.source = source;
 		this.target = target;
-		this.nbPikers = nb_piquiers;
-		this.nbKnights = nb_chevaliers;
-		this.nbCatapults = nb_onagre;
-		this.nb_troops = nb_chevaliers + nb_onagre + nb_piquiers;
+		this.nbPikers = nbPikers;
+		this.nbKnights = nbKnights;
+		this.nbCatapults = nbCatapults;
+		this.nb_troops = nbPikers + nbKnights + nbCatapults;
 		this.moved = false;
 		
 	}
 	
 	public void ost_move() {
 		if(!moved){
-			create_soldier(PIQUIER, nbPikers);
-			create_soldier(CHEVALIER, nbKnights);
-			create_soldier(ONAGRE, nbCatapults);
+			create_soldier(PIKER, nbPikers);
+			create_soldier(KNIGHT, nbKnights);
+			create_soldier(CATAPULT, nbCatapults);
 			moved = true;
 		}
 		leave_the_castle();
@@ -94,13 +94,13 @@ public class Order {
 	private void create_soldier(int type, int nb_soldiers){
 		for(int i = 0; i < nb_soldiers; i++) {
 			switch(type){
-				case PIQUIER : 
+				case PIKER : 
 					troops.add(new Piker(source.getLayer(),source.getDoorPoint()));
 					break;
-				case CHEVALIER : 
+				case KNIGHT : 
 					troops.add(new Knight(source.getLayer(),source.getDoorPoint()));
 					break;
-				case ONAGRE : 
+				case CATAPULT : 
 					troops.add(new Catapult(source.getLayer(),source.getDoorPoint()));
 					break;
 				default: break;

@@ -14,7 +14,7 @@ public class Piker extends Soldier {
 	private static final int DAMAGE = 1;
 	
 	public Piker(Pane layer, Point2D point) {
-		super(layer, point, HEALTH, Settings.SIZE_PIQUIER, Settings.SIZE_PIQUIER, COST, TIME_PRODUCTION, SPEED, DAMAGE, Color.YELLOW);
+		super(layer, point, HEALTH, Settings.SIZE_PIKER, Settings.SIZE_PIKER, COST, TIME_PRODUCTION, SPEED, DAMAGE, Color.YELLOW);
 	}	
 
 }

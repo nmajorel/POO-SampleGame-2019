@@ -79,7 +79,7 @@ public class NotOwnedCastleWindow extends Window {
 			
 			
 			buttonAttackPressedList.add(button.getIndexButton(), new Button(button.getNameButton()));
-			buttonAttackPressedList.get(button.getIndexButton()).setMinSize(40, 40);
+			buttonAttackPressedList.get(button.getIndexButton()).setMinSize(50, 50);
 			
 		}
 		
@@ -105,13 +105,15 @@ public class NotOwnedCastleWindow extends Window {
 	
 	public void buttonAttackPressed(Castle c) {
 		
-		hboxAttackList.get(enumHBox.hboxAttack.getIndexHBox()).getChildren().clear();
+		//hboxAttackList.get(enumHBox.hboxAttack.getIndexHBox()).getChildren().clear();
+		
+		removeTexts();
 		
 		getLayer().getChildren().remove(hboxAttackList.get(enumHBox.hboxAttack.getIndexHBox()));
 		
 		double y = getY()+getHeight()/6;
 		for(int indexHBbox = enumHBox.hboxPikers.getIndexHBox(); indexHBbox <= enumHBox.hboxConfirm.getIndexHBox(); indexHBbox++) {
-			hboxAttackList.get(indexHBbox).relocate(getX()+50, y);
+			hboxAttackList.get(indexHBbox).relocate(getX()+150, y);
 			hboxAttackList.get(indexHBbox).setMaxSize(250, 50);
 			getLayer().getChildren().add(hboxAttackList.get(indexHBbox));
 			hboxAttackList.get(indexHBbox).setSpacing(50);
@@ -128,22 +130,34 @@ public class NotOwnedCastleWindow extends Window {
 	
 		}
 		
-
-		hboxAttackList.get(enumHBox.hboxPikers.getIndexHBox()).getChildren().add(new Text("Pikers"));
+		Text pikersText = new Text("Pikers : " +  getNbSoldiersTmp().get(enumSoldiers.Pikers.getIndexSoldiers()) + "/" + c.getNbPikers());
+		
 		
 		hboxAttackList.get(enumHBox.hboxPikers.getIndexHBox()).getChildren().add(buttonAttackPressedList.get(enumButton.lessPikers.getIndexButton()));
 		hboxAttackList.get(enumHBox.hboxPikers.getIndexHBox()).getChildren().add(buttonAttackPressedList.get(enumButton.morePikers.getIndexButton()));
 		
-		buttonAttackPressedList.get(enumButton.morePikers.getIndexButton()).setOnAction(event -> System.out.println("morePikers") );
+		hboxAttackList.get(enumHBox.hboxPikers.getIndexHBox()).getChildren().add(pikersText);
+		
+		buttonAttackPressedList.get(enumButton.lessPikers.getIndexButton()).setOnAction(event -> {modifyNbSoldiersTmp(false, enumSoldiers.Pikers ,c);
+		pikersText.setText("Pikers : " +  getNbSoldiersTmp().get(enumSoldiers.Pikers.getIndexSoldiers()) + "/" + c.getNbPikers());} );
+		
+		buttonAttackPressedList.get(enumButton.morePikers.getIndexButton()).setOnAction(event -> {modifyNbSoldiersTmp(true, enumSoldiers.Pikers ,c);
+		pikersText.setText("Pikers : " +  getNbSoldiersTmp().get(enumSoldiers.Pikers.getIndexSoldiers()) + "/" + c.getNbPikers());} );
 
 		
-		hboxAttackList.get(enumHBox.hboxKnights.getIndexHBox()).getChildren().add(new Text("Knights"));
+	
 		hboxAttackList.get(enumHBox.hboxKnights.getIndexHBox()).getChildren().add(buttonAttackPressedList.get(enumButton.lessKnights.getIndexButton()));
 		hboxAttackList.get(enumHBox.hboxKnights.getIndexHBox()).getChildren().add(buttonAttackPressedList.get(enumButton.moreKnights.getIndexButton()));
 		
-		hboxAttackList.get(enumHBox.hboxCatapults.getIndexHBox()).getChildren().add(new Text("Catapults"));
+		hboxAttackList.get(enumHBox.hboxKnights.getIndexHBox()).getChildren().add(new Text("Knights : " +  getNbSoldiersTmp().get(enumSoldiers.Knights.getIndexSoldiers()) + "/" + c.getNbKnights()));
+		
+		
 		hboxAttackList.get(enumHBox.hboxCatapults.getIndexHBox()).getChildren().add(buttonAttackPressedList.get(enumButton.lessCatapults.getIndexButton()));
 		hboxAttackList.get(enumHBox.hboxCatapults.getIndexHBox()).getChildren().add(buttonAttackPressedList.get(enumButton.moreCatapults.getIndexButton()));
+		
+		hboxAttackList.get(enumHBox.hboxCatapults.getIndexHBox()).getChildren().add(new Text("Catapults : " +  getNbSoldiersTmp().get(enumSoldiers.Catapults.getIndexSoldiers()) + "/" + c.getNbCatapults()));
+		
+
 		
 		
 		hboxAttackList.get(enumHBox.hboxConfirm.getIndexHBox()).getChildren().add(buttonAttackPressedList.get(enumButton.buttonConfirm.getIndexButton()));
@@ -156,6 +170,7 @@ public class NotOwnedCastleWindow extends Window {
 			
 		
 	}
+	
 	
 	public void buttonConfirmPressed(Castle c) {
 		

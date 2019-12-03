@@ -18,8 +18,8 @@ public class Settings {
 	public static final int LEVEL_5 = 5;
 	
 	// Size of soldiers
-	public static final double SIZE_PIQUIER = 15;
-	public static final double SIZE_CHEVALIER = 18;
-	public static final double SIZE_Onagre = 26;
+	public static final double SIZE_PIKER = 15;
+	public static final double SIZE_KNIGHT = 18;
+	public static final double SIZE_CATAPULT = 26;
 	
 }

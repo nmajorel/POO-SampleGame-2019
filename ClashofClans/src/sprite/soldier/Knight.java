@@ -14,7 +14,7 @@ public class Knight extends Soldier {
 	private static final int DAMAGE = 5;
 	
 	public Knight(Pane layer, Point2D point) {
-		super(layer, point, HEALTH, Settings.SIZE_CHEVALIER, Settings.SIZE_CHEVALIER, COST, TIME_PRODUCTION, SPEED, DAMAGE, Color.DARKGRAY);
+		super(layer, point, HEALTH, Settings.SIZE_KNIGHT, Settings.SIZE_KNIGHT, COST, TIME_PRODUCTION, SPEED, DAMAGE, Color.DARKGRAY);
 	}
 	
 }

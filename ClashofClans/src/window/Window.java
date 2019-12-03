@@ -39,12 +39,10 @@ public abstract class Window extends Sprite{
 	private static final int gold = 6;
 	private VBox statusBar; 
 	
-	private int nbPikersTemp;
-	private int nbKnightsTemp;
-	private int nbCatapultsTemp;
 	
+	private boolean keepPlaying;
 
-	private List<Integer> nbSoldiersTemp = new ArrayList<Integer>();
+	private List<Integer> nbSoldiersTmp = new ArrayList<Integer>();
 	
 	
 	public enum enumSoldiers{
@@ -63,12 +61,6 @@ public abstract class Window extends Sprite{
 			return indexSoldiers;
 		}
 	}	
-	
-	private boolean keepPlaying;
-	
-	// Liste de texte et liste de nombres
-	
-	
 
 
 	public Window(Pane layer, Point2D point, double w, double h, Castle c) {
@@ -99,9 +91,9 @@ public abstract class Window extends Sprite{
 		texts.add( gold, new Text("Gold : " + String.valueOf(c.getGold()) ) ) ;	
 		initText();
 		
-		nbSoldiersTemp.add(enumSoldiers.Pikers.getIndexSoldiers(), c.getNbPikers());
-		nbSoldiersTemp.add(enumSoldiers.Knights.getIndexSoldiers(), c.getNbKnights());
-		nbSoldiersTemp.add(enumSoldiers.Catapults.getIndexSoldiers(), c.getNbCatapults());
+		nbSoldiersTmp.add(enumSoldiers.Pikers.getIndexSoldiers(), 0);
+		nbSoldiersTmp.add(enumSoldiers.Knights.getIndexSoldiers(), 0);
+		nbSoldiersTmp.add(enumSoldiers.Catapults.getIndexSoldiers(), 0);
 
 	}
 
@@ -113,18 +105,20 @@ public abstract class Window extends Sprite{
 		
 	}
 	
-	public void modifyNbSoldiersTemp(Boolean plus, enumSoldiers indexSoldiers) {
+	public void modifyNbSoldiersTmp(Boolean plus, enumSoldiers indexSoldiers, Castle c) {
+		
+		int val = nbSoldiersTmp.get(indexSoldiers.getIndexSoldiers());
 		
 		if(plus) {
-			nbSoldiersTemp.set(indexSoldiers.getIndexSoldiers(), indexSoldiers.getIndexSoldiers()+1);
+			nbSoldiersTmp.set(indexSoldiers.getIndexSoldiers(), val+1);
 		}
 		else {
-			nbSoldiersTemp.set(indexSoldiers.getIndexSoldiers(), indexSoldiers.getIndexSoldiers()-1);
+			nbSoldiersTmp.set(indexSoldiers.getIndexSoldiers(), val-1);
 			
 		}
 		
 		
-		
+			
 		
 		
 	}
@@ -175,8 +169,6 @@ public abstract class Window extends Sprite{
 		return keepPlaying;
 	}
 	
-
-
 	public Button getSuppr() {
 		return suppr;
 	}
@@ -199,6 +191,14 @@ public abstract class Window extends Sprite{
 	public void setStatusBar(VBox statusBar) {
 		this.statusBar = statusBar;
 	}
+
+
+
+	public List<Integer> getNbSoldiersTmp() {
+		return nbSoldiersTmp;
+	}
+	
+	
 	
 	
 
