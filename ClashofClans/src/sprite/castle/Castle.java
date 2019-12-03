@@ -23,7 +23,7 @@ public abstract class Castle extends Sprite{
 	protected int gold;
 	private int level;
 	private List<Soldier> troops = new ArrayList<>();
-	private int nb_troops;
+	private int nbTroops;
 	private Laboratory lab;
 	private Directions dir;
 	private Order order;
@@ -42,7 +42,7 @@ public abstract class Castle extends Sprite{
 		this.nbPikers = 9;
 		this.nbKnights = 4;
 		this.nbCatapults = 2;
-		this.nb_troops = nbPikers + nbKnights + nbCatapults;
+		this.nbTroops = nbPikers + nbKnights + nbCatapults;
 		
 		int pick = new Random().nextInt(Directions.values().length);
 		this.dir = Directions.values()[pick]; 
@@ -133,8 +133,8 @@ public abstract class Castle extends Sprite{
 		return troops;
 	}
 
-	public int getNb_troops() {
-		return nb_troops;
+	public int getNbTroops() {
+		return nbTroops;
 	}
 
 	public Laboratory getLab() {
@@ -182,8 +182,8 @@ public abstract class Castle extends Sprite{
 		this.troops = troops;
 	}
 
-	public void setNb_troops(int nb_troops) {
-		this.nb_troops = nb_troops;
+	public void setNbTroops(int nb_troops) {
+		this.nbTroops = nb_troops;
 	}
 
 	public void setLab(Laboratory lab) {
