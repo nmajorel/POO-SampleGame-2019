@@ -94,8 +94,8 @@ public class Main extends Application {
 					player.getCastles().forEach(sprite -> sprite.move());
 					
 					if(player.getCastles().get(0).getOrder()!=null) {
-						player.getCastles().get(0).makeAnOrder();
-						player.getCastles().get(0).getOrder().getTroops().forEach(sprite -> sprite.updateUI());
+						player.getCastles().get(0).continueOrders();
+						player.getCastles().get(0).getOrder().forEach(order -> order.getTroops().forEach(sprite -> sprite.updateUI()) );
 					}
 					
 					//player.getCastles().forEach(sprite -> sprite.updateUI());
@@ -206,7 +206,7 @@ public class Main extends Application {
 									
 									List<Integer> nbSoldiersTmp = notOwnedCastleWindow.getNbSoldiersTmp();
 									
-									player.getCastles().get(0).setOrder(new Order(player.getCastles().get(0),notOwnedCastleWindow.getCastleClicked(), nbSoldiersTmp.get(0),nbSoldiersTmp.get(1),nbSoldiersTmp.get(2)));
+									player.getCastles().get(0).addOrder(new Order(player.getCastles().get(0),notOwnedCastleWindow.getCastleClicked(), nbSoldiersTmp.get(0),nbSoldiersTmp.get(1),nbSoldiersTmp.get(2)));
 									
 								
 								}

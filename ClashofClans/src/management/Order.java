@@ -15,7 +15,7 @@ import sprite.soldier.Soldier;
 
 public class Order {
 	
-	private List<Soldier> troops = new ArrayList<Soldier>();
+	private ArrayList<Soldier> troops = new ArrayList<Soldier>();
 	private Castle source, target;
 	private int nb_troops;
 	private int nbPikers;

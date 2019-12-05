@@ -16,17 +16,19 @@ import shape.Rectangle;
 import sprite.Sprite;
 import sprite.soldier.Soldier;
 
+////////////////////////////////////////// Pour faire défiler l'écran on peut lancer un Thread qui pousse la fenêtre dans le sens inverse quan la souris est au
+	////////////////////////////////////         bords de l'écran ///////////////////////
 
 public abstract class Castle extends Sprite{
 	
 	private String duke;
 	protected int gold;
 	private int level;
-	private List<Soldier> troops = new ArrayList<>();
+	private ArrayList<Soldier> troops = new ArrayList<>();
 	private int nbTroops;
 	private Laboratory lab;
 	private Directions dir;
-	private Order order;
+	private ArrayList <Order> orders = new ArrayList<Order>();
 	private Rectangle door;
 	
 	private int nbPikers;
@@ -108,8 +110,8 @@ public abstract class Castle extends Sprite{
 		
     }
 
-	public void makeAnOrder() {
-		this.order.ost_move();
+	public void continueOrders() {
+		orders.forEach(order -> order.ost_move());
 	}
 	
 
@@ -145,8 +147,8 @@ public abstract class Castle extends Sprite{
 		return dir;
 	}
 
-	public Order getOrder() {
-		return order;
+	public ArrayList<Order> getOrder() {
+		return orders;
 	}
 
 	public int getNbPikers() {
@@ -178,7 +180,7 @@ public abstract class Castle extends Sprite{
 		this.level = level;
 	}
 
-	public void setTroops(List<Soldier> troops) {
+	public void setTroops(ArrayList<Soldier> troops) {
 		this.troops = troops;
 	}
 
@@ -194,8 +196,8 @@ public abstract class Castle extends Sprite{
 		this.dir = dir;
 	}
 
-	public void setOrder(Order order) {
-		this.order = order;
+	public void addOrder(Order order) {
+		this.orders.add(order);
 	}
 
 	public void setNbPikers(int nbPikers) {
