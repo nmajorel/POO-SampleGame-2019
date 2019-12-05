@@ -105,14 +105,16 @@ public class NotOwnedCastleWindow extends Window {
 	
 	public void buttonAttackPressed(Castle c) {
 		
-		//hboxAttackList.get(enumHBox.hboxAttack.getIndexHBox()).getChildren().clear();
-		
 		removeTexts();
 		
 		getLayer().getChildren().remove(hboxAttackList.get(enumHBox.hboxAttack.getIndexHBox()));
 		
 		double y = getY()+getHeight()/6;
+		
+		int indexButton = enumButton.lessPikers.getIndexButton();
+		
 		for(int indexHBbox = enumHBox.hboxPikers.getIndexHBox(); indexHBbox <= enumHBox.hboxConfirm.getIndexHBox(); indexHBbox++) {
+			
 			hboxAttackList.get(indexHBbox).relocate(getX()+150, y);
 			hboxAttackList.get(indexHBbox).setMaxSize(250, 50);
 			getLayer().getChildren().add(hboxAttackList.get(indexHBbox));
@@ -120,17 +122,25 @@ public class NotOwnedCastleWindow extends Window {
 		
 			y += getHeight()/6;
 			
-
-		
-			
-			/*for(int indexButton = enumButton.moreSoldiers.getIndexButton(); indexButton <= enumButton.lessSoldiers.getIndexButton(); indexButton++) {
-				hboxAttackList.get(indexHBbox).getChildren().add(buttonAttackPressedList.get(indexButton));
+			/*
+			for(int j = indexButton ; j <= enumButton.morePikers.getIndexButton(); j++) {
+				//hboxAttackList.get(indexHBbox).getChildren().add(buttonAttackPressedList.get(indexButton));
+				
+				indexButton = j;
+				
+				System.out.println(j+"\n");
 				
 			}*/
+			
+		
 	
 		}
 		
-		Text pikersText = new Text("Pikers : " +  getNbSoldiersTmp().get(enumSoldiers.Pikers.getIndexSoldiers()) + "/" + c.getNbPikers());
+
+		
+		
+		
+		Text pikersText = new Text(enumTexts.nbPikersText.getText()+  getNbSoldiersTmp().get(enumSoldiers.Pikers.getIndexSoldiers()) + "/" + c.getNbPikers());
 		
 		
 		hboxAttackList.get(enumHBox.hboxPikers.getIndexHBox()).getChildren().add(buttonAttackPressedList.get(enumButton.lessPikers.getIndexButton()));
@@ -138,14 +148,18 @@ public class NotOwnedCastleWindow extends Window {
 		
 		hboxAttackList.get(enumHBox.hboxPikers.getIndexHBox()).getChildren().add(pikersText);
 		
+		
+		
+		
+		
 		buttonAttackPressedList.get(enumButton.lessPikers.getIndexButton()).setOnAction(event -> {modifyNbSoldiersTmp(false, enumSoldiers.Pikers ,c);
-		pikersText.setText("Pikers : " +  getNbSoldiersTmp().get(enumSoldiers.Pikers.getIndexSoldiers()) + "/" + c.getNbPikers());} );
+		pikersText.setText(enumTexts.nbPikersText.getText() +  getNbSoldiersTmp().get(enumSoldiers.Pikers.getIndexSoldiers()) + "/" + c.getNbPikers());} );
 		
 		buttonAttackPressedList.get(enumButton.morePikers.getIndexButton()).setOnAction(event -> {modifyNbSoldiersTmp(true, enumSoldiers.Pikers ,c);
-		pikersText.setText("Pikers : " +  getNbSoldiersTmp().get(enumSoldiers.Pikers.getIndexSoldiers()) + "/" + c.getNbPikers());} );
+		pikersText.setText(enumTexts.nbPikersText.getText() +  getNbSoldiersTmp().get(enumSoldiers.Pikers.getIndexSoldiers()) + "/" + c.getNbPikers());} );
 		
 
-		Text knightsText = new Text("Knights : " +  getNbSoldiersTmp().get(enumSoldiers.Knights.getIndexSoldiers()) + "/" + c.getNbKnights());
+		Text knightsText = new Text(enumTexts.nbKnightsText.getText() +  getNbSoldiersTmp().get(enumSoldiers.Knights.getIndexSoldiers()) + "/" + c.getNbKnights());
 		
 	
 		hboxAttackList.get(enumHBox.hboxKnights.getIndexHBox()).getChildren().add(buttonAttackPressedList.get(enumButton.lessKnights.getIndexButton()));
@@ -154,12 +168,12 @@ public class NotOwnedCastleWindow extends Window {
 		hboxAttackList.get(enumHBox.hboxKnights.getIndexHBox()).getChildren().add(knightsText);
 		
 		buttonAttackPressedList.get(enumButton.lessKnights.getIndexButton()).setOnAction(event -> {modifyNbSoldiersTmp(false, enumSoldiers.Knights ,c);
-		knightsText.setText("Knights : " +  getNbSoldiersTmp().get(enumSoldiers.Knights.getIndexSoldiers()) + "/" + c.getNbKnights());} );
+		knightsText.setText(enumTexts.nbKnightsText.getText() +  getNbSoldiersTmp().get(enumSoldiers.Knights.getIndexSoldiers()) + "/" + c.getNbKnights());} );
 		
 		buttonAttackPressedList.get(enumButton.moreKnights.getIndexButton()).setOnAction(event -> {modifyNbSoldiersTmp(true, enumSoldiers.Knights ,c);
-		knightsText.setText("Knights : " +  getNbSoldiersTmp().get(enumSoldiers.Knights.getIndexSoldiers()) + "/" + c.getNbKnights());} );
+		knightsText.setText(enumTexts.nbKnightsText.getText() +  getNbSoldiersTmp().get(enumSoldiers.Knights.getIndexSoldiers()) + "/" + c.getNbKnights());} );
 		
-		Text catapultsText = new Text("Catapults : " +  getNbSoldiersTmp().get(enumSoldiers.Catapults.getIndexSoldiers()) + "/" + c.getNbCatapults());
+		Text catapultsText = new Text(enumTexts.nbCatapultsText.getText() +  getNbSoldiersTmp().get(enumSoldiers.Catapults.getIndexSoldiers()) + "/" + c.getNbCatapults());
 		
 		
 		hboxAttackList.get(enumHBox.hboxCatapults.getIndexHBox()).getChildren().add(buttonAttackPressedList.get(enumButton.lessCatapults.getIndexButton()));
@@ -168,10 +182,10 @@ public class NotOwnedCastleWindow extends Window {
 		hboxAttackList.get(enumHBox.hboxCatapults.getIndexHBox()).getChildren().add(catapultsText);
 		
 		buttonAttackPressedList.get(enumButton.lessCatapults.getIndexButton()).setOnAction(event -> {modifyNbSoldiersTmp(false, enumSoldiers.Catapults ,c);
-		catapultsText.setText("Catapults : " +  getNbSoldiersTmp().get(enumSoldiers.Catapults.getIndexSoldiers()) + "/" + c.getNbCatapults());} );
+		catapultsText.setText(enumTexts.nbCatapultsText.getText() +  getNbSoldiersTmp().get(enumSoldiers.Catapults.getIndexSoldiers()) + "/" + c.getNbCatapults());} );
 		
 		buttonAttackPressedList.get(enumButton.moreCatapults.getIndexButton()).setOnAction(event -> {modifyNbSoldiersTmp(true, enumSoldiers.Catapults ,c);
-		catapultsText.setText("Catapults : " +  getNbSoldiersTmp().get(enumSoldiers.Catapults.getIndexSoldiers()) + "/" + c.getNbCatapults());} );
+		catapultsText.setText(enumTexts.nbCatapultsText.getText() +  getNbSoldiersTmp().get(enumSoldiers.Catapults.getIndexSoldiers()) + "/" + c.getNbCatapults());} );
 		
 		
 		hboxAttackList.get(enumHBox.hboxConfirm.getIndexHBox()).getChildren().add(buttonAttackPressedList.get(enumButton.buttonConfirm.getIndexButton()));

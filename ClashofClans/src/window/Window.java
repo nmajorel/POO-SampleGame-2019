@@ -28,15 +28,9 @@ public abstract class Window extends Sprite{
 	
 	protected List<HBox> hboxAttackList = new ArrayList<HBox>();
 	protected List<Button> buttonAttackPressedList = new ArrayList<Button>();
-	
+
 	private List<Text> texts = new ArrayList<Text>();
-	private static final int duke = 0;
-	private static final int level = 1;
-	private static final int income = 2;
-	private static final int nbPikersText = 3;
-	private static final int nbKnightsText = 4;
-	private static final int nbCatapultsText = 5;
-	private static final int gold = 6;
+
 	private VBox statusBar; 
 	
 	
@@ -45,6 +39,8 @@ public abstract class Window extends Sprite{
 	private List<Integer> nbSoldiersTmp = new ArrayList<Integer>();
 	
 	private Castle castleClicked;
+	
+	private List <Integer>getNbSoldiersList = new ArrayList<Integer>();
 	
 	
 	public enum enumSoldiers{
@@ -63,7 +59,35 @@ public abstract class Window extends Sprite{
 			return indexSoldiers;
 		}
 	}	
+	
+	public enum enumTexts{
 
+		dukeText(0 , "Duke : "),
+		levelText(1, "Level : "),
+		incomeText(2, "Income : "),
+		nbPikersText(3, "Pikers : "),
+		nbKnightsText(4, "Knights : "),
+		nbCatapultsText(5, "Catapults : "),
+		goldText(6, "Gold : ");
+		
+		private int indexText;
+		private String text;
+		
+		
+		private enumTexts(int indexText, String text) {
+			this.indexText = indexText;
+			this.text = text;
+		}
+
+		public int getIndexText() {
+			return indexText;
+		}
+
+		public String getText() {
+			return text;
+		}	
+	
+	}	
 
 	public Window(Pane layer, Point2D point, double w, double h, Castle c) {
 		super(layer, point, Color.DARKGREY, w, h);
@@ -72,6 +96,7 @@ public abstract class Window extends Sprite{
 		
 		this.suppr = new Button("X");
 		this.suppr.setMinSize(w/10, w/10);
+		
 		hboxSuppr = new HBox();
 		getLayer().getChildren().add(hboxSuppr);
 		hboxSuppr.setPrefSize(w/5, w/5);
@@ -80,22 +105,26 @@ public abstract class Window extends Sprite{
 	
 		suppr.setOnAction(event -> removeWindow() );
 		
-		
 		statusBar = new VBox();
+		
 		getLayer().getChildren().add(statusBar);
 		
-		texts.add( duke, new Text("Duke : " + c.getDuke() ) ) ;
-		texts.add( level, new Text("Level : " + String.valueOf(c.getLevel()) ) ) ;
-		texts.add( income, new Text("Income : " + String.valueOf(c.getIncome()) ) ) ;
-		texts.add( nbPikersText, new Text("Pikers : " + String.valueOf(c.getNbPikers()) ) ) ;
-		texts.add( nbKnightsText, new Text("Knights : " + String.valueOf(c.getNbKnights()) ) ) ;
-		texts.add( nbCatapultsText, new Text("Catapults : " + String.valueOf(c.getNbCatapults()) ) ) ;
-		texts.add( gold, new Text("Gold : " + String.valueOf(c.getGold()) ) ) ;	
+		texts.add( enumTexts.dukeText.getIndexText(), new Text(enumTexts.dukeText.getText() + c.getDuke() ) ) ;
+		texts.add( enumTexts.levelText.getIndexText(), new Text(enumTexts.levelText.getText() + String.valueOf(c.getLevel()) ) ) ;
+		texts.add( enumTexts.incomeText.getIndexText(), new Text(enumTexts.incomeText.getText() + String.valueOf(c.getIncome()) ) ) ;
+		texts.add( enumTexts.nbPikersText.getIndexText(), new Text(enumTexts.nbPikersText.getText() + String.valueOf(c.getNbPikers()) ) ) ;
+		texts.add( enumTexts.nbKnightsText.getIndexText(), new Text(enumTexts.nbKnightsText.getText() + String.valueOf(c.getNbKnights()) ) ) ;
+		texts.add( enumTexts.nbCatapultsText.getIndexText(), new Text(enumTexts.nbCatapultsText.getText() + String.valueOf(c.getNbCatapults()) ) ) ;
+		texts.add( enumTexts.goldText.getIndexText(), new Text(enumTexts.goldText.getText()+ String.valueOf(c.getGold()) ) ) ;	
 		initText();
 		
 		nbSoldiersTmp.add(enumSoldiers.Pikers.getIndexSoldiers(), 0);
 		nbSoldiersTmp.add(enumSoldiers.Knights.getIndexSoldiers(), 0);
 		nbSoldiersTmp.add(enumSoldiers.Catapults.getIndexSoldiers(), 0);
+		
+		getNbSoldiersList.add(enumSoldiers.Pikers.getIndexSoldiers(), c.getNbPikers());
+		getNbSoldiersList.add(enumSoldiers.Knights.getIndexSoldiers(), c.getNbKnights());
+		getNbSoldiersList.add(enumSoldiers.Catapults.getIndexSoldiers(), c.getNbCatapults());
 		
 		this.castleClicked = c;
 
@@ -110,24 +139,26 @@ public abstract class Window extends Sprite{
 	}
 	
 	public void modifyNbSoldiersTmp(Boolean plus, enumSoldiers indexSoldiers, Castle c) {
+
 		
 		int val = nbSoldiersTmp.get(indexSoldiers.getIndexSoldiers());
 		
 		if(plus) {
-			nbSoldiersTmp.set(indexSoldiers.getIndexSoldiers(), val+1);
+			if(val < getNbSoldiersList.get(indexSoldiers.getIndexSoldiers())) {
+				nbSoldiersTmp.set(indexSoldiers.getIndexSoldiers(), val+1);
+			}
 		}
 		else {
-			nbSoldiersTmp.set(indexSoldiers.getIndexSoldiers(), val-1);
-			
+			if(val > 0) {
+				nbSoldiersTmp.set(indexSoldiers.getIndexSoldiers(), val-1);
+			}
 		}
-		
-		
-			
-		
+							
 		
 	}
 	
 	public void initText() {
+		
 		double y = getY()+getHeight()/14;
 		double x = getX() + getWidth()/1.5;
 		statusBar.relocate(x, y);
@@ -154,6 +185,7 @@ public abstract class Window extends Sprite{
 	
 	
 	public void removeWindow() {
+
 		
 		for(int indexHBbox = enumHBox.hboxAttack.getIndexHBox(); indexHBbox <= enumHBox.hboxConfirm.getIndexHBox(); indexHBbox++) {
 			
@@ -223,7 +255,11 @@ public abstract class Window extends Sprite{
 		return castleClicked;
 	}
 	
-	
+
+	public List<Integer> getGetNbSoldiersList() {
+		return getNbSoldiersList;
+	}
+
 
 
 
@@ -280,6 +316,12 @@ public abstract class Window extends Sprite{
 		this.castleClicked = castleClicked;
 	}
 	
+
+
+	public void setGetNbSoldiersList(List<Integer> getNbSoldiersList) {
+		this.getNbSoldiersList = getNbSoldiersList;
+	}
+
 	
 	
 	
