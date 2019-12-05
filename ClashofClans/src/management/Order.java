@@ -1,9 +1,11 @@
 package management;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import settings.Settings;
 import shape.Point2D;
 import sprite.castle.Castle;
 import sprite.soldier.Knight;
@@ -19,11 +21,13 @@ public class Order {
 	private int nbPikers;
 	private int nbKnights;
 	private int nbCatapults;
-	boolean moved;
 	
-	private static final int PIKER = 0;
-	private static final int KNIGHT = 1;
-	private static final int CATAPULT = 2;
+	private int [] nb_soldiers_created = {0, 0, 0};
+	private int [] nb_soldiers;
+	
+	private int [] create_frequency = { 0, 0, 0};
+	private static final int [] max_frequency = { 25, 20, 45};
+	
 	
 	public Order(Castle source, Castle target, int nbPikers, int nbKnights, int nbCatapults) {
 		this.source = source;
@@ -32,17 +36,22 @@ public class Order {
 		this.nbKnights = nbKnights;
 		this.nbCatapults = nbCatapults;
 		this.nb_troops = nbPikers + nbKnights + nbCatapults;
-		this.moved = false;
+		nb_soldiers = new int[]{this.nbPikers, this.nbKnights, this.nbCatapults};
 		
 	}
 	
 	public void ost_move() {
-		if(!moved){
-			create_soldier(PIKER, nbPikers);
-			create_soldier(KNIGHT, nbKnights);
-			create_soldier(CATAPULT, nbCatapults);
-			moved = true;
+		
+		for(int i = 0; i< Settings.NB_TYPE_SOLDIERS; i++){
+			if(nb_soldiers_created[i] < nb_soldiers[i] && create_frequency[i]==0)
+				create_soldier(i);
 		}
+		for(int i = 0; i < Settings.NB_TYPE_SOLDIERS; i++){
+			create_frequency[i]++;
+			if(create_frequency[i] > max_frequency[i])
+				create_frequency[i] = 0;
+		}
+		
 		leave_the_castle();
 		for (Soldier soldier : troops) {
 			if(soldier.isLeft_the_castle())
@@ -60,13 +69,13 @@ public class Order {
 			if(!soldier.isLeft_the_castle()){
 				switch(source.getDir()){
 					case N : 
-						soldier.setY(soldier.getY() - soldier.getSpeed()); break;
+						soldier.setY(soldier.getY() - soldier.getSpeed() ); break;
 					case E : 
-						soldier.setX(soldier.getX() + soldier.getSpeed()); break;
+						soldier.setX(soldier.getX() + soldier.getSpeed() ); break;
 					case S : 
-						soldier.setY(soldier.getY() + soldier.getSpeed()); break;
+						soldier.setY(soldier.getY() + soldier.getSpeed() ); break;
 					case W : 
-						soldier.setX(soldier.getX() - soldier.getSpeed()); break;
+						soldier.setX(soldier.getX() - soldier.getSpeed() ); break;
 					default : break;
 				}
 				if(!source.inside(soldier))
@@ -91,21 +100,30 @@ public class Order {
 		}
 		return front_point;
 	}
-	private void create_soldier(int type, int nb_soldiers){
-		for(int i = 0; i < nb_soldiers; i++) {
+	private void create_soldier(int type){
+		int nb = 0;
+		switch(type){
+			case Settings.PIKER : 
+				nb = nbPikers;break;
+			case Settings.KNIGHT : 
+				nb = nbKnights;break;
+			case Settings.CATAPULT : 
+				nb = nbCatapults;break;
+			default: break;
+		}
+		if(nb_soldiers_created[type]<nb){
 			switch(type){
-				case PIKER : 
+				case Settings.PIKER : 
 					troops.add(new Piker(source.getLayer(),source.getDoorPoint()));
-					break;
-				case KNIGHT : 
+					nb_soldiers_created[type]++; break;
+				case Settings.KNIGHT : 
 					troops.add(new Knight(source.getLayer(),source.getDoorPoint()));
-					break;
-				case CATAPULT : 
+					nb_soldiers_created[type]++; break;
+				case Settings.CATAPULT : 
 					troops.add(new Catapult(source.getLayer(),source.getDoorPoint()));
-					break;
+					nb_soldiers_created[type]++; break;
 				default: break;
 			}
-			
-		}
+		}		
 	}
 }

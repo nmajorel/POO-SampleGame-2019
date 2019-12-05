@@ -12,12 +12,8 @@ public class Soldier extends Sprite {
     private int production_time;
     protected double speed;
     private int damage;
-    //static final double SPEED = 0.1;   Pour faire un define
 	private boolean left_the_castle = false;
-
-	public void checkRemovability() {
-		
-	}
+	
 	
 	public Soldier(Pane layer, Point2D point, int health, double w, double h, int production_cost, int production_time, int speed, int damage, Color c) {
 		super(layer, point, c, w, h);
@@ -27,6 +23,11 @@ public class Soldier extends Sprite {
 		this.production_time = production_time;
 		this.speed = speed;
 		this.damage = damage;
+		getImageView().setStroke(Color.BLACK);
+		
+	}
+	
+	public void checkRemovability() {
 		
 	}
 	

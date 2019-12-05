@@ -17,9 +17,16 @@ public class Settings {
 	public static final int LEVEL_4 = 4;
 	public static final int LEVEL_5 = 5;
 	
+	public static final int NB_TYPE_SOLDIERS = 3;
+	
 	// Size of soldiers
 	public static final double SIZE_PIKER = 15;
 	public static final double SIZE_KNIGHT = 18;
 	public static final double SIZE_CATAPULT = 26;
+	
+	// Indice of sodiers
+	public static final int PIKER = 0;
+	public static final int KNIGHT = 1;
+	public static final int CATAPULT = 2;
 	
 }

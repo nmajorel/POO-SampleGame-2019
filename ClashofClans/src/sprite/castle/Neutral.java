@@ -30,7 +30,7 @@ public class Neutral extends Castle {
 		pick = new Random().nextInt(MAX_CATAPULT );
 		nb_troops = nb_troops + pick;
 		setNbPikers(pick);
-		setNb_troops(nb_troops);		
+		setNbTroops(nb_troops);		
 		
 	}
 
