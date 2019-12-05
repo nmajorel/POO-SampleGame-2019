@@ -89,7 +89,7 @@ public abstract class Window extends Sprite{
 	
 	}	
 
-	public Window(Pane layer, Point2D point, double w, double h, Castle c) {
+	public Window(Pane layer, Point2D point, double w, double h, Castle source, Castle target) {
 		super(layer, point, Color.DARKGREY, w, h);
 		
 		this.keepPlaying = false;
@@ -109,24 +109,24 @@ public abstract class Window extends Sprite{
 		
 		getLayer().getChildren().add(statusBar);
 		
-		texts.add( enumTexts.dukeText.getIndexText(), new Text(enumTexts.dukeText.getText() + c.getDuke() ) ) ;
-		texts.add( enumTexts.levelText.getIndexText(), new Text(enumTexts.levelText.getText() + String.valueOf(c.getLevel()) ) ) ;
-		texts.add( enumTexts.incomeText.getIndexText(), new Text(enumTexts.incomeText.getText() + String.valueOf(c.getIncome()) ) ) ;
-		texts.add( enumTexts.nbPikersText.getIndexText(), new Text(enumTexts.nbPikersText.getText() + String.valueOf(c.getNbPikers()) ) ) ;
-		texts.add( enumTexts.nbKnightsText.getIndexText(), new Text(enumTexts.nbKnightsText.getText() + String.valueOf(c.getNbKnights()) ) ) ;
-		texts.add( enumTexts.nbCatapultsText.getIndexText(), new Text(enumTexts.nbCatapultsText.getText() + String.valueOf(c.getNbCatapults()) ) ) ;
-		texts.add( enumTexts.goldText.getIndexText(), new Text(enumTexts.goldText.getText()+ String.valueOf(c.getGold()) ) ) ;	
+		texts.add( enumTexts.dukeText.getIndexText(), new Text(enumTexts.dukeText.getText() + source.getDuke() ) ) ;
+		texts.add( enumTexts.levelText.getIndexText(), new Text(enumTexts.levelText.getText() + String.valueOf(source.getLevel()) ) ) ;
+		texts.add( enumTexts.incomeText.getIndexText(), new Text(enumTexts.incomeText.getText() + String.valueOf(source.getIncome()) ) ) ;
+		texts.add( enumTexts.nbPikersText.getIndexText(), new Text(enumTexts.nbPikersText.getText() + String.valueOf(source.getNbPikers()) ) ) ;
+		texts.add( enumTexts.nbKnightsText.getIndexText(), new Text(enumTexts.nbKnightsText.getText() + String.valueOf(source.getNbKnights()) ) ) ;
+		texts.add( enumTexts.nbCatapultsText.getIndexText(), new Text(enumTexts.nbCatapultsText.getText() + String.valueOf(source.getNbCatapults()) ) ) ;
+		texts.add( enumTexts.goldText.getIndexText(), new Text(enumTexts.goldText.getText()+ String.valueOf(source.getGold()) ) ) ;	
 		initText();
 		
 		nbSoldiersTmp.add(enumSoldiers.Pikers.getIndexSoldiers(), 0);
 		nbSoldiersTmp.add(enumSoldiers.Knights.getIndexSoldiers(), 0);
 		nbSoldiersTmp.add(enumSoldiers.Catapults.getIndexSoldiers(), 0);
 		
-		getNbSoldiersList.add(enumSoldiers.Pikers.getIndexSoldiers(), c.getNbPikers());
-		getNbSoldiersList.add(enumSoldiers.Knights.getIndexSoldiers(), c.getNbKnights());
-		getNbSoldiersList.add(enumSoldiers.Catapults.getIndexSoldiers(), c.getNbCatapults());
+		getNbSoldiersList.add(enumSoldiers.Pikers.getIndexSoldiers(), source.getNbPikers());
+		getNbSoldiersList.add(enumSoldiers.Knights.getIndexSoldiers(), source.getNbKnights());
+		getNbSoldiersList.add(enumSoldiers.Catapults.getIndexSoldiers(), source.getNbCatapults());
 		
-		this.castleClicked = c;
+		this.castleClicked = target;
 
 	}
 

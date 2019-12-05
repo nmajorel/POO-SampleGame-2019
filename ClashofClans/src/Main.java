@@ -178,7 +178,7 @@ public class Main extends Application {
 
 
 									paused = true;
-									notOwnedCastleWindow = new NotOwnedCastleWindow(playfieldLayer, new Point2D((Settings.SCENE_WIDTH/2) -300, (Settings.SCENE_HEIGHT/2) -300), 600, 600, castle);
+									notOwnedCastleWindow = new NotOwnedCastleWindow(playfieldLayer, new Point2D((Settings.SCENE_WIDTH/2) -300, (Settings.SCENE_HEIGHT/2) -300), 600, 600, player.getCastles().get(0), castle);
 					
 							
 
@@ -191,7 +191,7 @@ public class Main extends Application {
 
 							
 									paused = true;
-									ownedCastleWindow = new OwnedCastleWindow(playfieldLayer, new Point2D((Settings.SCENE_WIDTH/2) -300, (Settings.SCENE_HEIGHT/2) -300), 600, 600, castle);
+									ownedCastleWindow = new OwnedCastleWindow(playfieldLayer, new Point2D((Settings.SCENE_WIDTH/2) -300, (Settings.SCENE_HEIGHT/2) -300), 600, 600, player.getCastles().get(0), castle);
 									
 							
 
@@ -205,6 +205,10 @@ public class Main extends Application {
 								if(notOwnedCastleWindow.isMakeAnOrderWindow()) {
 									
 									List<Integer> nbSoldiersTmp = notOwnedCastleWindow.getNbSoldiersTmp();
+									
+									player.getCastles().get(0).setNbPikers(player.getCastles().get(0).getNbPikers()-nbSoldiersTmp.get(0));
+									player.getCastles().get(0).setNbKnights(player.getCastles().get(0).getNbKnights()-nbSoldiersTmp.get(1));
+									player.getCastles().get(0).setNbCatapults(player.getCastles().get(0).getNbCatapults()-nbSoldiersTmp.get(2));
 									
 									player.getCastles().get(0).addOrder(new Order(player.getCastles().get(0),notOwnedCastleWindow.getCastleClicked(), nbSoldiersTmp.get(0),nbSoldiersTmp.get(1),nbSoldiersTmp.get(2)));
 									

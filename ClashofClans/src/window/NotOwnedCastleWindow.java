@@ -68,8 +68,8 @@ public class NotOwnedCastleWindow extends Window {
 	}	
 	
 
-	public NotOwnedCastleWindow(Pane layer, Point2D point, double w, double h, Castle c) {
-		super(layer, point, w, h, c);
+	public NotOwnedCastleWindow(Pane layer, Point2D point, double w, double h, Castle source, Castle target) {
+		super(layer, point, w, h, source, target);
 		
 		this.makeAnOrderWindow = false;
 		for(enumButton button : enumButton.values()) {
@@ -99,7 +99,7 @@ public class NotOwnedCastleWindow extends Window {
 		
 		hboxAttackList.get(enumHBox.hboxAttack.getIndexHBox()).getChildren().add(buttonAttackPressedList.get(enumButton.buttonAttack.getIndexButton()));
 		
-		buttonAttackPressedList.get(enumButton.buttonAttack.getIndexButton()).setOnAction(event -> buttonAttackPressed(c) );
+		buttonAttackPressedList.get(enumButton.buttonAttack.getIndexButton()).setOnAction(event -> buttonAttackPressed(source) );
 		 
 	}
 	
@@ -122,20 +122,9 @@ public class NotOwnedCastleWindow extends Window {
 		
 			y += getHeight()/6;
 			
-			/*
-			for(int j = indexButton ; j <= enumButton.morePikers.getIndexButton(); j++) {
-				//hboxAttackList.get(indexHBbox).getChildren().add(buttonAttackPressedList.get(indexButton));
-				
-				indexButton = j;
-				
-				System.out.println(j+"\n");
-				
-			}*/
 			
-		
-	
-		}
-		
+				
+			}
 
 		
 		
