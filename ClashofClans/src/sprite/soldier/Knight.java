@@ -18,7 +18,7 @@ public class Knight extends Soldier {
 	private static final Color[] grays  = { Color.rgb(139, 131, 120), Color.rgb(131, 139, 139), Color.rgb(139, 131, 134)};
 	
 	public Knight(Pane layer, Point2D point) {
-		super(layer, point, HEALTH, Settings.SIZE_KNIGHT, Settings.SIZE_KNIGHT, COST, TIME_PRODUCTION, SPEED, DAMAGE, grays[new Random().nextInt(grays.length)]);
+		super(layer, point, HEALTH, Settings.SIZE_KNIGHT, Settings.SIZE_KNIGHT, COST, TIME_PRODUCTION, SPEED, DAMAGE, grays[new Random().nextInt(grays.length)], Settings.KNIGHT);
 	}
 	
 }

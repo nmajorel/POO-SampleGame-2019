@@ -13,9 +13,10 @@ public class Soldier extends Sprite {
     protected double speed;
     private int damage;
 	private boolean left_the_castle = false;
+	private int type = -1;
 	
 	
-	public Soldier(Pane layer, Point2D point, int health, double w, double h, int production_cost, int production_time, int speed, int damage, Color c) {
+	public Soldier(Pane layer, Point2D point, int health, double w, double h, int production_cost, int production_time, int speed, int damage, Color c, int type) {
 		super(layer, point, c, w, h);
 		this.health = health;
 		this.color = c;
@@ -24,6 +25,7 @@ public class Soldier extends Sprite {
 		this.speed = speed;
 		this.damage = damage;
 		getImageView().setStroke(Color.BLACK);
+		this.type = type;
 		
 	}
 	
@@ -31,25 +33,32 @@ public class Soldier extends Sprite {
 		
 	}
 	
-	public void move(Point2D destination) {
-		double x = destination.getX(),
+	public boolean move(Point2D destination, double alignement) {
+		double x = destination.getX()+alignement,
 		y = destination.getY(),
 		px = getX(), py = getY();
 		double speed = getSpeed();
+		boolean arrived = true;
+		
 		if(px + speed< x){
         	p.setX(px + speed);
+        	arrived = false;
         }else{
         	if(px - speed> x){
         		p.setX(px - speed);
+        		arrived = false;
         	}
         }
         if(py + speed< y){
         	p.setY(py + speed);
+        	arrived = false;
         }else{
         	if(py - speed> y){
         		p.setY(py - speed);
+        		arrived = false;
         	}
         }
+        return arrived;
     }
 
 	public double getSpeed() {
@@ -62,6 +71,10 @@ public class Soldier extends Sprite {
 
 	public void setLeft_the_castle(boolean left_the_castle) {
 		this.left_the_castle = left_the_castle;
+	}
+
+	public int getType() {
+		return type;
 	}
 	
     
