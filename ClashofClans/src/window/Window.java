@@ -109,13 +109,13 @@ public abstract class Window extends Sprite{
 		
 		getLayer().getChildren().add(statusBar);
 		
-		texts.add( enumTexts.dukeText.getIndexText(), new Text(enumTexts.dukeText.getText() + source.getDuke() ) ) ;
-		texts.add( enumTexts.levelText.getIndexText(), new Text(enumTexts.levelText.getText() + String.valueOf(source.getLevel()) ) ) ;
-		texts.add( enumTexts.incomeText.getIndexText(), new Text(enumTexts.incomeText.getText() + String.valueOf(source.getIncome()) ) ) ;
-		texts.add( enumTexts.nbPikersText.getIndexText(), new Text(enumTexts.nbPikersText.getText() + String.valueOf(source.getNbPikers()) ) ) ;
-		texts.add( enumTexts.nbKnightsText.getIndexText(), new Text(enumTexts.nbKnightsText.getText() + String.valueOf(source.getNbKnights()) ) ) ;
-		texts.add( enumTexts.nbCatapultsText.getIndexText(), new Text(enumTexts.nbCatapultsText.getText() + String.valueOf(source.getNbCatapults()) ) ) ;
-		texts.add( enumTexts.goldText.getIndexText(), new Text(enumTexts.goldText.getText()+ String.valueOf(source.getGold()) ) ) ;	
+		texts.add( enumTexts.dukeText.getIndexText(), new Text(enumTexts.dukeText.getText() + target.getDuke() ) ) ;
+		texts.add( enumTexts.levelText.getIndexText(), new Text(enumTexts.levelText.getText() + String.valueOf(target.getLevel()) ) ) ;
+		texts.add( enumTexts.incomeText.getIndexText(), new Text(enumTexts.incomeText.getText() + String.valueOf(target.getIncome()) ) ) ;
+		texts.add( enumTexts.nbPikersText.getIndexText(), new Text(enumTexts.nbPikersText.getText() + String.valueOf(target.getNbPikers()) ) ) ;
+		texts.add( enumTexts.nbKnightsText.getIndexText(), new Text(enumTexts.nbKnightsText.getText() + String.valueOf(target.getNbKnights()) ) ) ;
+		texts.add( enumTexts.nbCatapultsText.getIndexText(), new Text(enumTexts.nbCatapultsText.getText() + String.valueOf(target.getNbCatapults()) ) ) ;
+		texts.add( enumTexts.goldText.getIndexText(), new Text(enumTexts.goldText.getText()+ String.valueOf(target.getGold()) ) ) ;	
 		initText();
 		
 		nbSoldiersTmp.add(enumSoldiers.Pikers.getIndexSoldiers(), 0);
