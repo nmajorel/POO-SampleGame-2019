@@ -14,7 +14,7 @@ import sprite.castle.Castle.enumCastles;
 
 
 
-public class OwnedCastleWindow extends Window implements managementButton{
+public class OwnedCastleWindow extends Window {
 	
 	
 	public enum enumButtonOwnedCastleWindow{
