@@ -1,31 +1,142 @@
 package management;
-import sprite.soldier.Soldier;
+
+import static settings.Settings.CATAPULT;
+import static settings.Settings.KNIGHT;
+import static settings.Settings.PIKER;
+
+import java.util.concurrent.LinkedBlockingQueue;
+
+import settings.Settings;
+import sprite.castle.Castle;
+
 
 public class Laboratory {
 	
-	private Soldier soldier;
-	private boolean isUpgrade = false;
-	private int nb_rounds;
+	private LinkedBlockingQueue<Integer> soldiersTrainingQueue = new LinkedBlockingQueue<Integer>();
+	
+	private boolean isUpgrade;
+
+	int nbRoundsProductionTab[] = { Settings.NB_ROUNDS_PRODUCTION_PIKER, Settings.NB_ROUNDS_PRODUCTION_KNIGHT, Settings.NB_ROUNDS_PRODUCTION_CATAPULT };
+	
+	private long lastUpdate;
+	
+	private long elapsedNanos;
+	
+	private boolean resetTimer;
+
 	
 	
-	public Soldier getSoldier() {
-		return soldier;
+	public Laboratory() {
+		
+	
+		this.isUpgrade = false;
+		
+
+		this.resetTimer = true;
+		
 	}
-	public void setSoldier(Soldier soldier) {
-		this.soldier = soldier;
+	
+	public boolean finishedProduction(double elapsedSeconds){
+
+
+		int soldier = soldiersTrainingQueue.peek();
+
+		if(elapsedSeconds >= nbRoundsProductionTab[soldier] * Settings.TIME_ROUND_SECOND) {
+
+			return true;			
+		}		
+
+		return false;
+
 	}
+
+	
+	public int getSoldierProduction() {
+		
+		return soldiersTrainingQueue.poll();
+		
+	}
+	
+	
+
+	public LinkedBlockingQueue<Integer> getSoldiersTrainingQueue() {
+		return soldiersTrainingQueue;
+	}
+
+	public void addSoldiersTrainingQueue(int soldier) {
+		
+		this.soldiersTrainingQueue.offer(soldier);
+		
+	}
+
 	public boolean isUpgrade() {
 		return isUpgrade;
 	}
-	public void setUpgrade(boolean isUpgrade) {
-		this.isUpgrade = isUpgrade;
+
+	public boolean isRunning() {
+		return !(soldiersTrainingQueue.peek() == null);
 	}
-	public int getNb_rounds() {
-		return nb_rounds;
+
+	
+	public void checkProduction(long currentNanoTime, Castle castlePlayer) {
+		
+		if(resetTimer) {
+			lastUpdate = currentNanoTime - elapsedNanos;
+			resetTimer = false;
+		}
+
+		elapsedNanos = currentNanoTime - lastUpdate ;	
+		
+		double elapsedSeconds = elapsedNanos * Math.pow(10, -9) ;
+						
+		if(finishedProduction(elapsedSeconds)) {
+
+			int soldier = getSoldierProduction();	
+
+			switch(soldier) {
+
+			case PIKER:
+				
+				castlePlayer.setNbPikers(castlePlayer.getNbPikers()+1);
+				System.out.println("PIKER : TIME = " + elapsedSeconds);
+		
+				break;
+
+			case KNIGHT:
+				castlePlayer.setNbKnights(castlePlayer.getNbKnights()+1);
+				System.out.println("KNIGHT : TIME = " + elapsedSeconds);
+
+				break;
+
+			case CATAPULT:
+				castlePlayer.setNbCatapults(castlePlayer.getNbCatapults()+1);
+				System.out.println("CATAPULT : TIME = " + elapsedSeconds);
+
+				break;
+
+
+			}
+			elapsedNanos = 0;
+			resetTimer = true;
+
+
+		}		
+		
+		
 	}
-	public void setNb_rounds(int nb_rounds) {
-		this.nb_rounds = nb_rounds;
+
+	public void resetTimer() {
+		this.resetTimer = true;
 	}
+
+	
 	
 
+
+
+
+
+
 }
+		
+		

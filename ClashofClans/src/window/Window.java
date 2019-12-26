@@ -12,84 +12,48 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import shape.Point2D;
-import shape.Rectangle;
 import sprite.Sprite;
 import sprite.castle.Castle;
-import sprite.castle.Taken;
-import sprite.soldier.Soldier;
-import window.NotOwnedCastleWindow.enumButton;
-import window.NotOwnedCastleWindow.enumHBox;
+import sprite.castle.Castle.enumCastles;
+
+
 
 public abstract class Window extends Sprite{
+	
+
+	
+	private boolean keepPlaying;
+	
+	private Castle castleClicked;
+
+	private boolean makeAnOrderWindow;
 	
 	private Button suppr;
 	
 	private HBox hboxSuppr;
 	
-	protected List<HBox> hboxAttackList = new ArrayList<HBox>();
-	protected List<Button> buttonAttackPressedList = new ArrayList<Button>();
-
-	private List<Text> texts = new ArrayList<Text>();
-
 	private VBox statusBar; 
 	
+	private List<Text> statusBarTexts = new ArrayList<Text>();
 	
-	private boolean keepPlaying;
+	protected List<HBox> hboxList = new ArrayList<HBox>();
+	
+	protected List<Button> buttonPressedList = new ArrayList<Button>();
 
 	private List<Integer> nbSoldiersTmp = new ArrayList<Integer>();
 	
-	private Castle castleClicked;
+	private List <Integer>nbSoldiersList = new ArrayList<Integer>();
 	
-	private List <Integer>getNbSoldiersList = new ArrayList<Integer>();
+	private List<Castle> playerCastles = new ArrayList<Castle>();
 	
-	
-	public enum enumSoldiers{
+	protected Text variableDataTexts[] = new Text[4];
 
-		Pikers(0),
-		Knights(1),
-		Catapults(2);
+
+	
+	
+	
+	public Window(Pane layer, Point2D point, double w, double h) {
 		
-		private int indexSoldiers;
-
-		enumSoldiers(int indexSoldiers){
-			this.indexSoldiers = indexSoldiers;
-		}
-
-		public int getIndexSoldiers(){
-			return indexSoldiers;
-		}
-	}	
-	
-	public enum enumTexts{
-
-		dukeText(0 , "Duke : "),
-		levelText(1, "Level : "),
-		incomeText(2, "Income : "),
-		nbPikersText(3, "Pikers : "),
-		nbKnightsText(4, "Knights : "),
-		nbCatapultsText(5, "Catapults : "),
-		goldText(6, "Gold : ");
-		
-		private int indexText;
-		private String text;
-		
-		
-		private enumTexts(int indexText, String text) {
-			this.indexText = indexText;
-			this.text = text;
-		}
-
-		public int getIndexText() {
-			return indexText;
-		}
-
-		public String getText() {
-			return text;
-		}	
-	
-	}	
-
-	public Window(Pane layer, Point2D point, double w, double h, Castle source, Castle target) {
 		super(layer, point, Color.DARKGREY, w, h);
 		
 		this.keepPlaying = false;
@@ -98,73 +62,88 @@ public abstract class Window extends Sprite{
 		this.suppr.setMinSize(w/10, w/10);
 		
 		hboxSuppr = new HBox();
-		getLayer().getChildren().add(hboxSuppr);
-		hboxSuppr.setPrefSize(w/5, w/5);
-		hboxSuppr.relocate(point.getX()+w - w/10, getY());
+		
+		addHBoxLayer(hboxSuppr, point.getX()+w - w/10, getY(), (int)w/10, (int)w/10, 50);
+		
 		hboxSuppr.getChildren().add(suppr);
-	
 		suppr.setOnAction(event -> removeWindow() );
 		
+		nbSoldiersTmp.add(enumCastles.nbPikers.getIndexElement(), 0);
+		nbSoldiersTmp.add(enumCastles.nbKnights.getIndexElement(), 0);
+		nbSoldiersTmp.add(enumCastles.nbCatapults.getIndexElement(), 0);
+
+		this.makeAnOrderWindow = false;
+
+			
+	}
+	
+	public Window(Pane layer, Point2D point, double w, double h, Castle source) {
+
+		this(layer, point, w , h);
+		
+		addNbSoldiersList(source);
+
+		this.castleClicked = source;		
+		
+		addStatusBarTexts(source, "CASTLE PLAYER");
+
+		initStatusBar(point.getX() + w/1.5, point.getY()+h/8);
+
+	}
+	
+
+
+	public Window(Pane layer, Point2D point, double w, double h, List<Castle> playerCastles, Castle target) {
+
+		this(layer, point, w , h);
+		
+
+		this.castleClicked = target;		
+		
+		addStatusBarTexts(target, "TARGET");
+
+		initStatusBar(point.getX() + w/1.5, point.getY()+h/8);
+		
+		this.playerCastles = playerCastles;
+
+	}
+	
+	protected void addNbSoldiersList(Castle castle){
+		
+		nbSoldiersList.add(enumCastles.nbPikers.getIndexElement(), castle.getNbPikers());
+		nbSoldiersList.add(enumCastles.nbKnights.getIndexElement(), castle.getNbKnights());
+		nbSoldiersList.add(enumCastles.nbCatapults.getIndexElement(), castle.getNbCatapults());
+		
+		
+	}
+	
+	
+	protected void addStatusBarTexts(Castle castle, String description) {
+		
+		statusBarTexts.add( new Text(description)) ;
+		
+		statusBarTexts.add( new Text(castle.toString()) )  ;
+
+
+		
+	}
+	
+	protected void setStatusBarTexts(Castle castle, String description) {
+		
+		statusBarTexts.get(0).setText(description);
+		
+		statusBarTexts.get(1).setText(castle.toString());
+
+	}
+
+
+	private void initStatusBar(double x, double y) {
+
 		statusBar = new VBox();
 		
-		getLayer().getChildren().add(statusBar);
+		addVBoxLayer(statusBar, x, y, 400, 400, getHeight()/16);
 		
-		texts.add( enumTexts.dukeText.getIndexText(), new Text(enumTexts.dukeText.getText() + target.getDuke() ) ) ;
-		texts.add( enumTexts.levelText.getIndexText(), new Text(enumTexts.levelText.getText() + String.valueOf(target.getLevel()) ) ) ;
-		texts.add( enumTexts.incomeText.getIndexText(), new Text(enumTexts.incomeText.getText() + String.valueOf(target.getIncome()) ) ) ;
-		texts.add( enumTexts.nbPikersText.getIndexText(), new Text(enumTexts.nbPikersText.getText() + String.valueOf(target.getNbPikers()) ) ) ;
-		texts.add( enumTexts.nbKnightsText.getIndexText(), new Text(enumTexts.nbKnightsText.getText() + String.valueOf(target.getNbKnights()) ) ) ;
-		texts.add( enumTexts.nbCatapultsText.getIndexText(), new Text(enumTexts.nbCatapultsText.getText() + String.valueOf(target.getNbCatapults()) ) ) ;
-		texts.add( enumTexts.goldText.getIndexText(), new Text(enumTexts.goldText.getText()+ String.valueOf(target.getGold()) ) ) ;	
-		initText();
-		
-		nbSoldiersTmp.add(enumSoldiers.Pikers.getIndexSoldiers(), 0);
-		nbSoldiersTmp.add(enumSoldiers.Knights.getIndexSoldiers(), 0);
-		nbSoldiersTmp.add(enumSoldiers.Catapults.getIndexSoldiers(), 0);
-		
-		getNbSoldiersList.add(enumSoldiers.Pikers.getIndexSoldiers(), source.getNbPikers());
-		getNbSoldiersList.add(enumSoldiers.Knights.getIndexSoldiers(), source.getNbKnights());
-		getNbSoldiersList.add(enumSoldiers.Catapults.getIndexSoldiers(), source.getNbCatapults());
-		
-		this.castleClicked = target;
-
-	}
-
-
-
-	@Override
-	public void checkRemovability() {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	public void modifyNbSoldiersTmp(Boolean plus, enumSoldiers indexSoldiers, Castle c) {
-
-		
-		int val = nbSoldiersTmp.get(indexSoldiers.getIndexSoldiers());
-		
-		if(plus) {
-			if(val < getNbSoldiersList.get(indexSoldiers.getIndexSoldiers())) {
-				nbSoldiersTmp.set(indexSoldiers.getIndexSoldiers(), val+1);
-			}
-		}
-		else {
-			if(val > 0) {
-				nbSoldiersTmp.set(indexSoldiers.getIndexSoldiers(), val-1);
-			}
-		}
-							
-		
-	}
-	
-	public void initText() {
-		
-		double y = getY()+getHeight()/14;
-		double x = getX() + getWidth()/1.5;
-		statusBar.relocate(x, y);
-		statusBar.setSpacing(getHeight()/14);
-		statusBar.setPrefSize(getWidth() , getHeight());
-		for (Text text : texts) {
+		for (Text text : statusBarTexts) {
 			text.setFont(Font.font("Verdana", FontWeight.LIGHT, 16));
 			statusBar.getChildren().add(text);
 
@@ -174,160 +153,198 @@ public abstract class Window extends Sprite{
 	}
 	
 	
-	public void removeTexts () {
+	protected void removeStatusBar () {
 		getLayer().getChildren().remove(statusBar);
 	}
 	
-	public void removeSuppr() {
+	protected void removeSuppr() {
 		
 		getLayer().getChildren().remove(hboxSuppr);
 	}
 	
+	public abstract void removeHBoxList();
 	
-	public void removeWindow() {
-
-		
-		for(int indexHBbox = enumHBox.hboxAttack.getIndexHBox(); indexHBbox <= enumHBox.hboxConfirm.getIndexHBox(); indexHBbox++) {
-			
-			if(hboxAttackList.get(indexHBbox)!= null)
-				getLayer().getChildren().remove(hboxAttackList.get(indexHBbox));
-		}
+	
+	protected void removeWindow() {
+	
+		removeHBoxList();
 		removeSuppr();
-		removeTexts();
+		removeStatusBar();
 		this.removeFromLayer();
-		setKeepPlaying(true);
+		this.keepPlaying = true;
+
+		
+	}
+
+	
+	protected void addButtonSign(int indexHBox, int indexButton, enumCastles indexElement, Castle c) {
+		
+		addButtonHBox(indexHBox, indexButton, getWidth()/16, getHeight()/16);
+		addButtonHBox(indexHBox, indexButton+1, getWidth()/16, getHeight()/16);
+
+		eventButtonSign(indexHBox, indexButton, indexElement, false, c );
+		eventButtonSign(indexHBox, indexButton + 1, indexElement, true, c );
+	
+		hboxList.get(indexHBox).getChildren().add(variableDataTexts[indexElement.getIndexElement()]);	
+
+	}
+	
+	protected abstract void eventButtonSign(int indexHbox, int indexButton, enumCastles indexElement, boolean sign, Castle c);
+	
+	
+	
+	protected void addHBoxLayer(HBox hbox, double x, double y, double width, double height, double spacing) {
+		
+		
+		hbox.relocate(x, y);
+		hbox.setMinSize(width, height);
+		hbox.setSpacing(spacing);
+
+		getLayer().getChildren().add(hbox);
+		
+		
+	}
+	
+	protected void addVBoxLayer(VBox vbox, double x, double y, double width, double height, double spacing) {
+		
+		
+		vbox.relocate(x, y);
+		vbox.setMinSize(width, height);
+		vbox.setSpacing(spacing);
+
+		getLayer().getChildren().add(vbox);
+		
+		
+	}
+	
+	
+	protected void addButtonHBox(int indexHBox, int indexButton, double width, double height) {
+		
+			buttonPressedList.get(indexButton).setMinSize(width, height);
+			hboxList.get(indexHBox).getChildren().add(buttonPressedList.get(indexButton));
+		
+
+	}
+	
+	
+	protected void addButtonConfirm(int indexHBbox, int indexButton, int width, int height, Castle c) {
+		
+		
+		addButtonHBox(indexHBbox, indexButton, width, height);
+
+		buttonPressedList.get(indexButton).setStyle("-fx-background-color: #3CEF18");
+		
+		buttonPressedList.get(indexButton).setOnAction(event -> buttonConfirmPressed(c) );
 		
 		
 	}
 
+	
+	protected abstract boolean canConfirm();
+	
+	
+	protected void buttonConfirmPressed(Castle c) {
 
 
-	public Button getSuppr() {
-		return suppr;
+		if(canConfirm()) {
+			
+			this.makeAnOrderWindow = true;
+
+			removeWindow();}
+
 	}
 
 
+	
+	protected void modifyNbSoldiersTmp(Boolean plus, enumCastles indexSoldiers, Castle c) {
 
-	public HBox getHboxSuppr() {
-		return hboxSuppr;
+
+		int val = nbSoldiersTmp.get(indexSoldiers.getIndexElement());
+
+		if(plus) {
+
+			nbSoldiersTmp.set(indexSoldiers.getIndexElement(), val+1);
+
+		}
+		else {
+			if(val > 0) {
+				nbSoldiersTmp.set(indexSoldiers.getIndexElement(), val-1);
+			}
+		}
+
+
 	}
-
-
-
-	public List<HBox> getHboxAttackList() {
-		return hboxAttackList;
+	
+	@Override
+	public void checkRemovability() {
+		// TODO Auto-generated method stub
+		
 	}
-
-
-
-	public List<Button> getButtonAttackPressedList() {
-		return buttonAttackPressedList;
-	}
-
-
-
-	public List<Text> getTexts() {
-		return texts;
-	}
-
-
-
-	public VBox getStatusBar() {
-		return statusBar;
-	}
-
-
 
 	public boolean isKeepPlaying() {
 		return keepPlaying;
 	}
 
+	public Castle getCastleClicked() {
+		return castleClicked;
+	}
 
+	public boolean isMakeAnOrderWindow() {
+		return makeAnOrderWindow;
+	}
+
+	public Button getSuppr() {
+		return suppr;
+	}
+
+	public HBox getHboxSuppr() {
+		return hboxSuppr;
+	}
+
+	public VBox getStatusBar() {
+		return statusBar;
+	}
+
+	public List<Text> getStatusBarTexts() {
+		return statusBarTexts;
+	}
+
+	public List<HBox> getHboxList() {
+		return hboxList;
+	}
+
+	public List<Button> getButtonPressedList() {
+		return buttonPressedList;
+	}
 
 	public List<Integer> getNbSoldiersTmp() {
 		return nbSoldiersTmp;
 	}
 
+	public List<Integer> getNbSoldiersList() {
+		return nbSoldiersList;
+	}
+
+	public List<Castle> getPlayerCastles() {
+		return playerCastles;
+	}
+
+	public Text[] getVariableDataTexts() {
+		return variableDataTexts;
+	}
+
 	
 
 
-	public Castle getCastleClicked() {
-		return castleClicked;
-	}
 	
-
-	public List<Integer> getGetNbSoldiersList() {
-		return getNbSoldiersList;
-	}
-
-
-
-
-	public void setSuppr(Button suppr) {
-		this.suppr = suppr;
-	}
-
-
-
-	public void setHboxSuppr(HBox hboxSuppr) {
-		this.hboxSuppr = hboxSuppr;
-	}
-
-
-
-	public void setHboxAttackList(List<HBox> hboxAttackList) {
-		this.hboxAttackList = hboxAttackList;
-	}
-
-
-
-	public void setButtonAttackPressedList(List<Button> buttonAttackPressedList) {
-		this.buttonAttackPressedList = buttonAttackPressedList;
-	}
-
-
-
-	public void setTexts(List<Text> texts) {
-		this.texts = texts;
-	}
-
-
-
-	public void setStatusBar(VBox statusBar) {
-		this.statusBar = statusBar;
-	}
-
-
-
-	public void setKeepPlaying(boolean keepPlaying) {
-		this.keepPlaying = keepPlaying;
-	}
-
-
-
-	public void setNbSoldiersTmp(List<Integer> nbSoldiersTmp) {
-		this.nbSoldiersTmp = nbSoldiersTmp;
-	}
-
-
-
-
-	public void setCastleClicked(Castle castleClicked) {
-		this.castleClicked = castleClicked;
-	}
-	
-
-
-	public void setGetNbSoldiersList(List<Integer> getNbSoldiersList) {
-		this.getNbSoldiersList = getNbSoldiersList;
-	}
 
 	
 	
 	
 	
-	
-	
-	
+
+
+
+
 
 }

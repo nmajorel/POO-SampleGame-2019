@@ -9,23 +9,21 @@ public class Soldier extends Sprite {
 	
     private int health;
 	private int production_cost;
-    private int production_time;
+    private int productionRound;
     protected double speed;
     private int damage;
 	private boolean left_the_castle = false;
-	private int type = -1;
 	
 	
-	public Soldier(Pane layer, Point2D point, int health, double w, double h, int production_cost, int production_time, int speed, int damage, Color c, int type) {
+	public Soldier(Pane layer, Point2D point, int health, double w, double h, int production_cost, int production_round, int speed, int damage, Color c) {
 		super(layer, point, c, w, h);
 		this.health = health;
 		this.color = c;
 		this.production_cost = production_cost;
-		this.production_time = production_time;
+		this.productionRound = productionRound;
 		this.speed = speed;
 		this.damage = damage;
 		getImageView().setStroke(Color.BLACK);
-		this.type = type;
 		
 	}
 	
@@ -33,32 +31,25 @@ public class Soldier extends Sprite {
 		
 	}
 	
-	public boolean move(Point2D destination, double alignement) {
-		double x = destination.getX()+alignement,
+	public void move(Point2D destination) {
+		double x = destination.getX(),
 		y = destination.getY(),
 		px = getX(), py = getY();
 		double speed = getSpeed();
-		boolean arrived = true;
-		
 		if(px + speed< x){
         	p.setX(px + speed);
-        	arrived = false;
         }else{
         	if(px - speed> x){
         		p.setX(px - speed);
-        		arrived = false;
         	}
         }
         if(py + speed< y){
         	p.setY(py + speed);
-        	arrived = false;
         }else{
         	if(py - speed> y){
         		p.setY(py - speed);
-        		arrived = false;
         	}
         }
-        return arrived;
     }
 
 	public double getSpeed() {
@@ -73,9 +64,13 @@ public class Soldier extends Sprite {
 		this.left_the_castle = left_the_castle;
 	}
 
-	public int getType() {
-		return type;
+	public int getProductionRound() {
+		return productionRound;
 	}
+
+
+
+	
 	
     
     

@@ -1,7 +1,6 @@
 package management;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 
 import javafx.scene.layout.Pane;
@@ -22,9 +21,6 @@ public class Order {
 	private int nbPikers;
 	private int nbKnights;
 	private int nbCatapults;
-	private boolean all_arrived = false;
-	private double alignment = 20;
-	private static final double[] spacement = { 0, Settings.SIZE_PIKER+5.0, Settings.SIZE_PIKER+5.0 +Settings.SIZE_KNIGHT+5.0};
 	
 	private int [] nb_soldiers_created = {0, 0, 0};
 	private int [] nb_soldiers;
@@ -45,15 +41,7 @@ public class Order {
 	}
 	
 	public void ost_move() {
-		if(all_arrived){
-			movement_for_each(new Point2D(target.getCenterX(), target.getCenterY()) );
-		}else{
-			ost_moving();
-		}
-	}
-
-	
-	private void ost_moving(){
+		
 		for(int i = 0; i< Settings.NB_TYPE_SOLDIERS; i++){
 			if(nb_soldiers_created[i] < nb_soldiers[i] && create_frequency[i]==0)
 				create_soldier(i);
@@ -65,44 +53,12 @@ public class Order {
 		}
 		
 		leave_the_castle();
-		movement_for_each(new Point2D(target.getP()));
-	}
-	
-	
-	private void movement_for_each(Point2D p){
-		double [] i_soldiers = {0, 0, 0};
-		Point2D destination = p;
-		double w = 0;
-		
-		boolean tmp_arrived = true;
 		for (Soldier soldier : troops) {
-			if(soldier.isLeft_the_castle()){
-				w = soldier.getWidth() + spacement[soldier.getType()];
-				destination.translate(0, -w);
-				if(!soldier.move( destination, i_soldiers[soldier.getType()]*alignment))
-					tmp_arrived = false;
-				destination.translate(0, +w);
-				//remove_soldier(soldier);
-			}else{
-				tmp_arrived = false;
-			}
-			i_soldiers[soldier.getType()]++;
-		}
-		if(tmp_arrived){
-			all_arrived = true;
+			if(soldier.isLeft_the_castle())
+				soldier.move(front_of_the_door(soldier));
 		}
 	}
-	
-	
-	private void remove_soldier(Soldier soldier){
-		if(target.inside(soldier.getP())){
-			soldier.remove();
-			troops.remove(soldier);
-		}
-	}
-	
-	
-	
+
 	public List<Soldier> getTroops() {
 		return troops;
 	}
@@ -127,9 +83,10 @@ public class Order {
 			}
 		}
 	 }
-	/*
-	private void front_of_the_door(){
-		double w = Settings.SIZE_CATAPULT;
+	
+	private Point2D front_of_the_door(Soldier soldier){
+		Point2D front_point = new Point2D(target.getDoorPoint());
+		double w = soldier.getWidth();
 		switch(target.getDir()){
 			case N : 
 				front_point.translate(0, -w); break;
@@ -141,7 +98,8 @@ public class Order {
 				front_point.translate(-w, 0); break;
 			default : break;
 		}
-	}*/
+		return front_point;
+	}
 	private void create_soldier(int type){
 		int nb = 0;
 		switch(type){

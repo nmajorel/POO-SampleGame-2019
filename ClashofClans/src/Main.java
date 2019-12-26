@@ -4,38 +4,40 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
+
 import javafx.animation.AnimationTimer;
+
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
+
 import javafx.event.EventHandler;
 import javafx.stage.Stage;
+
+import management.Laboratory;
 import management.Land;
 import management.Order;
-import settings.Settings;
+import static settings.Settings.*;
+
 import shape.Point2D;
 import sprite.Sprite;
+import static sprite.castle.Castle.canIncome;
 import sprite.castle.Castle;
 import sprite.castle.Neutral;
 import sprite.castle.Taken;
-import sprite.soldier.Soldier;
+
 import window.NotOwnedCastleWindow;
 import window.OwnedCastleWindow;
-import window.Window;
+
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.image.Image;
+
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
+
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
+
 
 public class Main extends Application {
 	
@@ -43,13 +45,11 @@ public class Main extends Application {
 
 	private Pane playfieldLayer;
 
-	private List<Castle> other_castles = new ArrayList<Castle>();
+	private List<Castle> otherCastles = new ArrayList<Castle>();
 	private ArrayList<Land> lands = new ArrayList<Land>(); 
 	
 	private boolean collision = false;
 
-	//private Text scoreMessage = new Text();
-	//private int scoreValue = 0;
 	
 	private Player player;
 	
@@ -61,13 +61,19 @@ public class Main extends Application {
 	private Input input;
 	private AnimationTimer gameLoop;
 	
+    private boolean resetTimerIncome = true;
+    
+    private long lastUpdateIncome;
+    private long elapsedNanosIncome;
+    
+
 	Group root;
 
 	@Override
 	public void start(Stage primaryStage) {
 
 		root = new Group();
-		scene = new Scene(root, Settings.SCENE_WIDTH, Settings.SCENE_HEIGHT, Color.FORESTGREEN );
+		scene = new Scene(root, SCENE_WIDTH, SCENE_HEIGHT, Color.FORESTGREEN );
 		primaryStage.setScene(scene);
 		primaryStage.setResizable(false);
 		primaryStage.show();
@@ -78,55 +84,55 @@ public class Main extends Application {
 		
 		loadGame();
 		
-		final long startNanoTime = System.nanoTime();
-		
+	
 		gameLoop = new AnimationTimer() {
+			
+
+		 
+			
 			@Override
 			public void handle(long currentNanoTime) {
+				
+				
 				try {
 					processInput(input, currentNanoTime);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				if(!paused){				
-					other_castles.forEach(sprite -> sprite.move());
-					other_castles.forEach(sprite -> sprite.updateUI());
-					player.getCastles().forEach(sprite -> sprite.move());
+		
+		
+				if(!paused){
 					
-					if(player.getCastles().get(0).getOrder()!=null) {
-						player.getCastles().get(0).continueOrders();
-						player.getCastles().get(0).getOrder().forEach(order -> order.getTroops().forEach(sprite -> sprite.updateUI()) );
+	
+					otherCastles.forEach(sprite -> sprite.move());
+					otherCastles.forEach(sprite -> sprite.updateUI());
+					
+					player.getCastles().forEach(sprite -> sprite.move());
+					player.getCastles().forEach(sprite -> sprite.updateUI());
+
+					for(Castle castle : player.getCastles()) {
+						
+						if(castle.getOrder()!=null) {
+							castle.continueOrders();
+							castle.getOrder().forEach(order -> order.getTroops().forEach(sprite -> sprite.updateUI()) );
+							
+						}
+						
+						Laboratory lab = castle.getLab();
+						if(castle.getLab().isRunning()) {
+							
+							lab.checkProduction(currentNanoTime, castle);
+							
+						}	
+						
 					}
 					
-					//player.getCastles().forEach(sprite -> sprite.updateUI());
-					
-					
+					checkIncome(currentNanoTime);
+
+
 				}
-				
+	
 
-				//player.processInput();
-				//castle.processInput();
-
-				// movement
-				//player.move();
-				//enemies.forEach(sprite -> sprite.move());
-				//missiles.forEach(sprite -> sprite.move());
-				
-				// update sprites in scene
-				//player.updateUI();
-				//enemies.forEach(sprite -> sprite.updateUI());
-				//missiles.forEach(sprite -> sprite.updateUI());
-
-				// check if sprite can be removed
-				//enemies.forEach(sprite -> sprite.checkRemovability());
-				//missiles.forEach(sprite -> sprite.checkRemovability());
-
-				// remove removables from list, layer, etc
-				//removeSprites(enemies);
-				//removeSprites(missiles);
-
-				// update score, health, etc
-				//update();
 			}
 
 			private void processInput(Input input, long now) throws InterruptedException {
@@ -135,6 +141,9 @@ public class Main extends Application {
 					System.exit(0);
 				} 
 				else if(input.isP()) {
+
+					player.getCastles().forEach(castle -> castle.getLab().resetTimer());
+				    resetTimerIncome = true;
 					paused = true;
 				}
 				else if(input.isC()){
@@ -145,6 +154,31 @@ public class Main extends Application {
 
 		};
 		gameLoop.start();
+	}	
+	
+	
+	public void checkIncome(long currentNanoTime) {
+		
+		
+		if(resetTimerIncome) {
+			lastUpdateIncome = currentNanoTime - elapsedNanosIncome;
+			resetTimerIncome = false;
+		}	
+
+		elapsedNanosIncome = currentNanoTime - lastUpdateIncome ;	
+		
+		double elapsedSeconds = elapsedNanosIncome * Math.pow(10, -9) ;
+		
+		if( canIncome(elapsedSeconds) ) {
+			
+			System.out.println("MONEY : TIME = " + elapsedSeconds);
+			player.getCastles().forEach(castle -> castle.income());
+			otherCastles.forEach(castle -> castle.income());
+			elapsedNanosIncome = 0;
+			resetTimerIncome = true;
+			
+		}
+		
 	}
 
 	private void loadGame() {
@@ -154,7 +188,21 @@ public class Main extends Application {
 		
 		createLands();
 		
-		player = new Player(playfieldLayer, input, new Taken(playfieldLayer, nextAvailableLand(), Settings.SIZE_CASTLE, Settings.SIZE_CASTLE));
+		player = new Player(playfieldLayer, input, new Taken(playfieldLayer, nextAvailableLand(), SIZE_CASTLE, SIZE_CASTLE));
+		player.addCastles(new Taken(playfieldLayer, nextAvailableLand(), SIZE_CASTLE, SIZE_CASTLE));
+		player.addCastles(new Taken(playfieldLayer, nextAvailableLand(), SIZE_CASTLE, SIZE_CASTLE));
+		
+		
+		player.getCastles().get(1).setNbPikers(40);
+		player.getCastles().get(1).setNbKnights(20);
+		player.getCastles().get(1).setNbCatapults(10);
+		
+		player.getCastles().get(2).setNbPikers(20);
+		player.getCastles().get(2).setNbKnights(7);
+		player.getCastles().get(2).setNbCatapults(14);
+		
+		
+		
 
 		createOtherCastles();
 		
@@ -163,22 +211,24 @@ public class Main extends Application {
 		GraphicsContext gc = canvas.getGraphicsContext2D();
 
 	    root.getChildren().add( canvas );
-	       
 	    
-	    Font theFont = Font.font( "Helvetica", FontWeight.BOLD, 24 );
+	    
 
+	       
         scene.setOnMouseClicked(
                 new EventHandler<MouseEvent>()
 				{
 					public void handle(MouseEvent e) {
 
 						if (!paused) {
-							for (Castle castle : other_castles) {
+							for (Castle castle : otherCastles) {
 								if (castle.getImageView().contains(e.getX(), e.getY())) {
-
-
+									
+									player.getCastles().forEach(c -> c.getLab().resetTimer());
+								    resetTimerIncome = true;
 									paused = true;
-									notOwnedCastleWindow = new NotOwnedCastleWindow(playfieldLayer, new Point2D((Settings.SCENE_WIDTH/2) -300, (Settings.SCENE_HEIGHT/2) -300), 600, 600, player.getCastles().get(0), castle);
+							
+									notOwnedCastleWindow = new NotOwnedCastleWindow(playfieldLayer, new Point2D((SCENE_WIDTH/2) -WINDOW_WIDTH/2, (SCENE_HEIGHT/2) - WINDOW_HEIGHT/2), WINDOW_WIDTH, WINDOW_HEIGHT, player.getCastles(), castle);
 					
 							
 
@@ -188,10 +238,10 @@ public class Main extends Application {
 							for (Castle castle : player.getCastles()) {
 								if (castle.getImageView().contains(e.getX(), e.getY())) {
 
-
-							
+									player.getCastles().forEach(c -> c.getLab().resetTimer());
+								    resetTimerIncome = true;
 									paused = true;
-									ownedCastleWindow = new OwnedCastleWindow(playfieldLayer, new Point2D((Settings.SCENE_WIDTH/2) -300, (Settings.SCENE_HEIGHT/2) -300), 600, 600, player.getCastles().get(0), castle);
+									ownedCastleWindow = new OwnedCastleWindow(playfieldLayer, new Point2D((SCENE_WIDTH/2) -WINDOW_WIDTH/2, (SCENE_HEIGHT/2) - WINDOW_HEIGHT/2), WINDOW_WIDTH, WINDOW_HEIGHT, castle);
 									
 							
 
@@ -200,32 +250,73 @@ public class Main extends Application {
 							}
 						} else {
 							
-							if(notOwnedCastleWindow.isKeepPlaying()) {
-								paused = false;
-								if(notOwnedCastleWindow.isMakeAnOrderWindow()) {
-									
-									List<Integer> nbSoldiersTmp = notOwnedCastleWindow.getNbSoldiersTmp();
-									
-									player.getCastles().get(0).setNbPikers(player.getCastles().get(0).getNbPikers()-nbSoldiersTmp.get(0));
-									player.getCastles().get(0).setNbKnights(player.getCastles().get(0).getNbKnights()-nbSoldiersTmp.get(1));
-									player.getCastles().get(0).setNbCatapults(player.getCastles().get(0).getNbCatapults()-nbSoldiersTmp.get(2));
-									
-									player.getCastles().get(0).addOrder(new Order(player.getCastles().get(0),notOwnedCastleWindow.getCastleClicked(), nbSoldiersTmp.get(0),nbSoldiersTmp.get(1),nbSoldiersTmp.get(2)));
-									
-								
+							if(notOwnedCastleWindow != null) {
+								if(notOwnedCastleWindow.isKeepPlaying()) {
+									paused = false;
+									if(notOwnedCastleWindow.isMakeAnOrderWindow()) {
+
+
+										List<Integer> nbSoldiersTmp = notOwnedCastleWindow.getNbSoldiersTmp();
+
+										Castle castlePlayer = player.getCastles().get(notOwnedCastleWindow.getIndexCastlePlayer());
+
+										castlePlayer.setNbPikers(castlePlayer.getNbPikers()-nbSoldiersTmp.get(0));
+										castlePlayer.setNbKnights(castlePlayer.getNbKnights()-nbSoldiersTmp.get(1));
+										castlePlayer.setNbCatapults(castlePlayer.getNbCatapults()-nbSoldiersTmp.get(2));
+										castlePlayer.addOrder(new Order(castlePlayer,notOwnedCastleWindow.getCastleClicked(), nbSoldiersTmp.get(0),nbSoldiersTmp.get(1),nbSoldiersTmp.get(2)));
+
+
+
+
+									}
+									notOwnedCastleWindow = null;
+
+
 								}
-								
-								
+
 							}
-			
-							
-							
-							
+							if(ownedCastleWindow != null) {
+								if(ownedCastleWindow.isKeepPlaying()) {
+									paused = false;
+									if(ownedCastleWindow.isMakeAnOrderWindow()) {
+					
+										
+										Castle castlePlayer = ownedCastleWindow.getCastleClicked();
+										
+										List<Integer> nbSoldiersTmp = ownedCastleWindow.getNbSoldiersTmp();
+										
+										for(int i = PIKER; i <= CATAPULT; i++) {
+											
+											for(int j =  0; j < nbSoldiersTmp.get(i); j++ ){
+										
+												castlePlayer.getLab().addSoldiersTrainingQueue(i);
+											}
+											
+											
+										}
+										
+										castlePlayer.setGold(ownedCastleWindow.getNbGoldTmp());
+										
+								
+										}
+									ownedCastleWindow = null;
+										
+										
+										
+									}
+									
+									
+									
+								}
+
+							}
+
+
 
 						}
-					}
+					
 				});
-		
+
 		
 	}
 	
@@ -236,7 +327,7 @@ public class Main extends Application {
 		
 		Point2D p = nextAvailableLand();
 		while(p!=null ) {
-			other_castles.add(new Neutral(playfieldLayer, p, Settings.SIZE_CASTLE, Settings.SIZE_CASTLE));	 
+			otherCastles.add(new Neutral(playfieldLayer, p, SIZE_CASTLE, SIZE_CASTLE));	 
 			p = nextAvailableLand();
 	    }		
 		
@@ -244,8 +335,8 @@ public class Main extends Application {
 	
 	private void createLands() {
 		
-		for(double x = 50; x < Settings.SCENE_WIDTH ; x = x + Settings.SIZE_LAND + Settings.DISTANCE_BETWEEN_CASTLES) {
-			for(double y = 50; y < Settings.SCENE_HEIGHT; y = y + Settings.SIZE_LAND + Settings.DISTANCE_BETWEEN_CASTLES) {
+		for(double x = 50; x < SCENE_WIDTH ; x = x + SIZE_LAND + DISTANCE_BETWEEN_CASTLES) {
+			for(double y = 50; y < SCENE_HEIGHT; y = y + SIZE_LAND + DISTANCE_BETWEEN_CASTLES) {
 				lands.add(new Land(x, y, true));
 			}
 		}

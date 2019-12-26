@@ -16,9 +16,6 @@ import shape.Rectangle;
 import sprite.Sprite;
 import sprite.soldier.Soldier;
 
-////////////////////////////////////////// Pour faire défiler l'écran on peut lancer un Thread qui pousse la fenêtre dans le sens inverse quan la souris est au
-	////////////////////////////////////         bords de l'écran ///////////////////////
-
 public abstract class Castle extends Sprite{
 	
 	private String duke;
@@ -35,11 +32,48 @@ public abstract class Castle extends Sprite{
 	private int nbKnights;
 	private int nbCatapults;
 	
+	
+	
+	public enum enumCastles{
+		
+		nbPikers(0, "Pikers : "),
+		nbKnights(1, "Knights : "),
+		nbCatapults(2, "Catapults : "),
+		gold(3, "Gold : "),
+		level(4, "Level : "),
+		income(5, "Income : "),
+		duke(6 , "Duke : ");
+
+		
+		private int indexElement;
+		private String text;
+		
+		public void setIndexElement(int indexElement) {
+			this.indexElement = indexElement;
+		}
+
+		private enumCastles(int indexSoldier, String element) {
+			this.indexElement = indexSoldier;
+			this.text = element;
+		}
+
+		public int getIndexElement() {
+			return indexElement;
+		}
+
+
+		public String getText() {
+			return text;
+		}
+				
+	
+	}	
+	
 	public Castle(Pane layer, Point2D point, Color c, double w, double h) {
 		
 		super(layer, point, c, w, h);
 		this.duke = "Peter";
-		this.gold = 0;
+		this.gold = 2000;
 		this.level = Settings.LEVEL_1;
 		this.nbPikers = 9;
 		this.nbKnights = 4;
@@ -50,7 +84,16 @@ public abstract class Castle extends Sprite{
 		this.dir = Directions.values()[pick]; 
 	
 		this.door = createDoor();
+		
+		this.lab = new Laboratory();
 
+	}
+	
+	public static boolean canIncome(double elapsedSeconds) {
+		
+		return elapsedSeconds >= Settings.NB_ROUNDS_INCOME * Settings.TIME_ROUND_SECOND;
+		
+		
 	}
 
 	public void income() {
@@ -99,6 +142,15 @@ public abstract class Castle extends Sprite{
 		
 	}
 	
+
+	public String toString() {
+		
+		
+		return "Pikers : " + nbPikers + "\n\n\n" + "Knights : " + nbKnights + "\n\n\n" +  "Catapults : " + nbCatapults + "\n\n\n" + "Gold : " + gold + "\n\n\n" +  "level : " + level + "\n\n\n" +  "Income : " + getIncome() + "\n\n\n" + 
+				"Duke : " + duke + "\n\n\n";
+		
+		
+	}
 	
 	
 	@Override

@@ -50,8 +50,8 @@ public class Player {
 		return castles;
 	}
 
-	public void setCastles(List<Castle> castles) {
-		this.castles = castles;
+	public void addCastles(Castle castle) {
+		this.castles.add(castle);
 	}
 	
 	
