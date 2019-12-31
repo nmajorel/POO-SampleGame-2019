@@ -138,7 +138,7 @@ public class NotOwnedCastleWindow extends Window {
 
 		}
 		
-		setStatusBarTexts(getPlayerCastles().get(indexCastlePlayer), "CASTLE PLAYER N ° "+ indexCastlePlayer);
+		setStatusBarTexts(getPlayerCastles().get(indexCastlePlayer), "CASTLE PLAYER N ° "+ getPlayerCastles().get(indexCastlePlayer).getId());
 		addVBoxLayer(getStatusBar(), getX() + width/2-100, getY() + 50, 400, 400, getHeight()/16);
 	
 		addHBoxLayer(hboxList.get(indexHBoxChoose), getX()+width/16, (getY()+height)-height/4, width - (width/8), height/16, width/16);
@@ -148,7 +148,7 @@ public class NotOwnedCastleWindow extends Window {
 			if(indexCastlePlayer > 0) {
 				indexCastlePlayer--;}
 
-			setStatusBarTexts(getPlayerCastles().get(indexCastlePlayer), "CASTLE PLAYER N ° "+ indexCastlePlayer);
+			setStatusBarTexts(getPlayerCastles().get(indexCastlePlayer), "CASTLE PLAYER N ° "+ getPlayerCastles().get(indexCastlePlayer).getId());
 		} );	
 
 		buttonPressedList.get(enumButtonNotOwnedCastleWindow.buttonChoose.getIndexButton()).setOnAction(event -> buttonChoosePressed(getPlayerCastles().get(indexCastlePlayer)) );
@@ -157,7 +157,7 @@ public class NotOwnedCastleWindow extends Window {
 			if(indexCastlePlayer < getPlayerCastles().size()-1) {
 				indexCastlePlayer++;}
 			
-			setStatusBarTexts(getPlayerCastles().get(indexCastlePlayer), "CASTLE PLAYER N ° "+indexCastlePlayer);
+			setStatusBarTexts(getPlayerCastles().get(indexCastlePlayer), "CASTLE PLAYER N ° "+getPlayerCastles().get(indexCastlePlayer).getId());
 		} );	
 
 		
