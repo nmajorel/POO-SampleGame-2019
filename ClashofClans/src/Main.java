@@ -53,9 +53,9 @@ public class Main extends Application {
 
 	private Pane playfieldLayer;
 
-	private List<Castle> otherCastles = new ArrayList<Castle>();
+	private ArrayList<Castle> otherCastles = new ArrayList<Castle>();
 	
-	private List<Castle> allCastles = new ArrayList<Castle>();
+	private ArrayList<Castle> allCastles = new ArrayList<Castle>();
 	
 	private ArrayList<Land> lands = new ArrayList<Land>(); 
 	
