@@ -4,9 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import management.Laboratory;
 import management.Order;
 import settings.Settings;
@@ -32,6 +38,8 @@ public abstract class Castle extends Sprite{
 	private int nbKnights;
 	private int nbCatapults;
 	
+	public static int static_id = 0;
+	public int id = 0;
 	
 	
 	public enum enumCastles{
@@ -86,9 +94,53 @@ public abstract class Castle extends Sprite{
 		this.door = createDoor();
 		
 		this.lab = new Laboratory();
+		
+		this.id = newId();
+		
+		
+		
+		drawId();
 
 	}
 	
+	
+	public void drawId() {
+		
+		HBox hbox = new HBox();
+
+		getLayer().getChildren().add( hbox );	
+		Text text = new Text(""+id);
+		text.setFont(Font.font("Verdana", FontWeight.LIGHT, 20));
+		hbox.relocate(getX()+getWidth()/2, getY()+getHeight()/2);
+		hbox.getChildren().add(text);
+		
+
+	    
+	}
+	
+	
+	public static int newId() {
+		
+		static_id++;
+		return static_id;
+			
+	}	
+	
+
+
+
+	public int getId() {
+		return id;
+	}
+
+
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+
+
 	public static boolean canIncome(double elapsedSeconds) {
 		
 		return elapsedSeconds >= Settings.NB_ROUNDS_INCOME * Settings.TIME_ROUND_SECOND;

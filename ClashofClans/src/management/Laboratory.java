@@ -53,7 +53,13 @@ public class Laboratory {
 	
 	public int getSoldierProduction() {
 		
-		return soldiersTrainingQueue.poll();
+		return soldiersTrainingQueue.peek();
+		
+	}
+	
+	public void removeSoldierProduction() {
+		
+		soldiersTrainingQueue.poll();
 		
 	}
 	
@@ -92,6 +98,7 @@ public class Laboratory {
 		if(finishedProduction(elapsedSeconds)) {
 
 			int soldier = getSoldierProduction();	
+			removeSoldierProduction();
 
 			switch(soldier) {
 
@@ -127,6 +134,10 @@ public class Laboratory {
 
 	public void resetTimer() {
 		this.resetTimer = true;
+	}
+
+	public double getElapsedSeconds() {
+		return (elapsedNanos * Math.pow(10, -9));
 	}
 
 	

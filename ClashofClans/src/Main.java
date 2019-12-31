@@ -1,9 +1,9 @@
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-
 
 import javafx.animation.AnimationTimer;
 
@@ -19,6 +19,7 @@ import management.Order;
 import static settings.Settings.*;
 
 import shape.Point2D;
+import shape.Rectangle;
 import sprite.Sprite;
 import static sprite.castle.Castle.canIncome;
 import sprite.castle.Castle;
@@ -30,13 +31,19 @@ import window.OwnedCastleWindow;
 
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
+
 
 import javafx.scene.input.MouseEvent;
-
+import javafx.scene.layout.Background;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import javafx.geometry.Insets;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 
 
 public class Main extends Application {
@@ -46,6 +53,9 @@ public class Main extends Application {
 	private Pane playfieldLayer;
 
 	private List<Castle> otherCastles = new ArrayList<Castle>();
+	
+	private List<Castle> allCastles = new ArrayList<Castle>();
+	
 	private ArrayList<Land> lands = new ArrayList<Land>(); 
 	
 	private boolean collision = false;
@@ -65,6 +75,9 @@ public class Main extends Application {
     
     private long lastUpdateIncome;
     private long elapsedNanosIncome;
+    
+    
+	Text hudTexts[] = new Text[12];
     
 
 	Group root;
@@ -99,7 +112,12 @@ public class Main extends Application {
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
+				
 		
+				
+				
+				
+				
 		
 				if(!paused){
 					
@@ -128,6 +146,8 @@ public class Main extends Application {
 					}
 					
 					checkIncome(currentNanoTime);
+					
+					updateHUD();
 
 
 				}
@@ -186,9 +206,12 @@ public class Main extends Application {
 		input = new Input(scene);
 		input.addListeners();
 		
+		
 		createLands();
 		
 		player = new Player(playfieldLayer, input, new Taken(playfieldLayer, nextAvailableLand(), SIZE_CASTLE, SIZE_CASTLE));
+		
+		
 		player.addCastles(new Taken(playfieldLayer, nextAvailableLand(), SIZE_CASTLE, SIZE_CASTLE));
 		player.addCastles(new Taken(playfieldLayer, nextAvailableLand(), SIZE_CASTLE, SIZE_CASTLE));
 		
@@ -201,19 +224,13 @@ public class Main extends Application {
 		player.getCastles().get(2).setNbKnights(7);
 		player.getCastles().get(2).setNbCatapults(14);
 		
-		
+		allCastles.addAll(player.getCastles());
+	
 		
 
 		createOtherCastles();
-		
-		Canvas canvas = new Canvas( 500, 500 );	
-	    
-		GraphicsContext gc = canvas.getGraphicsContext2D();
 
-	    root.getChildren().add( canvas );
-	    
-	    
-
+		createHUD();
 	       
         scene.setOnMouseClicked(
                 new EventHandler<MouseEvent>()
@@ -320,14 +337,16 @@ public class Main extends Application {
 		
 	}
 	
-
+	
 
 
 	private void createOtherCastles() {
 		
 		Point2D p = nextAvailableLand();
 		while(p!=null ) {
-			otherCastles.add(new Neutral(playfieldLayer, p, SIZE_CASTLE, SIZE_CASTLE));	 
+			Castle c = new Neutral(playfieldLayer, p, SIZE_CASTLE, SIZE_CASTLE);
+			otherCastles.add(c);	 
+			allCastles.add(c);
 			p = nextAvailableLand();
 	    }		
 		
@@ -336,7 +355,7 @@ public class Main extends Application {
 	private void createLands() {
 		
 		for(double x = 50; x < SCENE_WIDTH ; x = x + SIZE_LAND + DISTANCE_BETWEEN_CASTLES) {
-			for(double y = 50; y < SCENE_HEIGHT; y = y + SIZE_LAND + DISTANCE_BETWEEN_CASTLES) {
+			for(double y = 250; y < SCENE_HEIGHT; y = y + SIZE_LAND + DISTANCE_BETWEEN_CASTLES) {
 				lands.add(new Land(x, y, true));
 			}
 		}
@@ -369,6 +388,88 @@ public class Main extends Application {
 		}
 			
 	}
+	
+
+	
+	
+	public void createHUD() {
+		HBox hud = new HBox();
+		hud.relocate(0, 0);
+		hud.setSpacing(20);
+		hud.setMinSize(SCENE_WIDTH+10,SCENE_HEIGHT/6);
+		root.getChildren().add(hud);
+		hud.setBackground(new Background(new BackgroundFill(Color.GREY, CornerRadii.EMPTY, Insets.EMPTY)));
+		
+		for(int i = 0; i < allCastles.size(); i++) {
+			
+			
+			Text text = new Text("\n\n\n\n\nCastles n°"+ (i+1) +"\t \n"+"No production");
+			text.setFont(Font.font("Verdana", FontWeight.LIGHT,13));
+			hudTexts[i] = text;
+		
+			hud.getChildren().add(hudTexts[i]);
+
+			
+
+		}
+
+
+	
+	}
+	
+	
+	private void updateHUD() {
+		
+		
+		for(int i = 0; i < allCastles.size(); i++) {
+
+			String string = null;
+			
+			NumberFormat nf = NumberFormat.getInstance();
+			nf.setMaximumFractionDigits(1);
+			
+			double ElapsedSeconds = allCastles.get(i).getLab().getElapsedSeconds();
+
+			if (allCastles.get(i).getLab().isRunning()) {
+
+				int soldier =  allCastles.get(i).getLab().getSoldierProduction();
+
+
+				switch(soldier) {
+
+				case PIKER:
+
+					string = "Piker : " + nf.format(TIME_PIKER_SECOND-ElapsedSeconds)   +"s";
+
+					break;
+
+				case KNIGHT:
+
+					string = "Knight : " + nf.format(TIME_KNIGHT_SECOND-ElapsedSeconds) +"s";
+
+					break;
+
+				case CATAPULT:
+
+					string = "Catapult : " + nf.format(TIME_CATAPULT_SECOND-ElapsedSeconds)+"s";
+
+					break;
+
+
+				}
+
+			}
+
+			else {
+
+				string = "No production";
+			}
+			
+			hudTexts[i].setText("\n\n\n\n\nCastles n°"+ (i+1) +"\t \n"+string);
+
+		}
+	}
+
 	
 
 /*
