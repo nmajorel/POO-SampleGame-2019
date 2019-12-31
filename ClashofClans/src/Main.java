@@ -24,7 +24,8 @@ import static sprite.castle.Castle.canIncome;
 import sprite.castle.Castle;
 import sprite.castle.Neutral;
 import sprite.castle.Taken;
-
+import player.*;
+import settings.Settings;
 import window.NotOwnedCastleWindow;
 import window.OwnedCastleWindow;
 
@@ -45,7 +46,7 @@ public class Main extends Application {
 
 	private Pane playfieldLayer;
 
-	private List<Castle> otherCastles = new ArrayList<Castle>();
+	private ArrayList<Castle> otherCastles = new ArrayList<Castle>();
 	private ArrayList<Land> lands = new ArrayList<Land>(); 
 	
 	private boolean collision = false;
@@ -109,11 +110,12 @@ public class Main extends Application {
 					
 					player.getCastles().forEach(sprite -> sprite.move());
 					player.getCastles().forEach(sprite -> sprite.updateUI());
-
-					for(Castle castle : player.getCastles()) {
-						
+					
+					
+					for(int i =0; i< player.getCastles().size(); i++) {
+						Castle castle = player.getCastles().get(i);
 						if(castle.getOrder()!=null) {
-							castle.continueOrders();
+							continueOrders(castle);
 							castle.getOrder().forEach(order -> order.getTroops().forEach(sprite -> sprite.updateUI()) );
 							
 						}
@@ -125,7 +127,41 @@ public class Main extends Application {
 							
 						}	
 						
+					}/*
+					Iterator <Castle> iter = player.getCastles().iterator();
+					while (iter.hasNext()) {
+						Castle castle = iter.next();
+						
+						if(castle.getOrder()!=null) {
+							continueOrders(castle);
+							castle.getOrder().forEach(order -> order.getTroops().forEach(sprite -> sprite.updateUI()) );
+							
+						}
+						
+						Laboratory lab = castle.getLab();
+						if(castle.getLab().isRunning()) {
+							
+							lab.checkProduction(currentNanoTime, castle);
+							
+						}	
 					}
+					/*
+					for(Castle castle : player.getCastles()) {
+						
+						if(castle.getOrder()!=null) {
+							continueOrders(castle);
+							castle.getOrder().forEach(order -> order.getTroops().forEach(sprite -> sprite.updateUI()) );
+							
+						}
+						
+						Laboratory lab = castle.getLab();
+						if(castle.getLab().isRunning()) {
+							
+							lab.checkProduction(currentNanoTime, castle);
+							
+						}	
+						
+					}*/
 					
 					checkIncome(currentNanoTime);
 
@@ -355,7 +391,7 @@ public class Main extends Application {
 		return null;
 	}
 	
-	private void removeSprites(List<? extends Sprite> spriteList) {
+	public void removeSprites(ArrayList<? extends Sprite> spriteList) {
 		Iterator<? extends Sprite> iter = spriteList.iterator();
 		while (iter.hasNext()) {
 			Sprite sprite = iter.next();
@@ -370,6 +406,26 @@ public class Main extends Application {
 			
 	}
 	
+	public void continueOrders( Castle c) {
+		
+		for(Order order : c.getOrder() ) {
+			if(order.ost_move()) {
+				Castle target = order.getTarget();
+				double w = Settings.SIZE_CASTLE;
+				Point2D point = new Point2D(target.getP());
+				String duke = c.getDuke();
+				int gold = c.getGold();
+				int level = c.getLevel();
+				int income = c.getIncome();
+				
+				removeSprites(otherCastles);
+
+				player.addCastles(new Taken(playfieldLayer, point, w, w, duke, gold, level, income) );
+				
+			}
+		}
+		c.removeOrders();
+	}
 
 /*
 	private void checkCollisions() {
@@ -401,5 +457,6 @@ public class Main extends Application {
 	public static void main(String[] args) {
 		launch(args);
 	}
+
 
 }

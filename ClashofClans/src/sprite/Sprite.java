@@ -1,5 +1,9 @@
 package sprite;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
@@ -15,7 +19,7 @@ public abstract class Sprite {
     
     protected Color color;
 
-    private boolean removable = false;
+    protected boolean removable = false;
 
     private double w;
     private double h;

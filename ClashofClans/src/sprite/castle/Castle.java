@@ -1,8 +1,11 @@
 package sprite.castle;
 
+import player.Player;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+
 
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -161,11 +164,26 @@ public abstract class Castle extends Sprite{
 	public void move() {
 		
     }
-
-	public void continueOrders() {
-		orders.forEach(order -> order.ost_move());
-	}
 	
+	public void remove() {
+        this.removable = true;
+        troops.clear();
+        orders.clear();
+        door.removeFromLayer();
+    }
+	
+	public void removeOrders() {
+		Iterator<Order> iter = orders.iterator();
+		while (iter.hasNext()) {
+			Order order = iter.next();
+
+			if (order.isRemovable()) {
+				// remove from list
+				iter.remove();
+			}
+		}
+			
+	}
 
 	public Point2D getDoorPoint() {
 		return door.getP();
@@ -236,8 +254,11 @@ public abstract class Castle extends Sprite{
 		this.troops = troops;
 	}
 
-	public void setNbTroops(int nb_troops) {
-		this.nbTroops = nb_troops;
+	public void setNbAllTroops(int nb_pikers, int nb_knights, int nb_catapults) {
+		this.nbPikers = nb_pikers;
+		this.nbKnights = nb_knights;
+		this.nbCatapults = nb_catapults;
+		this.nbTroops = nb_pikers + nb_knights + nb_catapults;
 	}
 
 	public void setLab(Laboratory lab) {
@@ -262,6 +283,10 @@ public abstract class Castle extends Sprite{
 
 	public void setNbCatapults(int nbCatapults) {
 		this.nbCatapults = nbCatapults;
+	}
+
+	public void setNbTroops(int nbTroops) {
+		this.nbTroops = nbTroops;
 	}
 
 	
