@@ -145,41 +145,7 @@ public class Main extends Application {
 							
 						}	
 						
-					}/*
-					Iterator <Castle> iter = player.getCastles().iterator();
-					while (iter.hasNext()) {
-						Castle castle = iter.next();
-						
-						if(castle.getOrder()!=null) {
-							continueOrders(castle);
-							castle.getOrder().forEach(order -> order.getTroops().forEach(sprite -> sprite.updateUI()) );
-							
-						}
-						
-						Laboratory lab = castle.getLab();
-						if(castle.getLab().isRunning()) {
-							
-							lab.checkProduction(currentNanoTime, castle);
-							
-						}	
 					}
-					/*
-					for(Castle castle : player.getCastles()) {
-						
-						if(castle.getOrder()!=null) {
-							continueOrders(castle);
-							castle.getOrder().forEach(order -> order.getTroops().forEach(sprite -> sprite.updateUI()) );
-							
-						}
-						
-						Laboratory lab = castle.getLab();
-						if(castle.getLab().isRunning()) {
-							
-							lab.checkProduction(currentNanoTime, castle);
-							
-						}	
-						
-					}*/
 					
 					checkIncome(currentNanoTime);
 					
@@ -332,31 +298,90 @@ public class Main extends Application {
 								if(ownedCastleWindow.isKeepPlaying()) {
 									paused = false;
 									if(ownedCastleWindow.isMakeAnOrderWindow()) {
-					
+										
+										
+										short exitCode = ownedCastleWindow.getExitCode();
 										
 										Castle castlePlayer = ownedCastleWindow.getCastleClicked();
 										
-										List<Integer> nbSoldiersTmp = ownedCastleWindow.getNbSoldiersTmp();
+										Laboratory lab = castlePlayer.getLab();
 										
-										for(int i = PIKER; i <= CATAPULT; i++) {
-											
-											for(int j =  0; j < nbSoldiersTmp.get(i); j++ ){
-										
-												castlePlayer.getLab().addSoldiersTrainingQueue(i);
+										int cost;
+
+										switch (exitCode) {
+
+
+										case EXIT_TRAIN :
+
+
+											List<Integer> nbSoldiersTmp = ownedCastleWindow.getNbSoldiersTmp();
+
+											for(int i = PIKER; i <= CATAPULT; i++) {
+
+												for(int j =  0; j < nbSoldiersTmp.get(i); j++ ){
+
+													lab.addProductionQueue(i);
+												}
+
+
 											}
+
+											castlePlayer.setGold(ownedCastleWindow.getNbGoldTmp());
+											break;
 											
 											
+										case EXIT_CANCEL_ONE_QUEUE :
+	
+											
+											
+											if(!lab.getProductionQueue().isEmpty()) {
+												cost =  lab.getCostProduction();
+
+												lab.removeProductionQueue();
+
+												lab.setElapsedNanos(0);
+
+
+												castlePlayer.setGold(castlePlayer.getGold()+cost);}
+
+											break;
+											
+											
+										case EXIT_CANCEL_ALL_QUEUE :
+											
+											if(!lab.getProductionQueue().isEmpty()) {
+
+												int size = lab.getProductionQueue().size();
+
+												for(int i = 0; i < size; i++) {
+
+
+													cost =  lab.getCostProduction();
+
+													lab.removeProductionQueue();
+
+													lab.setElapsedNanos(0);
+
+
+
+													castlePlayer.setGold(castlePlayer.getGold()+cost);
+
+												}
+													}
+
+											break;
+
+					
 										}
-										
-										castlePlayer.setGold(ownedCastleWindow.getNbGoldTmp());
-										
-								
-										}
-									ownedCastleWindow = null;
-										
-										
-										
+
+
+
 									}
+									ownedCastleWindow = null;
+
+
+
+								}
 									
 									
 									
@@ -460,7 +485,7 @@ public class Main extends Application {
 		for(int i = 0; i < allCastles.size(); i++) {
 			
 			
-			Text text = new Text("\n\n\n\n\nCastles nï¿½"+ (i+1) +"\t \n"+"No production");
+			Text text = new Text("\n\n\n\n\nCastles numéro :"+ (i+1) +"\t \n"+"No production");
 			text.setFont(Font.font("Verdana", FontWeight.LIGHT,13));
 			hudTexts[i] = text;
 		
@@ -484,34 +509,30 @@ public class Main extends Application {
 			
 			NumberFormat nf = NumberFormat.getInstance();
 			nf.setMaximumFractionDigits(1);
-			
+
 			double ElapsedSeconds = allCastles.get(i).getLab().getElapsedSeconds();
 
 			if (allCastles.get(i).getLab().isRunning()) {
 
-				int soldier =  allCastles.get(i).getLab().getSoldierProduction();
+				Castle castle = allCastles.get(i);
+				Laboratory lab = castle.getLab();
 
 
-				switch(soldier) {
-
-				case PIKER:
+				if(lab.isPikerQueueFirst()) {
 
 					string = "Piker : " + nf.format(TIME_PIKER_SECOND-ElapsedSeconds)   +"s";
 
-					break;
+				}
 
-				case KNIGHT:
+				if(lab.isKnightQueueFirst()) {
 
 					string = "Knight : " + nf.format(TIME_KNIGHT_SECOND-ElapsedSeconds) +"s";
 
-					break;
+				}
 
-				case CATAPULT:
+				if(lab.isCatapultQueueFirst()) {
 
 					string = "Catapult : " + nf.format(TIME_CATAPULT_SECOND-ElapsedSeconds)+"s";
-
-					break;
-
 
 				}
 
@@ -522,7 +543,7 @@ public class Main extends Application {
 				string = "No production";
 			}
 			
-			hudTexts[i].setText("\n\n\n\n\nCastles nï¿½"+ (i+1) +"\t \n"+string);
+			hudTexts[i].setText("\n\n\n\n\nCastles n° : "+ (i+1) +"\t \n"+string);
 
 		}
 	}

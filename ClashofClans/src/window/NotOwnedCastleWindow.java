@@ -189,7 +189,7 @@ public class NotOwnedCastleWindow extends Window {
 	    addButtonSign(enumHBoxNotOwnedCastleWindow.hboxKnights.getIndexHBox(),enumButtonNotOwnedCastleWindow.lessKnights.getIndexButton(), enumCastles.nbKnights, c);
 	    addButtonSign(enumHBoxNotOwnedCastleWindow.hboxCatapults.getIndexHBox(),enumButtonNotOwnedCastleWindow.lessCatapults.getIndexButton(), enumCastles.nbCatapults, c);
 	    
-	    addButtonConfirm(enumHBoxNotOwnedCastleWindow.hboxConfirm.getIndexHBox(),enumButtonNotOwnedCastleWindow.buttonConfirm.getIndexButton(), 150, 50 , c);
+	    addButtonConfirm(enumHBoxNotOwnedCastleWindow.hboxConfirm.getIndexHBox(),enumButtonNotOwnedCastleWindow.buttonConfirm.getIndexButton(), 150, 50);
 		
 	}
 	

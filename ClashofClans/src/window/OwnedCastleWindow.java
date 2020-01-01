@@ -8,6 +8,12 @@ import settings.Settings;
 import shape.Point2D;
 import sprite.castle.Castle;
 import sprite.castle.Castle.enumCastles;
+import window.NotOwnedCastleWindow.enumButtonNotOwnedCastleWindow;
+import window.NotOwnedCastleWindow.enumHBoxNotOwnedCastleWindow;
+
+import static settings.Settings.*;
+
+import java.util.Hashtable;
 
 
 
@@ -20,13 +26,17 @@ public class OwnedCastleWindow extends Window implements managementButton{
 	public enum enumButtonOwnedCastleWindow{
 
 		buttonTrain("Train", 0),
-		lessPikers("-", 1),
-		morePikers("+", 2),
-		lessKnights("-", 3),
-		moreKnights("+", 4),
-		lessCatapults("-", 5),
-		moreCatapults("+", 6),
-		buttonConfirm("Confirm", 7);
+		buttonCancelOneQueue("CancelOneQueue", 1),
+		buttonCancelAllQueue("CancelAllQueue", 2),
+		buttonUpgrade("Upgrade", 3),
+		buttonTransfer("Transfer", 4),
+		lessPikers("-", 5),
+		morePikers("+", 6),
+		lessKnights("-", 7),
+		moreKnights("+", 8),
+		lessCatapults("-", 9),
+		moreCatapults("+", 10),
+		buttonConfirm("Confirm", 11);
 
 		private String nameButton;
 		private int indexButton;
@@ -48,11 +58,12 @@ public class OwnedCastleWindow extends Window implements managementButton{
 
 	public enum enumHBoxOwnedCastleWindow{
 
-		hboxTrain(0),
-		hboxPikers(1),
-		hboxKnights(2),
-		hboxCatapults(3),
-		hboxConfirm(4);
+		hboxManagementQueue(0),
+		hboxOtherFeatures(1),
+		hboxPikers(2),
+		hboxKnights(3),
+		hboxCatapults(4),
+		hboxConfirm(5);
 
 		
 		private int indexHBox;
@@ -80,8 +91,7 @@ public class OwnedCastleWindow extends Window implements managementButton{
 			
 			buttonPressedList.add(button.getIndexButton(), new Button(button.getNameButton()));
 			
-			buttonPressedList.get(button.getIndexButton()).setMinSize(50, 50);
-			
+
 		}
 		
 		for(enumHBoxOwnedCastleWindow hbox : enumHBoxOwnedCastleWindow.values()) {
@@ -90,16 +100,54 @@ public class OwnedCastleWindow extends Window implements managementButton{
 		}
 		
 		
-		buttonPressedList.get(enumButtonOwnedCastleWindow.buttonTrain.getIndexButton()).setMinSize(200, 50);
+		double width = getWidth();
+		double height = getHeight();
+		
+		int indexHBoxManagementQueue = enumHBoxOwnedCastleWindow.hboxManagementQueue.getIndexHBox();
+		int indexHBoxOtherFeatures = enumHBoxOwnedCastleWindow.hboxOtherFeatures.getIndexHBox();
+		
+		
+		addHBoxLayer(hboxList.get(indexHBoxManagementQueue), getX()+width/16, (getY()+height)-height/8, width - (width/8), height/16, width/16);
+		addHBoxLayer(hboxList.get(indexHBoxOtherFeatures), getX()+width/4, (getY()+height)-height/4, width - (width/8), height/16, width/16);
 
-	
-		addHBoxLayer(hboxList.get(enumHBoxOwnedCastleWindow.hboxTrain.getIndexHBox()), getX()+50, getY()+getHeight()/2, 250, 50, 50);
+		
+		for(int indexButton = enumButtonOwnedCastleWindow.buttonTrain.getIndexButton(); indexButton <= enumButtonOwnedCastleWindow.buttonCancelAllQueue.getIndexButton(); indexButton++) {
+			
+			addButtonHBox(indexHBoxManagementQueue, indexButton, width/4, height/16);
+
+		}
+		
+		for(int indexButton = enumButtonOwnedCastleWindow.buttonUpgrade.getIndexButton(); indexButton <= enumButtonOwnedCastleWindow.buttonTransfer.getIndexButton(); indexButton++) {
+			
+			addButtonHBox(indexHBoxOtherFeatures, indexButton, width/4, height/16);
+
+		}
 		
 		
 		
-		hboxList.get(enumHBoxOwnedCastleWindow.hboxTrain.getIndexHBox()).getChildren().add(buttonPressedList.get(enumButtonOwnedCastleWindow.buttonTrain.getIndexButton()));
+		buttonPressedList.get(enumButtonOwnedCastleWindow.buttonTrain.getIndexButton()).setOnAction(event -> {
+			
+			setExitCode(EXIT_TRAIN);	
+			buttonTrainPressed(source);
+																													
 		
-		buttonPressedList.get(enumButtonOwnedCastleWindow.buttonTrain.getIndexButton()).setOnAction(event -> buttonTrainPressed(source) );
+		} );
+		
+		
+		buttonPressedList.get(enumButtonOwnedCastleWindow.buttonCancelOneQueue.getIndexButton()).setOnAction(event -> { 
+			setExitCode(EXIT_CANCEL_ONE_QUEUE);																											
+			buttonConfirmPressed();
+			} );
+		buttonPressedList.get(enumButtonOwnedCastleWindow.buttonCancelAllQueue.getIndexButton()).setOnAction(event -> { 
+			setExitCode(EXIT_CANCEL_ALL_QUEUE);																											
+			buttonConfirmPressed();
+			} );
+		
+		
+		Hashtable ht = new Hashtable();
+		
+		//ht.put(key, value)
+		
 		
 		this.variableDataTexts[enumCastles.nbPikers.getIndexElement()] = new Text(enumCastles.nbPikers.getText() +  getNbSoldiersTmp().get(enumCastles.nbPikers.getIndexElement()));
 		this.variableDataTexts[enumCastles.nbKnights.getIndexElement()] = new Text(enumCastles.nbKnights.getText() +  getNbSoldiersTmp().get(enumCastles.nbKnights.getIndexElement()));
@@ -117,7 +165,8 @@ public class OwnedCastleWindow extends Window implements managementButton{
 		
 		removeStatusBar();
 		
-		getLayer().getChildren().remove(hboxList.get(enumHBoxOwnedCastleWindow.hboxTrain.getIndexHBox()));
+		getLayer().getChildren().remove(hboxList.get(enumHBoxOwnedCastleWindow.hboxManagementQueue.getIndexHBox()));
+		getLayer().getChildren().remove(hboxList.get(enumHBoxOwnedCastleWindow.hboxOtherFeatures.getIndexHBox()));
 		
 		
 		double y = getY()+getHeight()/6;
@@ -137,7 +186,7 @@ public class OwnedCastleWindow extends Window implements managementButton{
 	    addButtonSign(enumHBoxOwnedCastleWindow.hboxCatapults.getIndexHBox(),enumButtonOwnedCastleWindow.lessCatapults.getIndexButton(), enumCastles.nbCatapults, c);
 		
 		
-	    addButtonConfirm(enumHBoxOwnedCastleWindow.hboxConfirm.getIndexHBox(),enumButtonOwnedCastleWindow.buttonConfirm.getIndexButton(), 150, 50 , c);
+	    addButtonConfirm(enumHBoxOwnedCastleWindow.hboxConfirm.getIndexHBox(),enumButtonOwnedCastleWindow.buttonConfirm.getIndexButton(), 150, 50);
 		
 		
 		hboxList.get(enumHBoxOwnedCastleWindow.hboxConfirm.getIndexHBox()).getChildren().add(variableDataTexts[enumCastles.gold.getIndexElement()]);
@@ -211,7 +260,7 @@ public class OwnedCastleWindow extends Window implements managementButton{
 	@Override
 	public void removeHBoxList() {
 
-		for(int indexHBox = enumHBoxOwnedCastleWindow.hboxTrain.getIndexHBox(); indexHBox <= enumHBoxOwnedCastleWindow.hboxConfirm.getIndexHBox(); indexHBox++) {
+		for(int indexHBox = enumHBoxOwnedCastleWindow.hboxManagementQueue.getIndexHBox(); indexHBox <= enumHBoxOwnedCastleWindow.hboxConfirm.getIndexHBox(); indexHBox++) {
 
 			getLayer().getChildren().remove(hboxList.get(indexHBox));}
 

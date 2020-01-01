@@ -1,22 +1,22 @@
 package management;
 
-import static settings.Settings.CATAPULT;
-import static settings.Settings.KNIGHT;
-import static settings.Settings.PIKER;
+import static settings.Settings.*;
+
 
 import java.util.concurrent.LinkedBlockingQueue;
 
-import settings.Settings;
 import sprite.castle.Castle;
 
 
 public class Laboratory {
 	
-	private LinkedBlockingQueue<Integer> soldiersTrainingQueue = new LinkedBlockingQueue<Integer>();
+	private LinkedBlockingQueue<Integer> productionQueue = new LinkedBlockingQueue<Integer>();
 	
-	private boolean isUpgrade;
 
-	int nbRoundsProductionTab[] = { Settings.NB_ROUNDS_PRODUCTION_PIKER, Settings.NB_ROUNDS_PRODUCTION_KNIGHT, Settings.NB_ROUNDS_PRODUCTION_CATAPULT };
+
+	private double timeProductionTab[] = { TIME_PIKER_SECOND, TIME_KNIGHT_SECOND, TIME_CATAPULT_SECOND, TIME_UPGRADE_LEVEL_SECOND};
+	
+	private int costProductionTab[] = { COST_PIKER, COST_KNIGHT, COST_CATAPULT, COST_UPGRADE_LEVEL };
 	
 	private long lastUpdate;
 	
@@ -28,20 +28,43 @@ public class Laboratory {
 	
 	public Laboratory() {
 		
-	
-		this.isUpgrade = false;
-		
 
 		this.resetTimer = true;
 		
 	}
 	
+	
+
+	public boolean isPikerQueueFirst() {
+
+		return productionQueue.peek() == PIKER;
+
+	}
+	public boolean isKnightQueueFirst() {
+
+		return productionQueue.peek() == KNIGHT;
+
+	}
+
+	public boolean isCatapultQueueFirst() {
+
+		return productionQueue.peek() == CATAPULT;
+
+	}
+
+	public boolean isUpgradeLevelQueueFirst() {
+
+		return productionQueue.peek() == UPGRADE_LEVEL;
+
+	}
+
+	
 	public boolean finishedProduction(double elapsedSeconds){
 
 
-		int soldier = soldiersTrainingQueue.peek();
+		int element = productionQueue.peek();
 
-		if(elapsedSeconds >= nbRoundsProductionTab[soldier] * Settings.TIME_ROUND_SECOND) {
+		if(elapsedSeconds >= timeProductionTab[element]) {
 
 			return true;			
 		}		
@@ -51,36 +74,47 @@ public class Laboratory {
 	}
 
 	
-	public int getSoldierProduction() {
+	public int getProduction() {
 		
-		return soldiersTrainingQueue.peek();
+		return productionQueue.peek();
 		
 	}
 	
-	public void removeSoldierProduction() {
+	public int getCostProduction() {
 		
-		soldiersTrainingQueue.poll();
+		int element = productionQueue.peek();
+		int cost = costProductionTab[element];
+		
+		return cost;
+		
+	}
+	
+	
+	
+	public void removeProductionQueue() {
+		
+		productionQueue.poll();
 		
 	}
 	
 	
 
-	public LinkedBlockingQueue<Integer> getSoldiersTrainingQueue() {
-		return soldiersTrainingQueue;
+
+	public LinkedBlockingQueue<Integer> getProductionQueue() {
+		return productionQueue;
 	}
 
-	public void addSoldiersTrainingQueue(int soldier) {
+
+	public void addProductionQueue(int soldier) {
 		
-		this.soldiersTrainingQueue.offer(soldier);
+		this.productionQueue.offer(soldier);
 		
 	}
 
-	public boolean isUpgrade() {
-		return isUpgrade;
-	}
+
 
 	public boolean isRunning() {
-		return !(soldiersTrainingQueue.peek() == null);
+		return !(productionQueue.peek() == null);
 	}
 
 	
@@ -97,10 +131,11 @@ public class Laboratory {
 						
 		if(finishedProduction(elapsedSeconds)) {
 
-			int soldier = getSoldierProduction();	
-			removeSoldierProduction();
+			int element = getProduction();	
+			
+			removeProductionQueue();
 
-			switch(soldier) {
+			switch(element) {
 
 			case PIKER:
 				
@@ -140,6 +175,12 @@ public class Laboratory {
 		return (elapsedNanos * Math.pow(10, -9));
 	}
 
+
+	public void setElapsedNanos(long elapsedNanos) {
+		this.elapsedNanos = elapsedNanos;
+	}
+
+	
 	
 	
 
@@ -149,5 +190,8 @@ public class Laboratory {
 
 
 }
+		
+		
+
 		
 		

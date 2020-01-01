@@ -47,6 +47,9 @@ public abstract class Window extends Sprite{
 	private List<Castle> playerCastles = new ArrayList<Castle>();
 	
 	protected Text variableDataTexts[] = new Text[4];
+	
+	
+	private short exitCode;
 
 
 	
@@ -227,14 +230,14 @@ public abstract class Window extends Sprite{
 	}
 	
 	
-	protected void addButtonConfirm(int indexHBbox, int indexButton, int width, int height, Castle c) {
+	protected void addButtonConfirm(int indexHBbox, int indexButton, int width, int height) {
 		
 		
 		addButtonHBox(indexHBbox, indexButton, width, height);
 
 		buttonPressedList.get(indexButton).setStyle("-fx-background-color: #3CEF18");
 		
-		buttonPressedList.get(indexButton).setOnAction(event -> buttonConfirmPressed(c) );
+		buttonPressedList.get(indexButton).setOnAction(event -> buttonConfirmPressed() );
 		
 		
 	}
@@ -243,7 +246,7 @@ public abstract class Window extends Sprite{
 	protected abstract boolean canConfirm();
 	
 	
-	protected void buttonConfirmPressed(Castle c) {
+	protected void buttonConfirmPressed() {
 
 
 		if(canConfirm()) {
@@ -272,7 +275,26 @@ public abstract class Window extends Sprite{
 			}
 		}
 
+	}
+	
+	
+	public int getNbPikersTmp() {
+		
+		return nbSoldiersTmp.get(enumCastles.nbPikers.getIndexElement());
+		
+	}
+	
+	
+	public int getNbKnightsTmp() {
+		
+		return nbSoldiersTmp.get(enumCastles.nbKnights.getIndexElement());
+		
+	}
 
+	public int getNbCatapultsTmp() {
+	
+		return nbSoldiersTmp.get(enumCastles.nbCatapults.getIndexElement());
+	
 	}
 	
 	@Override
@@ -333,6 +355,23 @@ public abstract class Window extends Sprite{
 		return variableDataTexts;
 	}
 
+	public short getExitCode() {
+		return exitCode;
+	}
+
+	
+	
+	
+	
+	public void setExitCode(short exitCode) {
+		this.exitCode = exitCode;
+	}
+
+	public void setMakeAnOrderWindow(boolean makeAnOrderWindow) {
+		this.makeAnOrderWindow = makeAnOrderWindow;
+	}
+
+	
 	
 
 
