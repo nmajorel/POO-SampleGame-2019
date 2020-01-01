@@ -433,13 +433,14 @@ public class Main extends Application {
 				double w = Settings.SIZE_CASTLE;
 				Point2D point = new Point2D(target.getP());
 				String duke = c.getDuke();
-				int gold = c.getGold();
-				int level = c.getLevel();
-				int income = c.getIncome();
+				int gold = target.getGold();
+				int level = target.getLevel();
+				int income = target.getIncome();
+				int id = target.getId();
 				
 				removeSprites(otherCastles);
 
-				player.addCastles(new Taken(playfieldLayer, point, w, w, duke, gold, level, income) );
+				player.addCastles(new Taken(playfieldLayer, point, w, w, duke, gold, level, income, id) );
 				
 			}
 		}

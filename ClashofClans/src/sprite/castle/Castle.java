@@ -40,8 +40,9 @@ public abstract class Castle extends Sprite{
 	private int nbKnights;
 	private int nbCatapults;
 	
-	public static int static_id = 0;
-	public int id = 0;
+	private HBox hbox_id = new HBox();
+	protected static int static_id = 0;
+	protected int id = 0;
 	
 	
 	public enum enumCastles{
@@ -107,14 +108,12 @@ public abstract class Castle extends Sprite{
 	
 	
 	public void drawId() {
-		
-		HBox hbox = new HBox();
 
-		getLayer().getChildren().add( hbox );	
+		getLayer().getChildren().add( hbox_id );	
 		Text text = new Text(""+id);
 		text.setFont(Font.font("Verdana", FontWeight.LIGHT, 20));
-		hbox.relocate(getX()+getWidth()/2, getY()+getHeight()/2);
-		hbox.getChildren().add(text);
+		hbox_id.relocate(getX()+getWidth()/2, getY()+getHeight()/2);
+		hbox_id.getChildren().add(text);
 		
 
 	    
@@ -338,6 +337,16 @@ public abstract class Castle extends Sprite{
 
 	public void setNbTroops(int nbTroops) {
 		this.nbTroops = nbTroops;
+	}
+
+
+	public HBox getHbox_id() {
+		return hbox_id;
+	}
+
+
+	public void setHbox_id(HBox hbox_id) {
+		this.hbox_id = hbox_id;
 	}
 
 	
