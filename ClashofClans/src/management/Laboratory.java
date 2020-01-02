@@ -2,21 +2,22 @@ package management;
 
 import static settings.Settings.*;
 
-
+import java.util.Hashtable;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import javafx.scene.text.Text;
 import sprite.castle.Castle;
+import sprite.castle.Castle.enumCastle;
 
 
 public class Laboratory {
 	
-	private LinkedBlockingQueue<Integer> productionQueue = new LinkedBlockingQueue<Integer>();
+	private LinkedBlockingQueue<enumCastle> productionQueue = new LinkedBlockingQueue<enumCastle>();
 	
-
-
-	private double timeProductionTab[] = { TIME_PIKER_SECOND, TIME_KNIGHT_SECOND, TIME_CATAPULT_SECOND, TIME_UPGRADE_LEVEL_SECOND};
+	private Hashtable <enumCastle,Double> htTimeProduction = new Hashtable<enumCastle,Double>();
 	
-	private int costProductionTab[] = { COST_PIKER, COST_KNIGHT, COST_CATAPULT, COST_UPGRADE_LEVEL };
+	private Hashtable <enumCastle,Integer> htCostProduction = new Hashtable<enumCastle,Integer>();
+	
 	
 	private long lastUpdate;
 	
@@ -28,43 +29,31 @@ public class Laboratory {
 	
 	public Laboratory() {
 		
+		
+		
+		htTimeProduction.put(enumCastle.Piker, TIME_PIKER_SECOND);
+		htTimeProduction.put(enumCastle.Knight, TIME_KNIGHT_SECOND);
+		htTimeProduction.put(enumCastle.Catapult, TIME_CATAPULT_SECOND);
+		htTimeProduction.put(enumCastle.Level, TIME_UPGRADE_LEVEL_SECOND);
+		
+		htCostProduction.put(enumCastle.Piker, COST_PIKER);
+		htCostProduction.put(enumCastle.Knight, COST_KNIGHT);
+		htCostProduction.put(enumCastle.Catapult, COST_CATAPULT);
+		htCostProduction.put(enumCastle.Level, COST_UPGRADE_LEVEL);
+		
 
 		this.resetTimer = true;
 		
 	}
 	
 	
-
-	public boolean isPikerQueueFirst() {
-
-		return productionQueue.peek() == PIKER;
-
-	}
-	public boolean isKnightQueueFirst() {
-
-		return productionQueue.peek() == KNIGHT;
-
-	}
-
-	public boolean isCatapultQueueFirst() {
-
-		return productionQueue.peek() == CATAPULT;
-
-	}
-
-	public boolean isUpgradeLevelQueueFirst() {
-
-		return productionQueue.peek() == UPGRADE_LEVEL;
-
-	}
-
 	
 	public boolean finishedProduction(double elapsedSeconds){
 
 
-		int element = productionQueue.peek();
+		enumCastle element = productionQueue.peek();
 
-		if(elapsedSeconds >= timeProductionTab[element]) {
+		if(elapsedSeconds >= htTimeProduction.get(element)) {
 
 			return true;			
 		}		
@@ -74,7 +63,7 @@ public class Laboratory {
 	}
 
 	
-	public int getProduction() {
+	public enumCastle getProduction() {
 		
 		return productionQueue.peek();
 		
@@ -82,8 +71,10 @@ public class Laboratory {
 	
 	public int getCostProduction() {
 		
-		int element = productionQueue.peek();
-		int cost = costProductionTab[element];
+		enumCastle element = productionQueue.peek();
+		
+
+		int cost = htCostProduction.get(element);
 		
 		return cost;
 		
@@ -100,14 +91,21 @@ public class Laboratory {
 	
 
 
-	public LinkedBlockingQueue<Integer> getProductionQueue() {
+	public LinkedBlockingQueue<enumCastle> getProductionQueue() {
 		return productionQueue;
 	}
 
 
-	public void addProductionQueue(int soldier) {
+	public void addProductionQueue(enumCastle element, int range) {
 		
-		this.productionQueue.offer(soldier);
+		
+		for(int i = 0; i < range; i++) {
+			
+			this.productionQueue.offer(element);
+			
+		}
+		
+
 		
 	}
 
@@ -131,33 +129,38 @@ public class Laboratory {
 						
 		if(finishedProduction(elapsedSeconds)) {
 
-			int element = getProduction();	
+			enumCastle element = getProduction();	
 			
 			removeProductionQueue();
-
-			switch(element) {
-
-			case PIKER:
-				
+			
+			if(element == enumCastle.Piker) {
 				castlePlayer.setNbPikers(castlePlayer.getNbPikers()+1);
 				System.out.println("PIKER : TIME = " + elapsedSeconds);
-		
-				break;
-
-			case KNIGHT:
+				
+			}
+			
+			if(element == enumCastle.Knight) {
+				
 				castlePlayer.setNbKnights(castlePlayer.getNbKnights()+1);
 				System.out.println("KNIGHT : TIME = " + elapsedSeconds);
-
-				break;
-
-			case CATAPULT:
+				
+			}
+			
+			if(element == enumCastle.Catapult) {
+				
 				castlePlayer.setNbCatapults(castlePlayer.getNbCatapults()+1);
 				System.out.println("CATAPULT : TIME = " + elapsedSeconds);
-
-				break;
-
-
+				
 			}
+			
+			if(element == enumCastle.Level) {
+				
+				castlePlayer.setLevel(castlePlayer.getLevel()+1);
+				System.out.println("UPGRADE : TIME = " + elapsedSeconds);
+				
+				
+			}
+
 			elapsedNanos = 0;
 			resetTimer = true;
 

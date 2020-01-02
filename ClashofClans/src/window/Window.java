@@ -1,6 +1,7 @@
 package window;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 import javafx.scene.control.Button;
@@ -14,7 +15,7 @@ import javafx.scene.text.Text;
 import shape.Point2D;
 import sprite.Sprite;
 import sprite.castle.Castle;
-import sprite.castle.Castle.enumCastles;
+import sprite.castle.Castle.enumCastle;
 
 
 
@@ -40,18 +41,24 @@ public abstract class Window extends Sprite{
 	
 	protected List<Button> buttonPressedList = new ArrayList<Button>();
 
-	private List<Integer> nbSoldiersTmp = new ArrayList<Integer>();
-	
-	private List <Integer>nbSoldiersList = new ArrayList<Integer>();
-	
+
 	private List<Castle> playerCastles = new ArrayList<Castle>();
 	
-	protected Text variableDataTexts[] = new Text[4];
 	
 	
 	private short exitCode;
+	
+	
+	
 
-
+	protected Hashtable <enumCastle,Text> htVariableData = new Hashtable<enumCastle,Text>();
+	
+	protected Hashtable <enumCastle,Integer> htNbSoldiersTmp = new Hashtable<enumCastle,Integer>();
+	
+	protected Hashtable <enumCastle,Integer> htNbSoldiers = new Hashtable<enumCastle,Integer>();
+	
+	
+	
 	
 	
 	
@@ -71,10 +78,11 @@ public abstract class Window extends Sprite{
 		hboxSuppr.getChildren().add(suppr);
 		suppr.setOnAction(event -> removeWindow() );
 		
-		nbSoldiersTmp.add(enumCastles.nbPikers.getIndexElement(), 0);
-		nbSoldiersTmp.add(enumCastles.nbKnights.getIndexElement(), 0);
-		nbSoldiersTmp.add(enumCastles.nbCatapults.getIndexElement(), 0);
-
+		
+		htNbSoldiersTmp.put(enumCastle.Piker, 0);
+		htNbSoldiersTmp.put(enumCastle.Knight, 0);
+		htNbSoldiersTmp.put(enumCastle.Catapult, 0);
+		
 		this.makeAnOrderWindow = false;
 
 			
@@ -84,7 +92,7 @@ public abstract class Window extends Sprite{
 
 		this(layer, point, w , h);
 		
-		addNbSoldiersList(source);
+		addHtNbSoldiers(source);
 
 		this.castleClicked = source;		
 		
@@ -111,11 +119,14 @@ public abstract class Window extends Sprite{
 
 	}
 	
-	protected void addNbSoldiersList(Castle castle){
+	protected void addHtNbSoldiers(Castle castle){
 		
-		nbSoldiersList.add(enumCastles.nbPikers.getIndexElement(), castle.getNbPikers());
-		nbSoldiersList.add(enumCastles.nbKnights.getIndexElement(), castle.getNbKnights());
-		nbSoldiersList.add(enumCastles.nbCatapults.getIndexElement(), castle.getNbCatapults());
+		
+		htNbSoldiers.put(enumCastle.Piker, castle.getNbPikers());
+		htNbSoldiers.put(enumCastle.Knight, castle.getNbKnights());
+		htNbSoldiers.put(enumCastle.Catapult, castle.getNbCatapults());
+		
+
 		
 		
 	}
@@ -180,7 +191,7 @@ public abstract class Window extends Sprite{
 	}
 
 	
-	protected void addButtonSign(int indexHBox, int indexButton, enumCastles indexElement, Castle c) {
+	protected void addButtonSign(int indexHBox, int indexButton, enumCastle indexElement, Castle c) {
 		
 		addButtonHBox(indexHBox, indexButton, getWidth()/16, getHeight()/16);
 		addButtonHBox(indexHBox, indexButton+1, getWidth()/16, getHeight()/16);
@@ -188,11 +199,11 @@ public abstract class Window extends Sprite{
 		eventButtonSign(indexHBox, indexButton, indexElement, false, c );
 		eventButtonSign(indexHBox, indexButton + 1, indexElement, true, c );
 	
-		hboxList.get(indexHBox).getChildren().add(variableDataTexts[indexElement.getIndexElement()]);	
+		hboxList.get(indexHBox).getChildren().add(htVariableData.get(indexElement));	
 
 	}
 	
-	protected abstract void eventButtonSign(int indexHbox, int indexButton, enumCastles indexElement, boolean sign, Castle c);
+	protected abstract void eventButtonSign(int indexHbox, int indexButton, enumCastle indexElement, boolean sign, Castle c);
 	
 	
 	
@@ -259,50 +270,50 @@ public abstract class Window extends Sprite{
 
 
 	
-	protected void modifyNbSoldiersTmp(Boolean plus, enumCastles indexSoldiers, Castle c) {
+	protected void modifyNbSoldiersTmp(Boolean plus, enumCastle indexSoldier, Castle c) {
 
 
-		int val = nbSoldiersTmp.get(indexSoldiers.getIndexElement());
+		int val = htNbSoldiersTmp.get(indexSoldier);
 
 		if(plus) {
 
-			nbSoldiersTmp.set(indexSoldiers.getIndexElement(), val+1);
+			htNbSoldiersTmp.put(indexSoldier, htNbSoldiersTmp.get(indexSoldier)+1);
 
 		}
 		else {
 			if(val > 0) {
-				nbSoldiersTmp.set(indexSoldiers.getIndexElement(), val-1);
+				htNbSoldiersTmp.put(indexSoldier, htNbSoldiersTmp.get(indexSoldier)-1);
 			}
 		}
 
 	}
 	
 	
-	public int getNbPikersTmp() {
-		
-		return nbSoldiersTmp.get(enumCastles.nbPikers.getIndexElement());
-		
-	}
-	
-	
-	public int getNbKnightsTmp() {
-		
-		return nbSoldiersTmp.get(enumCastles.nbKnights.getIndexElement());
-		
-	}
-
-	public int getNbCatapultsTmp() {
-	
-		return nbSoldiersTmp.get(enumCastles.nbCatapults.getIndexElement());
-	
-	}
-	
 	@Override
 	public void checkRemovability() {
 		// TODO Auto-generated method stub
 		
 	}
-
+	
+	
+	public int getNbPikersTmp() {
+		
+		return htNbSoldiersTmp.get(enumCastle.Piker);
+		
+	}
+	
+	public int getNbKnightsTmp() {
+		
+		return htNbSoldiersTmp.get(enumCastle.Knight);
+		
+	}
+	
+	public int getNbCatapultsTmp() {
+		
+		return htNbSoldiersTmp.get(enumCastle.Catapult);
+		
+	}
+	
 	public boolean isKeepPlaying() {
 		return keepPlaying;
 	}
@@ -339,30 +350,15 @@ public abstract class Window extends Sprite{
 		return buttonPressedList;
 	}
 
-	public List<Integer> getNbSoldiersTmp() {
-		return nbSoldiersTmp;
-	}
-
-	public List<Integer> getNbSoldiersList() {
-		return nbSoldiersList;
-	}
-
 	public List<Castle> getPlayerCastles() {
 		return playerCastles;
 	}
 
-	public Text[] getVariableDataTexts() {
-		return variableDataTexts;
-	}
 
 	public short getExitCode() {
 		return exitCode;
 	}
 
-	
-	
-	
-	
 	public void setExitCode(short exitCode) {
 		this.exitCode = exitCode;
 	}
@@ -372,6 +368,16 @@ public abstract class Window extends Sprite{
 	}
 
 	
+	
+	public Hashtable<enumCastle, Integer> getHtNbSoldiersTmp() {
+		return htNbSoldiersTmp;
+	}
+
+	public Hashtable<enumCastle, Integer> getHtNbSoldiers() {
+		return htNbSoldiers;
+	}
+
+
 	
 
 

@@ -45,15 +45,15 @@ public abstract class Castle extends Sprite{
 	protected int id = 0;
 	
 	
-	public enum enumCastles{
+	public enum enumCastle{
 		
-		nbPikers(0, "Pikers : "),
-		nbKnights(1, "Knights : "),
-		nbCatapults(2, "Catapults : "),
-		gold(3, "Gold : "),
-		level(4, "Level : "),
-		income(5, "Income : "),
-		duke(6 , "Duke : ");
+		Piker(0, "Pikers : "),
+		Knight(1, "Knights : "),
+		Catapult(2, "Catapults : "),
+		Gold(3, "Gold : "),
+		Level(4, "Level : "),
+		Income(5, "Income : "),
+		Duke(6 , "Duke : ");
 
 		
 		private int indexElement;
@@ -63,7 +63,7 @@ public abstract class Castle extends Sprite{
 			this.indexElement = indexElement;
 		}
 
-		private enumCastles(int indexSoldier, String element) {
+		private enumCastle(int indexSoldier, String element) {
 			this.indexElement = indexSoldier;
 			this.text = element;
 		}

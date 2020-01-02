@@ -61,7 +61,7 @@ public class Settings {
 	public static final short EXIT_TRAIN = 1;
 	public static final short EXIT_CANCEL_ONE_QUEUE = 2;
 	public static final short EXIT_CANCEL_ALL_QUEUE = 3;
-	public static final short EXIT_UPGRADE_LEVEL = 3;
+	public static final short EXIT_UPGRADE_LEVEL = 4;
 	
 	
 	

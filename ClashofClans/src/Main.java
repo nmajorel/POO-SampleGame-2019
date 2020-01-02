@@ -1,6 +1,7 @@
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -25,6 +26,7 @@ import static sprite.castle.Castle.canIncome;
 import sprite.castle.Castle;
 import sprite.castle.Neutral;
 import sprite.castle.Taken;
+import sprite.castle.Castle.enumCastle;
 import player.*;
 import settings.Settings;
 import window.NotOwnedCastleWindow;
@@ -275,16 +277,16 @@ public class Main extends Application {
 									if(notOwnedCastleWindow.isMakeAnOrderWindow()) {
 
 
-										List<Integer> nbSoldiersTmp = notOwnedCastleWindow.getNbSoldiersTmp();
+										int nbPikers = notOwnedCastleWindow.getNbPikersTmp();
+										int nbKnights = notOwnedCastleWindow.getNbKnightsTmp();
+										int nbCatapults = notOwnedCastleWindow.getNbCatapultsTmp();
 
 										Castle castlePlayer = player.getCastles().get(notOwnedCastleWindow.getIndexCastlePlayer());
 
-										castlePlayer.setNbPikers(castlePlayer.getNbPikers()-nbSoldiersTmp.get(0));
-										castlePlayer.setNbKnights(castlePlayer.getNbKnights()-nbSoldiersTmp.get(1));
-										castlePlayer.setNbCatapults(castlePlayer.getNbCatapults()-nbSoldiersTmp.get(2));
-										castlePlayer.addOrder(new Order(castlePlayer,notOwnedCastleWindow.getCastleClicked(), nbSoldiersTmp.get(0),nbSoldiersTmp.get(1),nbSoldiersTmp.get(2)));
-
-
+										castlePlayer.setNbPikers(castlePlayer.getNbPikers() - nbPikers);
+										castlePlayer.setNbKnights(castlePlayer.getNbKnights() - nbKnights);
+										castlePlayer.setNbCatapults(castlePlayer.getNbCatapults() - nbCatapults);
+										castlePlayer.addOrder(new Order(castlePlayer,notOwnedCastleWindow.getCastleClicked(), nbPikers, nbKnights, nbCatapults));
 
 
 									}
@@ -312,19 +314,17 @@ public class Main extends Application {
 
 
 										case EXIT_TRAIN :
-
-
-											List<Integer> nbSoldiersTmp = ownedCastleWindow.getNbSoldiersTmp();
-
-											for(int i = PIKER; i <= CATAPULT; i++) {
-
-												for(int j =  0; j < nbSoldiersTmp.get(i); j++ ){
-
-													lab.addProductionQueue(i);
-												}
-
-
-											}
+											
+											
+											int nbPikers = ownedCastleWindow.getNbPikersTmp();
+											int nbKnights = ownedCastleWindow.getNbKnightsTmp();
+											int nbCatapults = ownedCastleWindow.getNbCatapultsTmp();
+	
+											
+											lab.addProductionQueue(enumCastle.Piker, nbPikers);
+											lab.addProductionQueue(enumCastle.Knight, nbKnights);
+											lab.addProductionQueue(enumCastle.Catapult, nbCatapults);
+							
 
 											castlePlayer.setGold(ownedCastleWindow.getNbGoldTmp());
 											break;
@@ -348,7 +348,7 @@ public class Main extends Application {
 											
 											
 										case EXIT_CANCEL_ALL_QUEUE :
-											
+
 											if(!lab.getProductionQueue().isEmpty()) {
 
 												int size = lab.getProductionQueue().size();
@@ -367,8 +367,17 @@ public class Main extends Application {
 													castlePlayer.setGold(castlePlayer.getGold()+cost);
 
 												}
-													}
+											}
 
+											break;
+
+											
+										case EXIT_UPGRADE_LEVEL :
+											
+											lab.addProductionQueue(enumCastle.Level, 1);
+											
+											castlePlayer.setGold(ownedCastleWindow.getNbGoldTmp());
+											
 											break;
 
 					
@@ -463,9 +472,14 @@ public class Main extends Application {
 				int income = target.getIncome();
 				int id = target.getId();
 				
+			
+				
 				removeSprites(otherCastles);
+				
+				Castle castle = new Taken(playfieldLayer, point, w, w, duke, gold, level, income, id);
 
-				player.addCastles(new Taken(playfieldLayer, point, w, w, duke, gold, level, income, id) );
+				player.addCastles(castle );
+				allCastles.set(target.getId()-1, castle);
 				
 			}
 		}
@@ -485,7 +499,7 @@ public class Main extends Application {
 		for(int i = 0; i < allCastles.size(); i++) {
 			
 			
-			Text text = new Text("\n\n\n\n\nCastles numéro :"+ (i+1) +"\t \n"+"No production");
+			Text text = new Text("\n\n\n\n\nCastle n° :"+ (i+1) +"\t \n"+"No production");
 			text.setFont(Font.font("Verdana", FontWeight.LIGHT,13));
 			hudTexts[i] = text;
 		
@@ -511,28 +525,36 @@ public class Main extends Application {
 			nf.setMaximumFractionDigits(1);
 
 			double ElapsedSeconds = allCastles.get(i).getLab().getElapsedSeconds();
+			
+			Castle castle = allCastles.get(i);
+			Laboratory lab = castle.getLab();
+			
+			enumCastle element = lab.getProduction();
 
-			if (allCastles.get(i).getLab().isRunning()) {
-
-				Castle castle = allCastles.get(i);
-				Laboratory lab = castle.getLab();
+			if (lab.isRunning()) {
 
 
-				if(lab.isPikerQueueFirst()) {
+				if(element == enumCastle.Piker) {
 
 					string = "Piker : " + nf.format(TIME_PIKER_SECOND-ElapsedSeconds)   +"s";
 
 				}
 
-				if(lab.isKnightQueueFirst()) {
+				if(element == enumCastle.Knight) {
 
 					string = "Knight : " + nf.format(TIME_KNIGHT_SECOND-ElapsedSeconds) +"s";
 
 				}
 
-				if(lab.isCatapultQueueFirst()) {
+				if(element == enumCastle.Catapult) {
 
 					string = "Catapult : " + nf.format(TIME_CATAPULT_SECOND-ElapsedSeconds)+"s";
+
+				}
+				
+				if(element == enumCastle.Level) {
+
+					string = "Upgrade : " + nf.format(TIME_UPGRADE_LEVEL_SECOND-ElapsedSeconds)+"s";
 
 				}
 
@@ -543,7 +565,7 @@ public class Main extends Application {
 				string = "No production";
 			}
 			
-			hudTexts[i].setText("\n\n\n\n\nCastles n° : "+ (i+1) +"\t \n"+string);
+			hudTexts[i].setText("\n\n\n\n\nCastle n° : "+ (i+1) +"\t \n"+string);
 
 		}
 	}

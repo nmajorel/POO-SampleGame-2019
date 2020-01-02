@@ -3,6 +3,7 @@ package window;
 
 
 
+import java.util.Enumeration;
 import java.util.List;
 
 import javafx.scene.control.Button;
@@ -12,7 +13,7 @@ import javafx.scene.text.Text;
 import static settings.Settings.*;
 import shape.Point2D;
 import sprite.castle.Castle;
-import sprite.castle.Castle.enumCastles;
+import sprite.castle.Castle.enumCastle;
 
 
 
@@ -168,9 +169,9 @@ public class NotOwnedCastleWindow extends Window {
 		
 		removeStatusBar();
 		
-		createVariableDataTexts(c);
+		createVariableData(c);
 		
-		addNbSoldiersList(c);
+		addHtNbSoldiers(c);
 		
 		getLayer().getChildren().remove(hboxList.get(enumHBoxNotOwnedCastleWindow.hboxChoose.getIndexHBox()));
 		
@@ -185,32 +186,37 @@ public class NotOwnedCastleWindow extends Window {
 				
 			}
 		
-	    addButtonSign(enumHBoxNotOwnedCastleWindow.hboxPikers.getIndexHBox(),enumButtonNotOwnedCastleWindow.lessPikers.getIndexButton(), enumCastles.nbPikers,  c);
-	    addButtonSign(enumHBoxNotOwnedCastleWindow.hboxKnights.getIndexHBox(),enumButtonNotOwnedCastleWindow.lessKnights.getIndexButton(), enumCastles.nbKnights, c);
-	    addButtonSign(enumHBoxNotOwnedCastleWindow.hboxCatapults.getIndexHBox(),enumButtonNotOwnedCastleWindow.lessCatapults.getIndexButton(), enumCastles.nbCatapults, c);
+	    addButtonSign(enumHBoxNotOwnedCastleWindow.hboxPikers.getIndexHBox(),enumButtonNotOwnedCastleWindow.lessPikers.getIndexButton(), enumCastle.Piker,  c);
+	    addButtonSign(enumHBoxNotOwnedCastleWindow.hboxKnights.getIndexHBox(),enumButtonNotOwnedCastleWindow.lessKnights.getIndexButton(), enumCastle.Knight, c);
+	    addButtonSign(enumHBoxNotOwnedCastleWindow.hboxCatapults.getIndexHBox(),enumButtonNotOwnedCastleWindow.lessCatapults.getIndexButton(), enumCastle.Catapult, c);
 	    
 	    addButtonConfirm(enumHBoxNotOwnedCastleWindow.hboxConfirm.getIndexHBox(),enumButtonNotOwnedCastleWindow.buttonConfirm.getIndexButton(), 150, 50);
 		
 	}
 	
 	
-	public void createVariableDataTexts(Castle c) {
+	public void createVariableData(Castle c) {
 		
-		this.variableDataTexts[enumCastles.nbPikers.getIndexElement()] = new Text(enumCastles.nbPikers.getText() +  getNbSoldiersTmp().get(enumCastles.nbPikers.getIndexElement()) + "/" + c.getNbPikers());
-		this.variableDataTexts[enumCastles.nbKnights.getIndexElement()] = new Text(enumCastles.nbKnights.getText() +  getNbSoldiersTmp().get(enumCastles.nbKnights.getIndexElement()) + "/" + c.getNbKnights());
-		this.variableDataTexts[enumCastles.nbCatapults.getIndexElement()] = new Text(enumCastles.nbCatapults.getText() +  getNbSoldiersTmp().get(enumCastles.nbCatapults.getIndexElement()) + "/" + c.getNbCatapults());
+		
+	    htVariableData.put(enumCastle.Piker, new Text(enumCastle.Piker.getText() +  getHtNbSoldiersTmp().get(enumCastle.Piker) + "/" + c.getNbPikers()));
+	    htVariableData.put(enumCastle.Knight, new Text(enumCastle.Knight.getText() +  getHtNbSoldiersTmp().get(enumCastle.Knight) + "/" + c.getNbKnights()));
+	    htVariableData.put(enumCastle.Catapult, new Text(enumCastle.Catapult.getText() +  getHtNbSoldiersTmp().get(enumCastle.Catapult) + "/" + c.getNbCatapults()));
+
 		
 	}
 
 
 
 	@Override
-	public void eventButtonSign(int indexHBox, int indexButton, enumCastles indexElement, boolean sign, Castle c) {
+	public void eventButtonSign(int indexHBox, int indexButton, enumCastle indexElement, boolean sign, Castle c) {
 
 
 		buttonPressedList.get(indexButton).setOnAction(event -> {modifyNbSoldiersTmp(sign, indexElement ,c);
 		checkNbSoldiersTmp();
-		variableDataTexts[indexElement.getIndexElement()].setText(indexElement.getText() +  getNbSoldiersTmp().get(indexElement.getIndexElement()) + "/" + getNbSoldiersList().get(indexElement.getIndexElement()));} );	
+		
+		htVariableData.get(indexElement).setText(indexElement.getText() +  getHtNbSoldiersTmp().get(indexElement) + "/" + getHtNbSoldiers().get(indexElement));
+
+		} );	
 
 
 	}
@@ -220,24 +226,14 @@ public class NotOwnedCastleWindow extends Window {
 	
 	void checkNbSoldiersTmp(){
 
-		boolean red = false;
 
-
-		for(int indexElement = enumCastles.nbPikers.getIndexElement(); indexElement <= enumCastles.nbCatapults.getIndexElement(); indexElement++ ) {
-
-			if(getNbSoldiersTmp().get(indexElement) > getNbSoldiersList().get(indexElement)) {
-				red = true;
-				
-				break;
-			}
-
-		}
-
-		if(red) {
+		if(getHtNbSoldiersTmp().get(enumCastle.Piker) > getHtNbSoldiers().get(enumCastle.Piker) || getHtNbSoldiersTmp().get(enumCastle.Knight) > getHtNbSoldiers().get(enumCastle.Knight)  || getHtNbSoldiersTmp().get(enumCastle.Catapult) > getHtNbSoldiers().get(enumCastle.Catapult) ) {
 			correctNbSoldiersTmp = false;
 			buttonPressedList.get(enumButtonNotOwnedCastleWindow.buttonConfirm.getIndexButton()).setStyle("-fx-background-color: #FF0000");
 
 		}
+
+
 		else {
 			correctNbSoldiersTmp = true;
 			buttonPressedList.get(enumButtonNotOwnedCastleWindow.buttonConfirm.getIndexButton()).setStyle("-fx-background-color: #3CEF18");
