@@ -9,12 +9,20 @@ import shape.Point2D;
 public class Taken extends Castle {
 
 	public Taken(Pane layer, Point2D point, double w, double h) {
-		super(layer, point, Color.LIMEGREEN, w, h);
-		// TODO Auto-generated constructor stub
+		this(layer, point, w, h, Color.LIMEGREEN);
+	}
+	
+	public Taken(Pane layer, Point2D point, double w, double h, Color c) {
+		super(layer, point, c, w, h);
 	}
 	
 	public Taken(Pane layer, Point2D point, double w, double h, String duke, int gold, int level, int income, int id) {
-		super(layer, point, Color.LIMEGREEN, w, h);
+		this(layer, point, w, h, duke, gold, level, income, id, Color.LIMEGREEN);
+		
+	}
+	
+	public Taken(Pane layer, Point2D point, double w, double h, String duke, int gold, int level, int income, int id, Color c) {
+		super(layer, point, c, w, h);
 		setDuke(duke);
 		this.gold = 2000;
 		this.id = id;

@@ -1,9 +1,7 @@
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Random;
 
 import javafx.animation.AnimationTimer;
@@ -20,7 +18,6 @@ import management.Order;
 import static settings.Settings.*;
 
 import shape.Point2D;
-import shape.Rectangle;
 import sprite.Sprite;
 import static sprite.castle.Castle.canIncome;
 import sprite.castle.Castle;
@@ -31,6 +28,7 @@ import player.*;
 import settings.Settings;
 import window.NotOwnedCastleWindow;
 import window.OwnedCastleWindow;
+import ennemy.Ennemy;
 
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -66,6 +64,8 @@ public class Main extends Application {
 	
 	private Player player;
 	
+	private ArrayList<Ennemy> ennemies = new ArrayList<Ennemy>();
+	
 	public static boolean paused = false;
 	private OwnedCastleWindow ownedCastleWindow;
 	private NotOwnedCastleWindow notOwnedCastleWindow;
@@ -78,6 +78,9 @@ public class Main extends Application {
     
     private long lastUpdateIncome;
     private long elapsedNanosIncome;
+    
+    private int nb_lands = 0;
+    private int nb_ennemies = 1;
     
     
 	Text hudTexts[] = new Text[12];
@@ -413,13 +416,21 @@ public class Main extends Application {
 	private void createOtherCastles() {
 		
 		Point2D p = nextAvailableLand();
-		while(p!=null ) {
+		int nb_neutrals = nb_lands - allCastles.size() - nb_ennemies;
+		
+		for(int i = 0; i<nb_neutrals; i++) {
 			Castle c = new Neutral(playfieldLayer, p, SIZE_CASTLE, SIZE_CASTLE);
 			otherCastles.add(c);	 
 			allCastles.add(c);
 			p = nextAvailableLand();
-	    }		
-		
+		}	
+		for(int i =0; i<nb_ennemies; i++) {
+			Castle c = new Taken(playfieldLayer, p, SIZE_CASTLE, SIZE_CASTLE, Color.CRIMSON);
+			ennemies.add(new Ennemy(c));
+			otherCastles.add(c);
+			allCastles.add(c);
+			p = nextAvailableLand();
+		}
 	}
 	
 	private void createLands() {
@@ -427,13 +438,14 @@ public class Main extends Application {
 		for(double x = 50; x < SCENE_WIDTH ; x = x + SIZE_LAND + DISTANCE_BETWEEN_CASTLES) {
 			for(double y = 250; y < SCENE_HEIGHT; y = y + SIZE_LAND + DISTANCE_BETWEEN_CASTLES) {
 				lands.add(new Land(x, y, true));
+				nb_lands++;
 			}
 		}
 		
 	}
 	
 	private Point2D nextAvailableLand () {
-		Iterator itr = lands.iterator();
+		Iterator<Land> itr = lands.iterator();
 		while(itr.hasNext() ) {
 			Land element = (Land) itr.next();
 	        if(element.isAvailable()) {
@@ -476,7 +488,7 @@ public class Main extends Application {
 				
 				removeSprites(otherCastles);
 				
-				Castle castle = new Taken(playfieldLayer, point, w, w, duke, gold, level, income, id);
+				Castle castle = new Taken(playfieldLayer, point, w, w, duke, gold, level, income, id, c.getColor());
 
 				player.addCastles(castle );
 				allCastles.set(target.getId()-1, castle);
@@ -499,7 +511,7 @@ public class Main extends Application {
 		for(int i = 0; i < allCastles.size(); i++) {
 			
 			
-			Text text = new Text("\n\n\n\n\nCastle n° :"+ (i+1) +"\t \n"+"No production");
+			Text text = new Text("\n\n\n\n\nCastle nï¿½ :"+ (i+1) +"\t \n"+"No production");
 			text.setFont(Font.font("Verdana", FontWeight.LIGHT,13));
 			hudTexts[i] = text;
 		
@@ -565,7 +577,7 @@ public class Main extends Application {
 				string = "No production";
 			}
 			
-			hudTexts[i].setText("\n\n\n\n\nCastle n° : "+ (i+1) +"\t \n"+string);
+			hudTexts[i].setText("\n\n\n\n\nCastle nï¿½ : "+ (i+1) +"\t \n"+string);
 
 		}
 	}
