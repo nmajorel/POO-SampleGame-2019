@@ -103,6 +103,18 @@ public class NotOwnedCastleWindow extends Window {
 			hboxList.add(hbox.getIndexHBox(), new HBox());
 		}
 
+
+		
+		mainWindow();
+			
+		 
+	}
+	
+	
+	
+
+	public void mainWindow() {
+		
 		
 		buttonPressedList.get(enumButtonNotOwnedCastleWindow.buttonAttack.getIndexButton()).setMinSize(200, 50);
 
@@ -115,10 +127,9 @@ public class NotOwnedCastleWindow extends Window {
 		
 		buttonPressedList.get(enumButtonNotOwnedCastleWindow.buttonAttack.getIndexButton()).setOnAction(event -> buttonAttackPressed() );
 		
-		
-			
-		 
 	}
+
+	
 
 
 	
@@ -190,7 +201,7 @@ public class NotOwnedCastleWindow extends Window {
 	    addButtonSign(enumHBoxNotOwnedCastleWindow.hboxKnights.getIndexHBox(),enumButtonNotOwnedCastleWindow.lessKnights.getIndexButton(), enumCastle.Knight, c);
 	    addButtonSign(enumHBoxNotOwnedCastleWindow.hboxCatapults.getIndexHBox(),enumButtonNotOwnedCastleWindow.lessCatapults.getIndexButton(), enumCastle.Catapult, c);
 	    
-	    addButtonConfirm(enumHBoxNotOwnedCastleWindow.hboxConfirm.getIndexHBox(),enumButtonNotOwnedCastleWindow.buttonConfirm.getIndexButton(), 150, 50);
+	    addButtonConfirm(enumHBoxNotOwnedCastleWindow.hboxConfirm.getIndexHBox(),enumButtonNotOwnedCastleWindow.buttonConfirm.getIndexButton(), 150, 50, EXIT_ATTACK);
 		
 	}
 	
@@ -266,6 +277,8 @@ public class NotOwnedCastleWindow extends Window {
 	public int getIndexCastlePlayer() {
 		return indexCastlePlayer;
 	}
+
+
 
 
 

@@ -17,7 +17,7 @@ import sprite.Sprite;
 import sprite.castle.Castle;
 import sprite.castle.Castle.enumCastle;
 
-
+import static settings.Settings.*;
 
 public abstract class Window extends Sprite{
 	
@@ -26,8 +26,6 @@ public abstract class Window extends Sprite{
 	private boolean keepPlaying;
 	
 	private Castle castleClicked;
-
-	private boolean makeAnOrderWindow;
 	
 	private Button suppr;
 	
@@ -76,15 +74,14 @@ public abstract class Window extends Sprite{
 		addHBoxLayer(hboxSuppr, point.getX()+w - w/10, getY(), (int)w/10, (int)w/10, 50);
 		
 		hboxSuppr.getChildren().add(suppr);
-		suppr.setOnAction(event -> removeWindow() );
+		suppr.setOnAction(event -> {removeWindow();
+		this.exitCode = EXIT_ECHAP;} );
 		
 		
 		htNbSoldiersTmp.put(enumCastle.Piker, 0);
 		htNbSoldiersTmp.put(enumCastle.Knight, 0);
 		htNbSoldiersTmp.put(enumCastle.Catapult, 0);
 		
-		this.makeAnOrderWindow = false;
-
 			
 	}
 	
@@ -184,8 +181,9 @@ public abstract class Window extends Sprite{
 		removeHBoxList();
 		removeSuppr();
 		removeStatusBar();
-		this.removeFromLayer();
 		this.keepPlaying = true;
+		this.removeFromLayer();
+	
 
 		
 	}
@@ -241,14 +239,14 @@ public abstract class Window extends Sprite{
 	}
 	
 	
-	protected void addButtonConfirm(int indexHBbox, int indexButton, int width, int height) {
+	protected void addButtonConfirm(int indexHBbox, int indexButton, int width, int height, short exitCode) {
 		
 		
 		addButtonHBox(indexHBbox, indexButton, width, height);
 
 		buttonPressedList.get(indexButton).setStyle("-fx-background-color: #3CEF18");
 		
-		buttonPressedList.get(indexButton).setOnAction(event -> buttonConfirmPressed() );
+		buttonPressedList.get(indexButton).setOnAction(event -> buttonConfirmPressed(exitCode) );
 		
 		
 	}
@@ -257,17 +255,17 @@ public abstract class Window extends Sprite{
 	protected abstract boolean canConfirm();
 	
 	
-	protected void buttonConfirmPressed() {
+	protected void buttonConfirmPressed(short exitCode) {
 
 
 		if(canConfirm()) {
 			
-			this.makeAnOrderWindow = true;
+			this.exitCode = exitCode;
+
 
 			removeWindow();}
 
 	}
-
 
 	
 	protected void modifyNbSoldiersTmp(Boolean plus, enumCastle indexSoldier, Castle c) {
@@ -287,6 +285,20 @@ public abstract class Window extends Sprite{
 		}
 
 	}
+	
+	
+	public abstract void mainWindow();
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	@Override
@@ -322,9 +334,7 @@ public abstract class Window extends Sprite{
 		return castleClicked;
 	}
 
-	public boolean isMakeAnOrderWindow() {
-		return makeAnOrderWindow;
-	}
+
 
 	public Button getSuppr() {
 		return suppr;
@@ -363,9 +373,6 @@ public abstract class Window extends Sprite{
 		this.exitCode = exitCode;
 	}
 
-	public void setMakeAnOrderWindow(boolean makeAnOrderWindow) {
-		this.makeAnOrderWindow = makeAnOrderWindow;
-	}
 
 	
 	

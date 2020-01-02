@@ -78,19 +78,32 @@ public class OwnedCastleWindow extends Window implements managementButton{
 	}
 	
 	private int nbGoldTmp;
+	
+	
+	private Hashtable <enumCastle,Integer> htCostProduction = new Hashtable<enumCastle,Integer>();
 
 
 	public OwnedCastleWindow(Pane layer, Point2D point, double w, double h, Castle source) {
 		super(layer, point, w, h, source);
 		
 		this.nbGoldTmp = source.getGold();
-
 		
+		htCostProduction.put(enumCastle.Piker, COST_PIKER);
+		htCostProduction.put(enumCastle.Knight, COST_KNIGHT);
+		htCostProduction.put(enumCastle.Catapult, COST_CATAPULT);
+		htCostProduction.put(enumCastle.Level, COST_UPGRADE_LEVEL);
+		
+		
+	    htVariableData.put(enumCastle.Piker, new Text(enumCastle.Piker.getText() +  getHtNbSoldiersTmp().get(enumCastle.Piker) + "\t\tCost : " + htCostProduction.get(enumCastle.Piker) + " coins"));
+	    htVariableData.put(enumCastle.Knight, new Text(enumCastle.Knight.getText() +  getHtNbSoldiersTmp().get(enumCastle.Knight) + "\t\tCost : " + htCostProduction.get(enumCastle.Knight) + " coins"));
+	    htVariableData.put(enumCastle.Catapult, new Text(enumCastle.Catapult.getText() +  getHtNbSoldiersTmp().get(enumCastle.Catapult) + "\t\tCost : " + htCostProduction.get(enumCastle.Catapult) + " coins"));
+	    htVariableData.put(enumCastle.Gold, new Text(enumCastle.Gold.getText() +  getNbGoldTmp() + "/" + source.getGold()));
+		
+		
+
 		for(enumButtonOwnedCastleWindow button : enumButtonOwnedCastleWindow.values()) {
 			
-			
 			buttonPressedList.add(button.getIndexButton(), new Button(button.getNameButton()));
-			
 
 		}
 		
@@ -100,13 +113,20 @@ public class OwnedCastleWindow extends Window implements managementButton{
 		}
 		
 		
+		mainWindow();
+
+
+	}
+	
+	
+	public void mainWindow() {
+		
 		double width = getWidth();
 		double height = getHeight();
 		
 		int indexHBoxManagementQueue = enumHBoxOwnedCastleWindow.hboxManagementQueue.getIndexHBox();
 		int indexHBoxOtherFeatures = enumHBoxOwnedCastleWindow.hboxOtherFeatures.getIndexHBox();
-		
-		
+
 		addHBoxLayer(hboxList.get(indexHBoxManagementQueue), getX()+width/16, (getY()+height)-height/8, width - (width/8), height/16, width/16);
 		addHBoxLayer(hboxList.get(indexHBoxOtherFeatures), getX()+width/4, (getY()+height)-height/4, width - (width/8), height/16, width/16);
 
@@ -127,42 +147,35 @@ public class OwnedCastleWindow extends Window implements managementButton{
 		buttonPressedList.get(enumButtonOwnedCastleWindow.buttonTrain.getIndexButton()).setOnAction(event -> {
 			
 			setExitCode(EXIT_TRAIN);	
-			buttonTrainPressed(source);
+			buttonTrainPressed(getCastleClicked());
 																													
 		
 		} );
 		
 		
 		buttonPressedList.get(enumButtonOwnedCastleWindow.buttonCancelOneQueue.getIndexButton()).setOnAction(event -> { 
-			setExitCode(EXIT_CANCEL_ONE_QUEUE);																											
-			buttonConfirmPressed();
+																													
+			confirmation("Are you sure to cancel the last Element \n of the Production Queue ?", EXIT_CANCEL_ONE_QUEUE);
 			} );
 		buttonPressedList.get(enumButtonOwnedCastleWindow.buttonCancelAllQueue.getIndexButton()).setOnAction(event -> { 
-			setExitCode(EXIT_CANCEL_ALL_QUEUE);																											
-			buttonConfirmPressed();
+									
+			confirmation("Are you sure to cancel all Elements \n of the Production Queue ?", EXIT_CANCEL_ALL_QUEUE);
 			} );
 		
 		
 		buttonPressedList.get(enumButtonOwnedCastleWindow.buttonUpgrade.getIndexButton()).setOnAction(event -> { 
-			setExitCode(EXIT_UPGRADE_LEVEL);
+			
+			String string = "Are you sure to Upgrade ? " + "\t\tCost : " + htCostProduction.get(enumCastle.Level) + " coins \n\n" + enumCastle.Gold.getText() +  getNbGoldTmp() + "/" + getCastleClicked().getGold();
 			nbGoldTmp -= COST_UPGRADE_LEVEL;
-			buttonConfirmPressed();
+			confirmation(string, EXIT_UPGRADE_LEVEL);
+			checkNbGoldTmp();
 			} );
-
-
 		
-		
-	    htVariableData.put(enumCastle.Piker, new Text(enumCastle.Piker.getText() +  getHtNbSoldiersTmp().get(enumCastle.Piker)));
-	    htVariableData.put(enumCastle.Knight, new Text(enumCastle.Knight.getText() +  getHtNbSoldiersTmp().get(enumCastle.Knight)));
-	    htVariableData.put(enumCastle.Catapult, new Text(enumCastle.Catapult.getText() +  getHtNbSoldiersTmp().get(enumCastle.Catapult)));
-	    htVariableData.put(enumCastle.Gold, new Text(enumCastle.Gold.getText() +  getNbGoldTmp() + "/" + source.getGold()));
-		
-
 	}
 
 	
 	
-	public void confirmation (String message) {
+	public void confirmation (String message, short exitCode) {
 		
 		removeStatusBar();
 		
@@ -170,7 +183,7 @@ public class OwnedCastleWindow extends Window implements managementButton{
 		getLayer().getChildren().remove(hboxList.get(enumHBoxOwnedCastleWindow.hboxOtherFeatures.getIndexHBox()));
 		
 		addHBoxLayer(hboxList.get(enumHBoxOwnedCastleWindow.hboxConfirm.getIndexHBox()), getX()+150, getHeight()/2, 250, 50, 50);
-		addButtonConfirm(enumHBoxOwnedCastleWindow.hboxConfirm.getIndexHBox(),enumButtonOwnedCastleWindow.buttonConfirm.getIndexButton(), 250, 50);
+		addButtonConfirm(enumHBoxOwnedCastleWindow.hboxConfirm.getIndexHBox(),enumButtonOwnedCastleWindow.buttonConfirm.getIndexButton(), 250, 50, exitCode);
 		
 		hboxList.get(enumHBoxOwnedCastleWindow.hboxConfirm.getIndexHBox()).getChildren().add(new Text(message));
 		
@@ -206,7 +219,7 @@ public class OwnedCastleWindow extends Window implements managementButton{
 	    addButtonSign(enumHBoxOwnedCastleWindow.hboxCatapults.getIndexHBox(),enumButtonOwnedCastleWindow.lessCatapults.getIndexButton(), enumCastle.Catapult, c);
 		
 		
-	    addButtonConfirm(enumHBoxOwnedCastleWindow.hboxConfirm.getIndexHBox(),enumButtonOwnedCastleWindow.buttonConfirm.getIndexButton(), 150, 50);
+	    addButtonConfirm(enumHBoxOwnedCastleWindow.hboxConfirm.getIndexHBox(),enumButtonOwnedCastleWindow.buttonConfirm.getIndexButton(), 150, 50, EXIT_TRAIN);
 		
 		
 		hboxList.get(enumHBoxOwnedCastleWindow.hboxConfirm.getIndexHBox()).getChildren().add(htVariableData.get(enumCastle.Gold));
@@ -227,7 +240,7 @@ public class OwnedCastleWindow extends Window implements managementButton{
 		modifyGoldTmp(sign, indexElement ,c);
 		checkNbGoldTmp();
 		
-		htVariableData.get(indexElement).setText(indexElement.getText() +  getHtNbSoldiersTmp().get(indexElement));
+		htVariableData.get(indexElement).setText(indexElement.getText() +  getHtNbSoldiersTmp().get(indexElement) + "\t\tCost : " + htCostProduction.get(indexElement) + " coins");
 		htVariableData.get(enumCastle.Gold).setText(enumCastle.Gold.getText() +  getNbGoldTmp() + "/" + c.getGold());
 
 		} );	
@@ -237,12 +250,9 @@ public class OwnedCastleWindow extends Window implements managementButton{
 
 	}
 	
-	public void modifyGoldTmp(Boolean plus, enumCastle indexSoldier, Castle c) {
-
+	public void modifyGoldTmp(Boolean plus, enumCastle indexElement, Castle c) {
 		
-		int tab[] = {COST_PIKER, COST_KNIGHT, COST_CATAPULT};
-		
-		int val = tab[indexSoldier.getIndexElement()];
+		int val = htCostProduction.get(indexElement);
 
 
 		if(plus) {
