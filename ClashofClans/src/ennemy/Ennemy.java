@@ -10,7 +10,7 @@ import management.Order;
 import settings.Settings;
 import sprite.castle.Castle;
 import sprite.castle.Castle.enumCastle;
-
+ 
 public class Ennemy {
 
 	private List<Castle> castles = new ArrayList<Castle>();
