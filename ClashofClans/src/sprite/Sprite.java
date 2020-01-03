@@ -151,6 +151,10 @@ public abstract class Sprite {
 		double w = s.getWidth();
 		return  (x + w >= this_x && x <= this_x + this.w ) && (y + w >= this_y && y <= this_y + this.w ); 
 	}
+
+	public Color getColor() {
+		return color;
+	}
 	
 	
 
