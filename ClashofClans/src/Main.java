@@ -34,6 +34,7 @@ import player.*;
 import settings.Settings;
 import window.NotOwnedCastleWindow;
 import window.OwnedCastleWindow;
+import ennemy.Ennemy;
 
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -66,6 +67,7 @@ public class Main extends Application {
 
 	private Player player;
 	
+	private ArrayList<Ennemy> ennemies = new ArrayList<Ennemy>();
 	public static boolean paused = false;
 	private OwnedCastleWindow ownedCastleWindow;
 	private NotOwnedCastleWindow notOwnedCastleWindow;
@@ -79,7 +81,8 @@ public class Main extends Application {
     private long lastUpdateIncome;
     private long elapsedNanosIncome;
     
-    
+	private int nb_lands = 0;
+    private int nb_ennemies = 1;    
 	Text hudTexts[] = new Text[6000];
 	
 	HBox hboxHUD = new HBox();
@@ -438,13 +441,21 @@ public class Main extends Application {
 	private void createOtherCastles() {
 		
 		Point2D p = nextAvailableLand();
-		while(p!=null ) {
+		int nb_neutrals = nb_lands - allCastles.size() - nb_ennemies;
+		
+		for(int i = 0; i<nb_neutrals; i++) {
 			Castle c = new Neutral(playfieldLayer, p, SIZE_CASTLE, SIZE_CASTLE);
 			otherCastles.add(c);	 
 			allCastles.add(c);
 			p = nextAvailableLand();
-	    }		
-		
+		}	
+		for(int i =0; i<nb_ennemies; i++) {
+			Castle c = new Taken(playfieldLayer, p, SIZE_CASTLE, SIZE_CASTLE, Color.CRIMSON);
+			ennemies.add(new Ennemy(c));
+			otherCastles.add(c);
+			allCastles.add(c);
+			p = nextAvailableLand();
+		}
 	}
 	
 	private void createLands() {
@@ -452,6 +463,7 @@ public class Main extends Application {
 		for(double x = DISTANCE_BETWEEN_CASTLES_WIDTH ; x < SCENE_WIDTH ; x = x + SIZE_LAND + DISTANCE_BETWEEN_CASTLES_WIDTH ) {
 			for(double y = DISTANCE_BETWEEN_CASTLES_HEIGHT+HUD_HEIGHT; y < SCENE_HEIGHT; y = y + SIZE_LAND + DISTANCE_BETWEEN_CASTLES_HEIGHT ) {
 				lands.add(new Land(x, y, true));
+				nb_lands++;
 			}
 		}
 		
@@ -505,7 +517,7 @@ public class Main extends Application {
 
 				removeSprites(otherCastles);
 				
-				Castle castle = new Taken(playfieldLayer, point, w, w, duke, gold, level, income, id);
+				Castle castle = new Taken(playfieldLayer, point, w, w, duke, gold, level, income, id, c.getColor());
 
 				player.addCastles(castle );
 				allCastles.set(target.getId()-1, castle);
