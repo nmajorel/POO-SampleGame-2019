@@ -1,3 +1,6 @@
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -28,11 +31,13 @@ import player.*;
 import settings.Settings;
 import window.NotOwnedCastleWindow;
 import window.OwnedCastleWindow;
+import window.OwnedCastleWindow.enumButtonOwnedCastleWindow;
+
 import ennemy.Ennemy;
 
 import javafx.scene.Group;
 import javafx.scene.Scene;
-
+import javafx.scene.control.Button;
 
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
@@ -83,7 +88,13 @@ public class Main extends Application {
     private int nb_ennemies = 1;
     
     
-	Text hudTexts[] = new Text[12];
+	Text hudTexts[] = new Text[6000];
+	
+	HBox hboxHUD = new HBox();
+	
+	HBox hboxSave = new HBox();
+	
+	Button buttonSave = new Button("save");
     
 
 	Group root;
@@ -238,6 +249,7 @@ public class Main extends Application {
 		createOtherCastles();
 
 		createHUD();
+		createSaveHBbox();
 	       
         scene.setOnMouseClicked(
                 new EventHandler<MouseEvent>()
@@ -252,7 +264,7 @@ public class Main extends Application {
 								    resetTimerIncome = true;
 									paused = true;
 							
-									notOwnedCastleWindow = new NotOwnedCastleWindow(playfieldLayer, new Point2D((SCENE_WIDTH/2) -WINDOW_WIDTH/2, (SCENE_HEIGHT/2) - WINDOW_HEIGHT/2), WINDOW_WIDTH, WINDOW_HEIGHT, player.getCastles(), castle);
+									notOwnedCastleWindow = new NotOwnedCastleWindow(playfieldLayer, new Point2D((SCENE_WIDTH/2) -WINDOW_WIDTH/2, HUD_HEIGHT+10), WINDOW_WIDTH, WINDOW_HEIGHT, player.getCastles(), castle);
 					
 							
 
@@ -265,7 +277,7 @@ public class Main extends Application {
 									player.getCastles().forEach(c -> c.getLab().resetTimer());
 								    resetTimerIncome = true;
 									paused = true;
-									ownedCastleWindow = new OwnedCastleWindow(playfieldLayer, new Point2D((SCENE_WIDTH/2) -WINDOW_WIDTH/2, (SCENE_HEIGHT/2) - WINDOW_HEIGHT/2), WINDOW_WIDTH, WINDOW_HEIGHT, castle);
+									ownedCastleWindow = new OwnedCastleWindow(playfieldLayer, new Point2D((SCENE_WIDTH/2) -WINDOW_WIDTH/2, HUD_HEIGHT+10), WINDOW_WIDTH, WINDOW_HEIGHT, castle);
 									
 							
 
@@ -277,22 +289,30 @@ public class Main extends Application {
 							if(notOwnedCastleWindow != null) {
 								if(notOwnedCastleWindow.isKeepPlaying()) {
 									paused = false;
-									if(notOwnedCastleWindow.isMakeAnOrderWindow()) {
-
-
-										int nbPikers = notOwnedCastleWindow.getNbPikersTmp();
-										int nbKnights = notOwnedCastleWindow.getNbKnightsTmp();
-										int nbCatapults = notOwnedCastleWindow.getNbCatapultsTmp();
-
-										Castle castlePlayer = player.getCastles().get(notOwnedCastleWindow.getIndexCastlePlayer());
-
-										castlePlayer.setNbPikers(castlePlayer.getNbPikers() - nbPikers);
-										castlePlayer.setNbKnights(castlePlayer.getNbKnights() - nbKnights);
-										castlePlayer.setNbCatapults(castlePlayer.getNbCatapults() - nbCatapults);
-										castlePlayer.addOrder(new Order(castlePlayer,notOwnedCastleWindow.getCastleClicked(), nbPikers, nbKnights, nbCatapults));
-
-
-									}
+									if(notOwnedCastleWindow.isKeepPlaying()) {
+										paused = false;
+	
+										short exitCode = notOwnedCastleWindow.getExitCode();
+	
+										switch (exitCode) {
+	
+										case EXIT_ECHAP :
+											break;
+	
+										case EXIT_ATTACK :
+	
+											int nbPikers = notOwnedCastleWindow.getNbPikersTmp();
+											int nbKnights = notOwnedCastleWindow.getNbKnightsTmp();
+											int nbCatapults = notOwnedCastleWindow.getNbCatapultsTmp();
+	
+											Castle castlePlayer = player.getCastles().get(notOwnedCastleWindow.getIndexCastlePlayer());
+	
+											castlePlayer.setNbPikers(castlePlayer.getNbPikers() - nbPikers);
+											castlePlayer.setNbKnights(castlePlayer.getNbKnights() - nbKnights);
+											castlePlayer.setNbCatapults(castlePlayer.getNbCatapults() - nbCatapults);
+											castlePlayer.addOrder(new Order(castlePlayer,notOwnedCastleWindow.getCastleClicked(), nbPikers, nbKnights, nbCatapults));
+	
+										}
 									notOwnedCastleWindow = null;
 
 
@@ -314,7 +334,9 @@ public class Main extends Application {
 										int cost;
 
 										switch (exitCode) {
-
+										
+											case EXIT_ECHAP :
+												break;
 
 										case EXIT_TRAIN :
 											
@@ -450,8 +472,13 @@ public class Main extends Application {
 			Land element = (Land) itr.next();
 	        if(element.isAvailable()) {
 	        	element.setAvailable(false);
-	        	return element.getPoint();
-	        }
+	        	double x = element.getPoint().getX();
+	        	double y = element.getPoint().getY();
+	        	
+	        	double new_x = (Math.random() * ( ((x+ SIZE_LAND)-SIZE_CASTLE) - x ))+x;
+	        	double new_y = (Math.random() * ( ((y+ SIZE_LAND)-SIZE_CASTLE) - y ))+y;
+
+	        	return new Point2D(new_x,new_y);	        }
 	    }
 		return null;
 	}
@@ -501,21 +528,19 @@ public class Main extends Application {
 	
 	
 	public void createHUD() {
-		HBox hud = new HBox();
-		hud.relocate(0, 0);
-		hud.setSpacing(20);
-		hud.setMinSize(SCENE_WIDTH+10,SCENE_HEIGHT/6);
-		root.getChildren().add(hud);
-		hud.setBackground(new Background(new BackgroundFill(Color.GREY, CornerRadii.EMPTY, Insets.EMPTY)));
+		hboxHUD.setSpacing(10);
+		hboxHUD.setMinSize(HUD_WIDTH+10,HUD_HEIGHT/2);
+		root.getChildren().add(hboxHUD);
+		hboxHUD.setBackground(new Background(new BackgroundFill(Color.DEEPSKYBLUE, CornerRadii.EMPTY, Insets.EMPTY)));
 		
 		for(int i = 0; i < allCastles.size(); i++) {
 			
 			
-			Text text = new Text("\n\n\n\n\nCastle n� :"+ (i+1) +"\t \n"+"No production");
-			text.setFont(Font.font("Verdana", FontWeight.LIGHT,13));
+			Text text = new Text("\n\nCastle "+ (i+1) +"\t\t \n"+"No production");
+			text.setFont(Font.font("Verdana", FontWeight.LIGHT,11));
 			hudTexts[i] = text;
 		
-			hud.getChildren().add(hudTexts[i]);
+			hboxHUD.getChildren().add(hudTexts[i]);
 
 			
 
@@ -577,39 +602,57 @@ public class Main extends Application {
 				string = "No production";
 			}
 			
-			hudTexts[i].setText("\n\n\n\n\nCastle n� : "+ (i+1) +"\t \n"+string);
+			hudTexts[i].setText("\n\nCastle "+ (i+1) +"\t\t \n"+string);
+
 
 		}
 	}
+	public void createSaveHBbox() {
+		
+		hboxSave.relocate(0, 100);
+		hboxSave.setSpacing(20);
+		hboxSave.setMinSize(HUD_WIDTH+10,HUD_HEIGHT/2);
+		root.getChildren().add(hboxSave);
+		hboxSave.setBackground(new Background(new BackgroundFill(Color.DARKGREEN, CornerRadii.EMPTY, Insets.EMPTY)));
+		buttonSave.setMinSize((SCENE_WIDTH+10)/4, SCENE_HEIGHT/24);
 
+	}
 	
 
-/*
-	private void checkCollisions() {
-		collision = false;
+	public void eventSave() {
 
-		for (Enemy enemy : enemies) {
-			for (Missile missile : missiles) {
-				if (missile.collidesWith(enemy)) {
-					enemy.damagedBy(missile);
-					missile.remove();
-					collision = true;
-					scoreValue += 10 + (Settings.SCENE_HEIGHT - player.getY()) / 10;
+		System.out.println("TEST");
+		
+		ObjectOutputStream oos = null;
+
+
+		try {
+			final FileOutputStream fichier = new FileOutputStream("donnees.ser");
+			oos = new ObjectOutputStream(fichier);
+			oos.writeObject(new java.util.Date());
+			final int[] tableau = { 1, 2, 3 };
+			oos.writeObject(tableau);
+			oos.writeUTF("ma chaine en UTF8");
+			oos.writeLong(123456789);
+			oos.writeObject("ma chaine de caracteres");
+
+			oos.flush();
+		} catch (final java.io.IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (oos != null) {
+					oos.flush();
+					oos.close();
 				}
-			}
-
-			if (player.collidesWith(enemy)) {
-				collision = true;
-				enemy.remove();
-				player.damagedBy(enemy);
-				if (player.getHealth() < 1)
-					gameOver();
+			} catch (final IOException ex) {
+				ex.printStackTrace();
 			}
 		}
 
-	}
+		
 
-	}*/
+	}
 
 	public static void main(String[] args) {
 		launch(args);
