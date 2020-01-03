@@ -1,6 +1,7 @@
 package window;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -27,25 +28,21 @@ public abstract class Window extends Sprite{
 	
 	private Castle castleClicked;
 	
-	private Button suppr;
 	
-	private HBox hboxSuppr;
+	private VBox vboxStatusBar; 
 	
-	private VBox statusBar; 
-	
-	private List<Text> statusBarTexts = new ArrayList<Text>();
-	
-	protected List<HBox> hboxList = new ArrayList<HBox>();
-	
-	protected List<Button> buttonPressedList = new ArrayList<Button>();
-
+	private List<Text> statusBar = new ArrayList<Text>();
 
 	private List<Castle> playerCastles = new ArrayList<Castle>();
 	
 	
-	
 	private short exitCode;
 	
+	protected Hashtable <enumButton,Button> htButton = new Hashtable<enumButton,Button>();
+	
+	protected Hashtable <enumHBox,HBox> htHBox = new Hashtable<enumHBox,HBox>();
+	
+	protected Hashtable <enumHBox,VBox> htVBox = new Hashtable<enumHBox,VBox>();
 	
 	
 
@@ -55,10 +52,68 @@ public abstract class Window extends Sprite{
 	
 	protected Hashtable <enumCastle,Integer> htNbSoldiers = new Hashtable<enumCastle,Integer>();
 	
+	private int indexCastlePlayer;
 	
 	
+
+	public enum enumButton{
+
+		Attack("Attack!"),
+		
+		Train("Train"),
+		CancelOneQueue("CancelOneQueue"),
+		CancelAllQueue("CancelAllQueue"),
+		Upgrade("Upgrade"),
+		Transfer("Transfer"),
+		
+		suppr("X"),
+		PrevCastle("<="),
+		Choose("Choose"),
+		NextCastle("=>"),
+		lessPikers("-"),
+		morePikers("+"),
+		lessKnights("-"),
+		moreKnights("+"),
+		lessCatapults("-"),
+		moreCatapults("+"),
+		Confirm("Confirm");
+
+		private String nameButton;
+
+		private enumButton(String nameButton) {
+			this.nameButton = nameButton;
+		}
+
+		public String getNameButton() {
+			return nameButton;
+		}
+		
+	}
+
+
+	public enum enumHBox{
+		
+		
+		
+		
+		hboxAttack(),
+		
+		hboxManagementQueue(),
+		hboxOtherFeatures(),
+		
+		
+		hboxSuppr(),
+		hboxChoose(),
+		hboxPikers(),
+		hboxKnights(),
+		hboxCatapults(),
+		hboxConfirm();
+
+
+		
+	}
 	
-	
+
 	
 	public Window(Pane layer, Point2D point, double w, double h) {
 		
@@ -66,26 +121,70 @@ public abstract class Window extends Sprite{
 		
 		this.keepPlaying = false;
 		
-		this.suppr = new Button("X");
-		this.suppr.setMinSize(w/10, w/10);
-		
-		hboxSuppr = new HBox();
-		
-		addHBoxLayer(hboxSuppr, point.getX()+w - w/10, getY(), (int)w/10, (int)w/10, 50);
-		
-		hboxSuppr.getChildren().add(suppr);
-		suppr.setOnAction(event -> {removeWindow();
-		this.exitCode = EXIT_ECHAP;} );
-		
 		
 		htNbSoldiersTmp.put(enumCastle.Piker, 0);
 		htNbSoldiersTmp.put(enumCastle.Knight, 0);
 		htNbSoldiersTmp.put(enumCastle.Catapult, 0);
 		
+		
+		
+		htButton.put(enumButton.Attack, new Button(enumButton.Attack.getNameButton()));
+		
+		htButton.put(enumButton.Train, new Button(enumButton.Train.getNameButton()));
+		htButton.put(enumButton.CancelOneQueue, new Button(enumButton.CancelOneQueue.getNameButton()));
+		htButton.put(enumButton.CancelAllQueue, new Button(enumButton.CancelAllQueue.getNameButton()));
+		htButton.put(enumButton.Upgrade, new Button(enumButton.Upgrade.getNameButton()));
+		htButton.put(enumButton.Transfer, new Button(enumButton.Transfer.getNameButton()));
+		
+		htButton.put(enumButton.suppr, new Button(enumButton.suppr.getNameButton()));
+		htButton.put(enumButton.PrevCastle, new Button(enumButton.PrevCastle.getNameButton()));
+		htButton.put(enumButton.Choose, new Button(enumButton.Choose.getNameButton()));
+		htButton.put(enumButton.NextCastle, new Button(enumButton.NextCastle.getNameButton()));
+		htButton.put(enumButton.lessPikers, new Button(enumButton.lessPikers.getNameButton()));
+		htButton.put(enumButton.morePikers, new Button(enumButton.morePikers.getNameButton()));
+		htButton.put(enumButton.lessKnights, new Button(enumButton.lessKnights.getNameButton()));
+		htButton.put(enumButton.moreKnights, new Button(enumButton.moreKnights.getNameButton()));
+		htButton.put(enumButton.lessCatapults, new Button(enumButton.lessCatapults.getNameButton()));
+		htButton.put(enumButton.moreCatapults, new Button(enumButton.moreCatapults.getNameButton()));
+		htButton.put(enumButton.Confirm, new Button(enumButton.Confirm.getNameButton()));
+		
+		
+		
+		htHBox.put(enumHBox.hboxAttack, new HBox());
+		
+		htHBox.put(enumHBox.hboxManagementQueue, new HBox());
+		htHBox.put(enumHBox.hboxOtherFeatures, new HBox());
+		
+		htHBox.put(enumHBox.hboxSuppr, new HBox());
+		htHBox.put(enumHBox.hboxChoose, new HBox());
+		htHBox.put(enumHBox.hboxPikers, new HBox());
+		htHBox.put(enumHBox.hboxKnights, new HBox());
+		htHBox.put(enumHBox.hboxCatapults, new HBox());
+		htHBox.put(enumHBox.hboxConfirm, new HBox());
+		
+		
+
+		
+		addHBoxLayer(htHBox.get(enumHBox.hboxSuppr), point.getX()+w - w/10, getY(), (int)w/10, (int)w/10, 50);
+		
+		addButtonHBox(enumHBox.hboxSuppr, enumButton.suppr, w/10, w/10);
+
+		htButton.get(enumButton.suppr).setOnAction(event -> {removeWindow();
+			this.exitCode = EXIT_ECHAP;} );
+		
+		
+		this.indexCastlePlayer = 0;
+		
+		vboxStatusBar = new VBox();
+		
+		addVBoxLayer(vboxStatusBar, point.getX() + w/1.5, point.getY()+h/8, 400, 400, getHeight()/16);
+		
+		
+		
 			
 	}
 	
-	public Window(Pane layer, Point2D point, double w, double h, Castle source) {
+	public Window(Pane layer, Point2D point, double w, double h, Castle source, List<Castle> playerCastles) {
 
 		this(layer, point, w , h);
 		
@@ -93,9 +192,12 @@ public abstract class Window extends Sprite{
 
 		this.castleClicked = source;		
 		
-		addStatusBarTexts(source, "CASTLE PLAYER");
+		addStatusBar(source, "CASTLE PLAYER " + source.getId());
 
-		initStatusBar(point.getX() + w/1.5, point.getY()+h/8);
+		initStatusBar();
+		
+		this.playerCastles = playerCastles;
+		
 
 	}
 	
@@ -105,12 +207,15 @@ public abstract class Window extends Sprite{
 
 		this(layer, point, w , h);
 		
+		
+		
+		
 
 		this.castleClicked = target;		
 		
-		addStatusBarTexts(target, "TARGET");
+		addStatusBar(target, "TARGET " + "( CASTLE " + target.getId() + " )");
 
-		initStatusBar(point.getX() + w/1.5, point.getY()+h/8);
+		initStatusBar();
 		
 		this.playerCastles = playerCastles;
 
@@ -129,34 +234,30 @@ public abstract class Window extends Sprite{
 	}
 	
 	
-	protected void addStatusBarTexts(Castle castle, String description) {
+	protected void addStatusBar(Castle castle, String description) {
 		
-		statusBarTexts.add( new Text(description)) ;
+		statusBar.add( new Text(description)) ;
 		
-		statusBarTexts.add( new Text(castle.toString()) )  ;
+		statusBar.add( new Text(castle.toString()) )  ;
 
 
 		
 	}
 	
-	protected void setStatusBarTexts(Castle castle, String description) {
+	protected void setStatusBar(Castle castle, String description) {
 		
-		statusBarTexts.get(0).setText(description);
+		statusBar.get(0).setText(description);
 		
-		statusBarTexts.get(1).setText(castle.toString());
+		statusBar.get(1).setText(castle.toString());
 
 	}
 
 
-	private void initStatusBar(double x, double y) {
+	private void initStatusBar() {
 
-		statusBar = new VBox();
-		
-		addVBoxLayer(statusBar, x, y, 400, 400, getHeight()/16);
-		
-		for (Text text : statusBarTexts) {
+		for (Text text : statusBar) {
 			text.setFont(Font.font("Verdana", FontWeight.LIGHT, 16));
-			statusBar.getChildren().add(text);
+			vboxStatusBar.getChildren().add(text);
 
 		}
 
@@ -165,20 +266,29 @@ public abstract class Window extends Sprite{
 	
 	
 	protected void removeStatusBar () {
-		getLayer().getChildren().remove(statusBar);
+		getLayer().getChildren().remove(vboxStatusBar);
+		
 	}
 	
 	protected void removeSuppr() {
 		
-		getLayer().getChildren().remove(hboxSuppr);
+		getLayer().getChildren().remove(htHBox.get(enumHBox.hboxSuppr));
 	}
 	
-	public abstract void removeHBoxList();
-	
+	public void removeHBox() {
+		
+		 Enumeration<HBox> e = htHBox.elements();
+
+		    while(e.hasMoreElements())
+		    	
+		    	getLayer().getChildren().remove(e.nextElement());
+
+		  }
+
 	
 	protected void removeWindow() {
 	
-		removeHBoxList();
+		removeHBox();
 		removeSuppr();
 		removeStatusBar();
 		this.keepPlaying = true;
@@ -189,19 +299,41 @@ public abstract class Window extends Sprite{
 	}
 
 	
-	protected void addButtonSign(int indexHBox, int indexButton, enumCastle indexElement, Castle c) {
+	protected void addButtonSign(enumHBox hbox, enumButton button, enumCastle indexElement, Castle c) {
 		
-		addButtonHBox(indexHBox, indexButton, getWidth()/16, getHeight()/16);
-		addButtonHBox(indexHBox, indexButton+1, getWidth()/16, getHeight()/16);
+		
 
-		eventButtonSign(indexHBox, indexButton, indexElement, false, c );
-		eventButtonSign(indexHBox, indexButton + 1, indexElement, true, c );
+		enumButton button1 = null;
+
+		if(button == enumButton.lessPikers) {
+
+			button1 = enumButton.morePikers;
+
+		}
+		if(button == enumButton.lessKnights) {
+
+			button1 = enumButton.moreKnights;
+
+		}
+
+		if(button == enumButton.lessCatapults) {
+
+			button1 = enumButton.moreCatapults;
+
+		}
+		
+		addButtonHBox(hbox, button, getWidth()/16, getHeight()/16);
+		addButtonHBox(hbox, button1, getWidth()/16, getHeight()/16);
+
+		eventButtonSign(button, indexElement, false, c );
+		eventButtonSign(button1, indexElement, true, c );
+		
+		htHBox.get(hbox).getChildren().add(htVariableData.get(indexElement));
 	
-		hboxList.get(indexHBox).getChildren().add(htVariableData.get(indexElement));	
-
 	}
 	
-	protected abstract void eventButtonSign(int indexHbox, int indexButton, enumCastle indexElement, boolean sign, Castle c);
+	
+	protected abstract void eventButtonSign(enumButton button, enumCastle indexElement, boolean sign, Castle c);
 	
 	
 	
@@ -230,24 +362,31 @@ public abstract class Window extends Sprite{
 	}
 	
 	
-	protected void addButtonHBox(int indexHBox, int indexButton, double width, double height) {
+	protected void addButtonHBox(enumHBox hbox, enumButton button, double width, double height) {
 		
-			buttonPressedList.get(indexButton).setMinSize(width, height);
-			hboxList.get(indexHBox).getChildren().add(buttonPressedList.get(indexButton));
+			htButton.get(button).setMinSize(width, height);
+			
+			htHBox.get(hbox).getChildren().add(htButton.get(button));
+			
+			
 		
 
 	}
 	
 	
-	protected void addButtonConfirm(int indexHBbox, int indexButton, int width, int height, short exitCode) {
+	protected void addButtonConfirm(int width, int height) {
 		
 		
-		addButtonHBox(indexHBbox, indexButton, width, height);
+		addButtonHBox(enumHBox.hboxConfirm, enumButton.Confirm, width, height);
 
-		buttonPressedList.get(indexButton).setStyle("-fx-background-color: #3CEF18");
+		htButton.get(enumButton.Confirm).setStyle("-fx-background-color: #3CEF18");
+
 		
-		buttonPressedList.get(indexButton).setOnAction(event -> buttonConfirmPressed(exitCode) );
+	}
+	
+	protected void eventButtonConfirm(short exitCode) {
 		
+		htButton.get(enumButton.Confirm).setOnAction(event -> buttonConfirmPressed(exitCode) );
 		
 	}
 
@@ -292,15 +431,96 @@ public abstract class Window extends Sprite{
 	
 	
 	
+	public void addButtonChoose() {
+		
+		double width = getWidth();
+		double height = getHeight();
+
+		addButtonHBox(enumHBox.hboxChoose, enumButton.PrevCastle, width/4, height/16);
+		addButtonHBox(enumHBox.hboxChoose, enumButton.Choose, width/4, height/16);
+		addButtonHBox(enumHBox.hboxChoose, enumButton.NextCastle, width/4, height/16);
+		
+
+		addVBoxLayer(vboxStatusBar, getX() + width/2-100, getY() + 50, 400, 400, getHeight()/16);
+	
+		addHBoxLayer(htHBox.get(enumHBox.hboxChoose), getX()+width/16, (getY()+height)-height/4, width - (width/8), height/16, width/16);
+		
+	}
 	
 	
 	
+	public void eventButtonChoose(String message, short exitCode) {
+
+
+		setStatusBar(playerCastles.get(indexCastlePlayer), message + playerCastles.get(indexCastlePlayer).getId());
+
+		
+		htButton.get(enumButton.PrevCastle).setOnAction(event -> {
+
+			if(indexCastlePlayer > 0) {
+				indexCastlePlayer--;}
+			setStatusBar(playerCastles.get(indexCastlePlayer), message + playerCastles.get(indexCastlePlayer).getId());
+			
+		} );	
+
+		htButton.get(enumButton.Choose).setOnAction(event -> buttonChoosePressed(playerCastles.get(indexCastlePlayer), exitCode) );
+
+		htButton.get(enumButton.NextCastle).setOnAction(event -> {
+			
+			if(indexCastlePlayer < playerCastles.size()-1) {
+				indexCastlePlayer++;}
+			
+			setStatusBar(playerCastles.get(indexCastlePlayer), message + playerCastles.get(indexCastlePlayer).getId());
+		} );	
+
+	}
+	
+
+	
+	public void buttonChoosePressed(Castle castlePlayer, short exitCode) {
+		
+		removeStatusBar();
+		
+	    htVariableData.put(enumCastle.Piker, new Text(enumCastle.Piker.getText() +  htNbSoldiersTmp.get(enumCastle.Piker) + "/" + castlePlayer.getNbPikers()));
+	    htVariableData.put(enumCastle.Knight, new Text(enumCastle.Knight.getText() +  htNbSoldiersTmp.get(enumCastle.Knight) + "/" + castlePlayer.getNbKnights()));
+	    htVariableData.put(enumCastle.Catapult, new Text(enumCastle.Catapult.getText() +  htNbSoldiersTmp.get(enumCastle.Catapult) + "/" + castlePlayer.getNbCatapults()));
+		
+		addHtNbSoldiers(castlePlayer);
+		
+		getLayer().getChildren().remove(htHBox.get(enumHBox.hboxChoose));
+
+		selectTroops(castlePlayer, exitCode);
+		
+
+
+	}
 	
 	
-	
-	
-	
-	
+	public void selectTroops(Castle castlePlayer, short exitCode) {
+		
+
+		double y = getY()+getHeight()/6;
+		
+		addHBoxLayer(htHBox.get(enumHBox.hboxPikers), getX()+150, y, 250, 50, 50);
+		y += getHeight()/8;
+		addHBoxLayer(htHBox.get(enumHBox.hboxKnights), getX()+150, y, 250, 50, 50);
+		y += getHeight()/8;
+		addHBoxLayer(htHBox.get(enumHBox.hboxCatapults), getX()+150, y, 250, 50, 50);
+		y += getHeight()/8;
+		addHBoxLayer(htHBox.get(enumHBox.hboxConfirm), getX()+150, y, 250, 50, 50);
+		
+	    addButtonSign(enumHBox.hboxPikers,enumButton.lessPikers, enumCastle.Piker,  castlePlayer);
+	    addButtonSign(enumHBox.hboxKnights,enumButton.lessKnights, enumCastle.Knight, castlePlayer);
+	    addButtonSign(enumHBox.hboxCatapults,enumButton.lessCatapults, enumCastle.Catapult, castlePlayer);
+
+		addButtonConfirm(150,50);
+		eventButtonConfirm(exitCode);
+		
+		
+	}
+		
+
+
 	@Override
 	public void checkRemovability() {
 		// TODO Auto-generated method stub
@@ -326,6 +546,9 @@ public abstract class Window extends Sprite{
 		
 	}
 	
+	
+	
+	
 	public boolean isKeepPlaying() {
 		return keepPlaying;
 	}
@@ -334,48 +557,38 @@ public abstract class Window extends Sprite{
 		return castleClicked;
 	}
 
-
-
-	public Button getSuppr() {
-		return suppr;
+	public VBox getVboxStatusBar() {
+		return vboxStatusBar;
 	}
 
-	public HBox getHboxSuppr() {
-		return hboxSuppr;
-	}
-
-	public VBox getStatusBar() {
+	public List<Text> getStatusBar() {
 		return statusBar;
-	}
-
-	public List<Text> getStatusBarTexts() {
-		return statusBarTexts;
-	}
-
-	public List<HBox> getHboxList() {
-		return hboxList;
-	}
-
-	public List<Button> getButtonPressedList() {
-		return buttonPressedList;
 	}
 
 	public List<Castle> getPlayerCastles() {
 		return playerCastles;
 	}
 
-
 	public short getExitCode() {
 		return exitCode;
 	}
 
-	public void setExitCode(short exitCode) {
-		this.exitCode = exitCode;
+	public Hashtable<enumButton, Button> getHtButton() {
+		return htButton;
 	}
 
+	public Hashtable<enumHBox, HBox> getHtHBox() {
+		return htHBox;
+	}
 
-	
-	
+	public Hashtable<enumHBox, VBox> getHtVBox() {
+		return htVBox;
+	}
+
+	public Hashtable<enumCastle, Text> getHtVariableData() {
+		return htVariableData;
+	}
+
 	public Hashtable<enumCastle, Integer> getHtNbSoldiersTmp() {
 		return htNbSoldiersTmp;
 	}
@@ -384,9 +597,13 @@ public abstract class Window extends Sprite{
 		return htNbSoldiers;
 	}
 
+	public int getIndexCastlePlayer() {
+		return indexCastlePlayer;
+	}
 
-	
-
+	public void setExitCode(short exitCode) {
+		this.exitCode = exitCode;
+	}
 
 	
 
