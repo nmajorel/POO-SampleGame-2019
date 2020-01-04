@@ -21,7 +21,7 @@ public class NotOwnedCastleWindow extends Window {
 
 	
 	
-	private boolean correctNbSoldiersTmp;
+
 
 
 	
@@ -94,23 +94,6 @@ public class NotOwnedCastleWindow extends Window {
 	
 	
 	
-	
-	void checkNbSoldiersTmp(){
-
-
-		if(getHtNbSoldiersTmp().get(enumCastle.Piker) > getHtNbSoldiers().get(enumCastle.Piker) || getHtNbSoldiersTmp().get(enumCastle.Knight) > getHtNbSoldiers().get(enumCastle.Knight)  || getHtNbSoldiersTmp().get(enumCastle.Catapult) > getHtNbSoldiers().get(enumCastle.Catapult) ) {
-			correctNbSoldiersTmp = false;
-			htButton.get(enumButton.Confirm).setStyle("-fx-background-color: #FF0000");
-
-		}
-
-
-		else {
-			correctNbSoldiersTmp = true;
-			htButton.get(enumButton.Confirm).setStyle("-fx-background-color: #3CEF18");
-		}
-
-	}
 
 
 
@@ -119,6 +102,15 @@ public class NotOwnedCastleWindow extends Window {
 
 
 		return correctNbSoldiersTmp;
+	}
+
+
+
+
+	@Override
+	protected Castle castleSelectTroops() {
+		// TODO Auto-generated method stub
+		return getPlayerCastles().get(getIndexCastlePlayer());
 	}
 
 

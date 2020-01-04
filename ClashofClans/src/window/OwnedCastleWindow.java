@@ -25,6 +25,12 @@ public class OwnedCastleWindow extends Window implements managementButton{
 	
 	private int nbGoldTmp;
 	
+	private boolean verifyNbGoldTmp;
+	
+	private boolean verifyNbSoldiersTmp;;
+	
+	private boolean isTextSign;
+	
 	
 	private Hashtable <enumCastle,Integer> htCostProduction = new Hashtable<enumCastle,Integer>();
 
@@ -45,12 +51,17 @@ public class OwnedCastleWindow extends Window implements managementButton{
 	    htVariableData.put(enumCastle.Catapult, new Text(enumCastle.Catapult.getText() +  getHtNbSoldiersTmp().get(enumCastle.Catapult) + "\t\tCost : " + htCostProduction.get(enumCastle.Catapult) + " coins"));
 	    htVariableData.put(enumCastle.Gold, new Text(enumCastle.Gold.getText() +  getNbGoldTmp() + "/" + source.getGold()));
 		
+		this.verifyNbGoldTmp = false;
+		this.verifyNbSoldiersTmp = false;
+		
+		this.correctNbSoldiersTmp = true;
 		
 		mainWindow();
 
 
 	}
 	
+
 	
 	public void mainWindow() {
 		
@@ -88,6 +99,8 @@ public class OwnedCastleWindow extends Window implements managementButton{
 		
 		htButton.get(enumButton.Upgrade).setOnAction(event -> { 
 			
+			this.verifyNbGoldTmp = true;
+			
 			String string = "Are you sure to Upgrade ? " + "\t\tCost : " + htCostProduction.get(enumCastle.Level) + " coins \n\n" + enumCastle.Gold.getText() +  getNbGoldTmp() + "/" + getCastleClicked().getGold();
 			nbGoldTmp -= COST_UPGRADE_LEVEL;
 			confirmation(string, EXIT_UPGRADE_LEVEL);
@@ -99,7 +112,8 @@ public class OwnedCastleWindow extends Window implements managementButton{
 			
 			removeStatusBar();
 			
-			
+			this.verifyNbSoldiersTmp = true;
+			this.isTextSign = false;
 			
 			getLayer().getChildren().remove(htHBox.get(enumHBox.hboxManagementQueue));
 			getLayer().getChildren().remove(htHBox.get(enumHBox.hboxOtherFeatures));
@@ -139,6 +153,9 @@ public class OwnedCastleWindow extends Window implements managementButton{
 		
 		removeStatusBar();
 		
+		this.verifyNbGoldTmp = true;
+		this.isTextSign = true;
+		
 		getLayer().getChildren().remove(htHBox.get(enumHBox.hboxManagementQueue));
 		getLayer().getChildren().remove(htHBox.get(enumHBox.hboxOtherFeatures));
 	    
@@ -157,10 +174,32 @@ public class OwnedCastleWindow extends Window implements managementButton{
 		
 		htButton.get(button).setOnAction(event -> {modifyNbSoldiersTmp(sign, indexElement ,c);
 		modifyGoldTmp(sign, indexElement ,c);
-		checkNbGoldTmp();
 		
-		htVariableData.get(indexElement).setText(indexElement.getText() +  getHtNbSoldiersTmp().get(indexElement) + "\t\tCost : " + htCostProduction.get(indexElement) + " coins");
-		htVariableData.get(enumCastle.Gold).setText(enumCastle.Gold.getText() +  getNbGoldTmp() + "/" + c.getGold());
+		if(verifyNbGoldTmp) {
+			checkNbGoldTmp();
+		}
+		if(verifyNbSoldiersTmp){
+			
+			checkNbSoldiersTmp();
+			
+		}
+		
+		
+		if(isTextSign) {
+			
+			
+			htVariableData.get(indexElement).setText(indexElement.getText() +  getHtNbSoldiersTmp().get(indexElement) + "\t\tCost : " + htCostProduction.get(indexElement) + " coins");
+						
+			htVariableData.get(enumCastle.Gold).setText(enumCastle.Gold.getText() +  getNbGoldTmp() + "/" + c.getGold());
+		
+		}
+		
+		else {
+			
+			htVariableData.get(indexElement).setText(indexElement.getText() +  getHtNbSoldiersTmp().get(indexElement) + "/" + getHtNbSoldiers().get(indexElement));
+		}
+		
+	
 
 		} );	
 
@@ -204,7 +243,19 @@ public class OwnedCastleWindow extends Window implements managementButton{
 
 
 	public boolean canConfirm() {
-		return nbGoldTmp >= 0;
+
+		if(verifyNbGoldTmp) {
+			return nbGoldTmp >= 0;
+		}
+		if(verifyNbSoldiersTmp){
+			
+			return correctNbSoldiersTmp;
+			
+		}
+		
+		
+		
+		return true;
 	}
 
 
@@ -222,6 +273,14 @@ public class OwnedCastleWindow extends Window implements managementButton{
 
 	public void setNbGoldTmp(int nbGoldTmp) {
 		this.nbGoldTmp = nbGoldTmp;
+	}
+
+
+
+	@Override
+	protected Castle castleSelectTroops() {
+		// TODO Auto-generated method stub
+		return getCastleClicked();
 	}
 
 

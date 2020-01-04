@@ -17,6 +17,7 @@ import shape.Point2D;
 import sprite.Sprite;
 import sprite.castle.Castle;
 import sprite.castle.Castle.enumCastle;
+import window.Window.enumButton;
 
 import static settings.Settings.*;
 
@@ -53,6 +54,10 @@ public abstract class Window extends Sprite{
 	protected Hashtable <enumCastle,Integer> htNbSoldiers = new Hashtable<enumCastle,Integer>();
 	
 	private int indexCastlePlayer;
+	
+	protected boolean correctNbSoldiersTmp;
+	
+	protected Castle castleSelectTroops;
 	
 	
 
@@ -426,6 +431,25 @@ public abstract class Window extends Sprite{
 	}
 	
 	
+	protected void checkNbSoldiersTmp(){
+
+
+		if(getHtNbSoldiersTmp().get(enumCastle.Piker) > getHtNbSoldiers().get(enumCastle.Piker) || getHtNbSoldiersTmp().get(enumCastle.Knight) > getHtNbSoldiers().get(enumCastle.Knight)  || getHtNbSoldiersTmp().get(enumCastle.Catapult) > getHtNbSoldiers().get(enumCastle.Catapult) ) {
+			correctNbSoldiersTmp = false;
+			htButton.get(enumButton.Confirm).setStyle("-fx-background-color: #FF0000");
+
+		}
+
+
+		else {
+			correctNbSoldiersTmp = true;
+			htButton.get(enumButton.Confirm).setStyle("-fx-background-color: #3CEF18");
+		}
+
+	}
+
+	
+	
 	public abstract void mainWindow();
 	
 	
@@ -463,7 +487,7 @@ public abstract class Window extends Sprite{
 			
 		} );	
 
-		htButton.get(enumButton.Choose).setOnAction(event -> buttonChoosePressed(playerCastles.get(indexCastlePlayer), exitCode) );
+		htButton.get(enumButton.Choose).setOnAction(event -> buttonChoosePressed(exitCode) );
 
 		htButton.get(enumButton.NextCastle).setOnAction(event -> {
 			
@@ -477,9 +501,12 @@ public abstract class Window extends Sprite{
 	
 
 	
-	public void buttonChoosePressed(Castle castlePlayer, short exitCode) {
+	public void buttonChoosePressed(short exitCode) {
 		
 		removeStatusBar();
+		
+		Castle castlePlayer = castleSelectTroops();
+		
 		
 	    htVariableData.put(enumCastle.Piker, new Text(enumCastle.Piker.getText() +  htNbSoldiersTmp.get(enumCastle.Piker) + "/" + castlePlayer.getNbPikers()));
 	    htVariableData.put(enumCastle.Knight, new Text(enumCastle.Knight.getText() +  htNbSoldiersTmp.get(enumCastle.Knight) + "/" + castlePlayer.getNbKnights()));
@@ -494,6 +521,9 @@ public abstract class Window extends Sprite{
 
 
 	}
+	
+	
+	protected abstract Castle castleSelectTroops();
 	
 	
 	public void selectTroops(Castle castlePlayer, short exitCode) {
