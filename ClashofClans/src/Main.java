@@ -269,7 +269,7 @@ public class Main extends Application {
 										castlePlayer.setNbPikers(castlePlayer.getNbPikers() - nbPikers);
 										castlePlayer.setNbKnights(castlePlayer.getNbKnights() - nbKnights);
 										castlePlayer.setNbCatapults(castlePlayer.getNbCatapults() - nbCatapults);
-										castlePlayer.addOrder(new Order(castlePlayer,notOwnedCastleWindow.getCastleClicked(), nbPikers, nbKnights, nbCatapults));
+										castlePlayer.addOrder(new OrderAttack(castlePlayer,notOwnedCastleWindow.getCastleClicked(), nbPikers, nbKnights, nbCatapults));
 
 									}
 
@@ -388,7 +388,7 @@ public class Main extends Application {
 										source.setNbKnights(source.getNbKnights() - nbKnights);
 										source.setNbCatapults(source.getNbCatapults() - nbCatapults);
 										
-										source.addOrder(new Order(source,castleTransfer, nbPikers, nbKnights, nbCatapults));
+										source.addOrder(new OrderSupport(source,castleTransfer, nbPikers, nbKnights, nbCatapults));
 										
 										
 										

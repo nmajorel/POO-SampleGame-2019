@@ -87,7 +87,7 @@ public class Ennemy {
 				int knights = (nbKnights==0)? 0 : random.nextInt(nbKnights);
 				int catapults = (nbCatapults==0)? 0 : random.nextInt(nbCatapults);
 				c.setNbAllTroops(nbPikers - pikers, nbKnights - knights, nbCatapults - catapults);
-				c.addOrder(new Order(c, getCastleToAttack(), pikers, knights, catapults));
+				c.addOrder(new OrderAttack(c, getCastleToAttack(), pikers, knights, catapults));
 			}
 		}
 		
