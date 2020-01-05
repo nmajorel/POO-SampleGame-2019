@@ -15,11 +15,6 @@ public class Taken extends Castle {
 		super(layer, point, c, w, h);
 	}
 	
-	public Taken(Pane layer, Point2D point, double w, double h, Color c, String duke) {
-		super(layer, point, c, w, h);
-		setDuke(duke);
-	}
-	
 	public Taken(Pane layer, Point2D point, double w, double h, String duke, int gold, int level, int income, int id) {
 		this(layer, point, w, h, duke, gold, level, income, id, Color.LIMEGREEN);
 		
@@ -28,7 +23,7 @@ public class Taken extends Castle {
 	public Taken(Pane layer, Point2D point, double w, double h, String duke, int gold, int level, int income, int id, Color c) {
 		super(layer, point, c, w, h);
 		setDuke(duke);
-		this.gold = gold;
+		this.gold = 2000;
 		this.id = id;
 		getLayer().getChildren().remove(getHbox_id());
 		setHbox_id(new HBox());

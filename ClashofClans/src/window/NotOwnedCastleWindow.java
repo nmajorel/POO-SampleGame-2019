@@ -82,7 +82,7 @@ public class NotOwnedCastleWindow extends Window {
 	public void eventButtonSign(enumButton button, enumCastle indexElement, boolean sign, Castle c) {
 
 
-		htButton.get(button).setOnAction(event -> {modifyNbSoldiersTmp(sign, indexElement ,c);
+		htButton.get(button).setOnAction(event -> {modifyNbSoldiersTmp(sign, indexElement);
 		checkNbSoldiersTmp();
 		
 		htVariableData.get(indexElement).setText(indexElement.getText() +  getHtNbSoldiersTmp().get(indexElement) + "/" + getHtNbSoldiers().get(indexElement));

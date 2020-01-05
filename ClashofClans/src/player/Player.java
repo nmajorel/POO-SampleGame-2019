@@ -17,7 +17,7 @@ public class Player {
 
 	
 	private Input input;
-	private ArrayList<Castle> castles = new ArrayList<Castle>();
+	private List<Castle> castles = new ArrayList<Castle>();
 	
 	public Player(Pane pane, Input input, Castle castle) {
 
@@ -47,7 +47,7 @@ public class Player {
 
 	}
 
-	public ArrayList<Castle> getCastles() {
+	public List<Castle> getCastles() {
 		return castles;
 	}
 

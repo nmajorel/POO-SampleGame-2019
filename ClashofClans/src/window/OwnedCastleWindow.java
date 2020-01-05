@@ -100,7 +100,6 @@ public class OwnedCastleWindow extends Window implements managementButton{
 		htButton.get(enumButton.Upgrade).setOnAction(event -> { 
 			
 			this.verifyNbGoldTmp = true;
-			
 			String string = "Are you sure to Upgrade ? " + "\t\tCost : " + htCostProduction.get(enumCastle.Level) + " coins \n\n" + enumCastle.Gold.getText() +  getNbGoldTmp() + "/" + getCastleClicked().getGold();
 			nbGoldTmp -= COST_UPGRADE_LEVEL;
 			confirmation(string, EXIT_UPGRADE_LEVEL);
@@ -172,7 +171,7 @@ public class OwnedCastleWindow extends Window implements managementButton{
 
 
 		
-		htButton.get(button).setOnAction(event -> {modifyNbSoldiersTmp(sign, indexElement ,c);
+		htButton.get(button).setOnAction(event -> {modifyNbSoldiersTmp(sign, indexElement);
 		modifyGoldTmp(sign, indexElement ,c);
 		
 		if(verifyNbGoldTmp) {

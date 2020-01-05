@@ -226,6 +226,17 @@ public abstract class Window extends Sprite{
 
 	}
 	
+	/**
+	
+	* initialise la hastable de soldats fixes
+	*
+	* @param castle 
+	* 	château que utilise pour initialiser ces données
+	*	
+	*
+
+	*/
+	
 	protected void addHtNbSoldiers(Castle castle){
 		
 		
@@ -238,7 +249,19 @@ public abstract class Window extends Sprite{
 		
 	}
 	
+	/**
 	
+	* rajoute la barre de status d'un château ( ces données )
+	*
+	* @param castle 
+	* 	château que l'on utilise pour initialiser ces données
+	*	
+	* @param description
+	* 	description que l'on rajoute au texte précédent
+
+	*/
+	
+
 	protected void addStatusBar(Castle castle, String description) {
 		
 		statusBar.add( new Text(description)) ;
@@ -249,6 +272,20 @@ public abstract class Window extends Sprite{
 		
 	}
 	
+	
+/**
+	
+	* modifie la barre de status d'un château ( ces données )
+	*
+	* @param castle 
+	* 	château que l'on utilise pour initialiser ces données
+	*	
+	* @param description
+	* 	description que l'on rajoute au texte précédent
+
+	*/
+	
+	
 	protected void setStatusBar(Castle castle, String description) {
 		
 		statusBar.get(0).setText(description);
@@ -256,6 +293,19 @@ public abstract class Window extends Sprite{
 		statusBar.get(1).setText(castle.toString());
 
 	}
+	
+/**
+	
+	* ajoute les textes à la vbox vboxStatusBar
+	* 
+	* 
+	
+		
+
+	*/
+	
+	
+	
 
 
 	private void initStatusBar() {
@@ -270,15 +320,46 @@ public abstract class Window extends Sprite{
 	}
 	
 	
+/**
+	
+	* supprime la vbox vboxStatusBar du noeud
+	* 
+	* 
+
+	*/
+	
+	
+	
 	protected void removeStatusBar () {
 		getLayer().getChildren().remove(vboxStatusBar);
 		
 	}
 	
+	
+/**
+	
+	* supprime la hbox  hboxSuppr du noeud
+	* 
+	* 
+
+	*/
+	
+
+	
 	protected void removeSuppr() {
 		
 		getLayer().getChildren().remove(htHBox.get(enumHBox.hboxSuppr));
 	}
+
+	
+/**
+	
+	* supprime toutes les HBox du noeud
+	* 
+	* 
+
+	*/
+	
 	
 	public void removeHBox() {
 		
@@ -289,8 +370,16 @@ public abstract class Window extends Sprite{
 		    	getLayer().getChildren().remove(e.nextElement());
 
 		  }
-
 	
+
+/**
+	
+	* supprime touts les élements de Window ( HBox, barre de statut, bouton Suppr)
+	* 
+	* 
+	*/
+	
+
 	protected void removeWindow() {
 	
 		removeHBox();
@@ -299,11 +388,30 @@ public abstract class Window extends Sprite{
 		this.keepPlaying = true;
 		this.removeFromLayer();
 	
-
-		
-	}
-
 	
+	}
+	
+/**
+	
+	* ajoute les boutons Sign ( + et - ) dans le noeud
+	* 
+	* @param hbox 
+	* 	hbox qui reçoit le bouton
+	* 
+	* @param button
+	* 	bouton que l'on rajoute au noeud
+	* 
+	* @param indexElement
+	* 
+	* 	element ( piker, knight ...) que l'on incrémente ou décrémente
+	*
+	*	@param c
+	*	
+	*	castle utilisée pour rajouter du texte utile pour eventButtonSign ( Gold etc ..)
+	* 
+	* 
+	*/
+
 	protected void addButtonSign(enumHBox hbox, enumButton button, enumCastle indexElement, Castle c) {
 		
 		
@@ -338,8 +446,64 @@ public abstract class Window extends Sprite{
 	}
 	
 	
+/**
+	
+	* les événements des boutons sign sont différents selon les sous classes
+	* 
+	* @param button
+	* 
+	* 	bouton auquel on va assigner un événement 
+	* 
+	* @param indexElement
+	* 
+	* 	element ( piker, knight ...) que l'on incrémente ou décrémente
+	* 
+	* @param sign
+	* 	
+	* 	false pour le bouton -, true pour le bouton + 
+	*
+	*@param c
+	*	
+	*	castle utilisée pour rajouter du texte utile pour eventButtonSign ( Gold etc ..)
+	* 
+	* 
+	*/
+
+	
 	protected abstract void eventButtonSign(enumButton button, enumCastle indexElement, boolean sign, Castle c);
 	
+	
+	
+	
+/**
+	
+	* 	ajoute une hbox au noeud 
+	* 
+	* 	@param hbox
+	* 
+	* 	hbox que l'on ajouté
+	* 
+	*	 @param x
+	* 
+	* 	coordonnées x de la hbox
+	* 
+	* 	@param y
+	* 	
+	* 	coordonnées y de la hbox
+	*
+	*	@param width
+	*	
+	*	largeur de la hbox
+	* 
+	* 	@param height
+	* 
+	* 	hauteur de la hbox
+	* 
+	* 	@param spacing
+	* 
+	* 	espacement entre les éléments ( boutons, textes)
+	* 
+	*/
 	
 	
 	protected void addHBoxLayer(HBox hbox, double x, double y, double width, double height, double spacing) {
@@ -354,6 +518,38 @@ public abstract class Window extends Sprite{
 		
 	}
 	
+/**
+	
+	* 	ajoute une vbox au noeud 
+	* 
+	* 	@param vbox
+	* 
+	* 	hbox que l'on ajouté
+	* 
+	*	 @param x
+	* 
+	* 	coordonnées x de la vbox
+	* 
+	* 	@param y
+	* 	
+	* 	coordonnées y de la vbox
+	*
+	*	@param width
+	*	
+	*	largeur de la vbox
+	* 
+	* 	@param height
+	* 
+	* 	hauteur de la vbox
+	* 
+	* 	@param spacing
+	* 
+	* 	espacement entre les éléments ( boutons, textes)
+	* 
+	*/
+	
+	
+	
 	protected void addVBoxLayer(VBox vbox, double x, double y, double width, double height, double spacing) {
 		
 		
@@ -362,9 +558,36 @@ public abstract class Window extends Sprite{
 		vbox.setSpacing(spacing);
 
 		getLayer().getChildren().add(vbox);
-		
+	
 		
 	}
+	
+	
+	
+	
+	
+/**
+	
+	* 	ajoute un bouton à la hbox
+	* 
+	* 	@param hbox
+	* 
+	* 	hbox auquelle on rajoute un bouton
+	* 
+	*	 @param button
+	* 
+	* 	bouton rajouté
+	* 
+	* 	@param width
+	* 	
+	* 	largeur du bouton
+	*
+	*	@param height
+	*	
+	*	hauteur du bouton
+	* 
+
+	*/
 	
 	
 	protected void addButtonHBox(enumHBox hbox, enumButton button, double width, double height) {
@@ -373,11 +596,27 @@ public abstract class Window extends Sprite{
 			
 			htHBox.get(hbox).getChildren().add(htButton.get(button));
 			
-			
-		
 
 	}
 	
+	
+/**
+	
+	* 	ajoute le bouton confirm au noeud
+	* 
+	* 	@param width
+	* 
+	* 	largeur du bouton confirm
+	* 
+	*	 @param height
+	*
+	*	hauteur du bouton confirm
+	* 
+
+
+	*/
+	
+
 	
 	protected void addButtonConfirm(int width, int height) {
 		
@@ -389,16 +628,52 @@ public abstract class Window extends Sprite{
 		
 	}
 	
+/**
+	
+	* 	événement du bouton confirm, appelle la fonction buttonConfirmPressed
+	* 
+	* 	@param exitCode
+	* 	
+	* 
+	* 	code de sortie
+	* 
+
+
+	*/
+	
+	
+	
 	protected void eventButtonConfirm(short exitCode) {
 		
 		htButton.get(enumButton.Confirm).setOnAction(event -> buttonConfirmPressed(exitCode) );
 		
 	}
 
+
 	
+	/**
+	
+	* 	le prédicat peut on confirmer est différent selon les sous classes
+
+		@return vrai si on peut confirmer faux dans le cas contraire
+
+	*/	
+	
+
 	protected abstract boolean canConfirm();
 	
 	
+	
+	/**
+	
+	* 	on vérifie si on peut confirmer, si oui on supprime la fenêtre
+
+	* 	@param exitCode
+
+	* 		code de sortie
+
+	*/	
+
 	protected void buttonConfirmPressed(short exitCode) {
 
 
@@ -410,9 +685,27 @@ public abstract class Window extends Sprite{
 			removeWindow();}
 
 	}
-
 	
-	protected void modifyNbSoldiersTmp(Boolean plus, enumCastle indexSoldier, Castle c) {
+	
+	
+	
+	/**
+	
+	* 	modifie la hastable de nombre de soldats temporaires
+
+	* 	@param plus
+
+	* 		si vrai on incrémente dans le cas contraire on décrémente
+	* 
+	* 
+	* 	@param indexSoldier
+	* 
+	* 		quel nombre de soldats temporaires on modifie ( Piker, Knight , .. )
+
+	*/	
+	
+
+	protected void modifyNbSoldiersTmp(Boolean plus, enumCastle indexSoldier) {
 
 
 		int val = htNbSoldiersTmp.get(indexSoldier);
@@ -431,6 +724,23 @@ public abstract class Window extends Sprite{
 	}
 	
 	
+	/**
+	
+	* 	vérifie si le nombre de soldats temporaires ( de la fenêtre ) ne dépasse pas le nombre de soldats fixes ( selon le château, htNbSoldiers est fixé par un château)
+
+	* 	@param plus
+
+	* 		si vrai on incrémente dans le cas contraire on décrémente
+	* 
+	* 
+	* 	@param indexSoldier
+	* 
+	* 		quel nombre de soldats temporaires on modifie ( Piker, Knight , .. )
+
+	*/	
+	
+	
+	
 	protected void checkNbSoldiersTmp(){
 
 
@@ -447,10 +757,20 @@ public abstract class Window extends Sprite{
 		}
 
 	}
+	
+	
+	/**
+	
+	
+	* ce que l'on ajoute dans la fenêtre principale dépend des sous classes
 
+	*/	
 	
-	
+
 	public abstract void mainWindow();
+	
+	
+	
 	
 	
 	

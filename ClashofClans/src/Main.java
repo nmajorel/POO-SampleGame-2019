@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
 
 import javafx.animation.AnimationTimer;
 
@@ -17,9 +20,13 @@ import javafx.stage.Stage;
 import management.Laboratory;
 import management.Land;
 import management.Order;
+import management.OrderAttack;
+import management.OrderSupport;
+
 import static settings.Settings.*;
 
 import shape.Point2D;
+import shape.Rectangle;
 import sprite.Sprite;
 import static sprite.castle.Castle.canIncome;
 import sprite.castle.Castle;
@@ -79,6 +86,7 @@ public class Main extends Application {
     
 	private int nb_lands = 0;
     private int nb_ennemies = 1;    
+    
 	Text hudTexts[] = new Text[6000];
 	
 	HBox hboxHUD = new HBox();
@@ -129,11 +137,23 @@ public class Main extends Application {
 					player.getCastles().forEach(sprite -> sprite.move());
 					player.getCastles().forEach(sprite -> sprite.updateUI());
 					
-					actionEnnemy(currentNanoTime);
 					
-					
-					checkOrders(player.getCastles(), currentNanoTime);
-					ennemies.forEach(ennemy -> checkOrders(ennemy.getCastles(), currentNanoTime));
+					for(int i =0; i< player.getCastles().size(); i++) {
+						Castle castle = player.getCastles().get(i);
+						if(castle.getOrder()!=null) {
+							continueOrders(castle);
+							castle.getOrder().forEach(order -> order.getTroops().forEach(sprite -> sprite.updateUI()) );
+							
+						}
+						
+						Laboratory lab = castle.getLab();
+						if(castle.getLab().isRunning()) {
+							
+							lab.checkProduction(currentNanoTime, castle);
+							
+						}	
+						
+					}
 					
 					checkIncome(currentNanoTime);
 					
@@ -212,7 +232,6 @@ public class Main extends Application {
 		createOtherCastles();
 
 		createHUD();
-		createSaveHBbox();
 	       
         scene.setOnMouseClicked(
                 new EventHandler<MouseEvent>()
@@ -384,13 +403,16 @@ public class Main extends Application {
 										Castle source = ownedCastleWindow.getCastleClicked();
 										Castle castleTransfer = player.getCastles().get(ownedCastleWindow.getIndexCastlePlayer());
 
-										source.setNbPikers(source.getNbPikers() - nbPikers);
-										source.setNbKnights(source.getNbKnights() - nbKnights);
-										source.setNbCatapults(source.getNbCatapults() - nbCatapults);
-										
-										source.addOrder(new OrderSupport(source,castleTransfer, nbPikers, nbKnights, nbCatapults));
-										
-										
+
+										if(source.getId() != castleTransfer.getId()) {
+
+											source.setNbPikers(source.getNbPikers() - nbPikers);
+											source.setNbKnights(source.getNbKnights() - nbKnights);
+											source.setNbCatapults(source.getNbCatapults() - nbCatapults);
+
+											source.addOrder(new OrderSupport(source,castleTransfer, nbPikers, nbKnights, nbCatapults));
+
+										}
 										
 									}
 										
@@ -418,6 +440,9 @@ public class Main extends Application {
 
 		
 	}
+	
+	
+
 
 	private void createOtherCastles() {
 		
@@ -431,7 +456,7 @@ public class Main extends Application {
 			p = nextAvailableLand();
 		}	
 		for(int i =0; i<nb_ennemies; i++) {
-			Castle c = new Taken(playfieldLayer, p, SIZE_CASTLE, SIZE_CASTLE, Color.CRIMSON, "Cersei Lannister");
+			Castle c = new Taken(playfieldLayer, p, SIZE_CASTLE, SIZE_CASTLE, Color.CRIMSON);
 			ennemies.add(new Ennemy(c));
 			otherCastles.add(c);
 			allCastles.add(c);
@@ -483,7 +508,7 @@ public class Main extends Application {
 			
 	}
 	
-	public void continueOrders( Castle c, ArrayList<Castle> listCastles) {
+	public void continueOrders( Castle c) {
 		
 		for(Order order : c.getOrder() ) {
 			if(order.ost_move()) {
@@ -495,22 +520,12 @@ public class Main extends Application {
 				int level = target.getLevel();
 				int income = target.getIncome();
 				int id = target.getId();
-				boolean contains = false;
-				
-				if(otherCastles.contains(c)) {
-					removeSprites(otherCastles);
-					contains = true;
-				}
 
-				removeSprites(allCastles);
+				removeSprites(otherCastles);
 				
 				Castle castle = new Taken(playfieldLayer, point, w, w, duke, gold, level, income, id, c.getColor());
-				
-				if(contains) {
-					otherCastles.add(castle);
-				}
-				listCastles.add(castle );
-				allCastles.add(castle);
+
+				player.addCastles(castle );
 				allCastles.set(target.getId()-1, castle);
 				
 			}
@@ -518,27 +533,7 @@ public class Main extends Application {
 		c.removeOrders();
 	}
 
-	private void actionEnnemy(long currentNanoTime) {
-		ennemies.forEach(ennemy -> ennemy.setCastleToAttack(allCastles));
-		ennemies.forEach(ennemy -> ennemy.checkAction(currentNanoTime));
-	}
 	
-	private void checkOrders( ArrayList<Castle> Castles, long currentNanoTime) {
-		
-		for(int i =0; i< Castles.size(); i++) {
-			Castle castle = Castles.get(i);
-			if(castle.getOrder()!=null) {
-				continueOrders(castle, Castles);
-				castle.getOrder().forEach(order -> order.getTroops().forEach(sprite -> sprite.updateUI()) );
-				
-			}
-			Laboratory lab = castle.getLab();
-			if(castle.getLab().isRunning()) {
-				
-				lab.checkProduction(currentNanoTime, castle);
-			}	
-		}
-	}
 	
 	public void createHUD() {
 	
