@@ -509,6 +509,7 @@ public class Main extends Application {
 					int id = target.getId();
 					boolean other_contain = false;
 					
+					
 					if(otherCastles.contains(c)) {
 						other_contain = true;
 					}
@@ -518,6 +519,11 @@ public class Main extends Application {
 					Sprite.removeSprites(player.getCastles());
 					
 					ennemies.forEach( ennemy -> Sprite.removeSprites(ennemy.getCastles()));
+					for(int i = 0; i<ennemies.size(); i++) {
+						if(ennemies.get(i).getCastles().size()==0) { 
+							ennemies.remove(ennemies.get(i)); 
+							}
+					}
 					
 					Sprite.removeSprites(allCastles);
 					
