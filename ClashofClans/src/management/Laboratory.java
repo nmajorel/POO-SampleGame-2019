@@ -12,19 +12,80 @@ import sprite.castle.Castle.enumCastle;
 
 public class Laboratory {
 	
+	
+	
+	
+	
+	
+	/**
+		file de production FIFO (First in First out ) qui prend des enum de type enumCastle (Piker, Knight, Catapult ..)
+	 * 
+	 */
+
+
 	private LinkedBlockingQueue<enumCastle> productionQueue = new LinkedBlockingQueue<enumCastle>();
-	
+
+
+
+
+	/**
+	hastable qui associe une type de donnée ( Piker, Knight .. ) à sa durée de production
+	 * 
+	 */
+
+
 	private Hashtable <enumCastle,Double> htTimeProduction = new Hashtable<enumCastle,Double>();
-	
+
+
+	/**
+	hastable qui associe une type de donnée ( Piker, Knight .. ) à son coût
+	 * 
+	 */
+
 	private Hashtable <enumCastle,Integer> htCostProduction = new Hashtable<enumCastle,Integer>();
 	
+
+
+
+	/**
+	hastable qui associe une type de donnée ( Piker, Knight .. ) à son coût
+	 * 
+	 */
+
+
+	
+	/**
+	dernière date (en Nano seconds) avant interruption
+	 * 
+	 */
 	
 	private long lastUpdate;
 	
+	
+	
+	/**
+	temps écoulé entre le début de la production et le temps actuel en Nanoseconds
+	 * 
+	 */
+	
+	
 	private long elapsedNanos;
+	
+	/**
+	remet à jour lastUpdate( quand on fait pause avec la fenêtre ou la touche p)
+	 * 
+	 */
+	
 	
 	private boolean resetTimer;
 
+	/**
+	initalise les hashtable avec des données fixes
+	 * 
+	 */
+	
+	
+	
 	
 	
 	public Laboratory() {
@@ -47,7 +108,20 @@ public class Laboratory {
 	}
 	
 	
+	/**
+	vérifie si la production de l'élement de type enumCastle est terminée en début de file
 	
+	
+	@param  elapsedSeconds
+	
+		temps écoulé entre le début de la production et le temps actuel en secondes
+		
+	
+	@return vrai si production terminée , faux dans le contraire
+	 * 
+	 */
+	
+
 	public boolean finishedProduction(double elapsedSeconds){
 
 
@@ -61,6 +135,17 @@ public class Laboratory {
 		return false;
 
 	}
+	
+	
+	
+	/**
+
+	
+	
+	@return l'élément en début de file
+	 * 
+	 */
+	
 
 	
 	public enumCastle getProduction() {
@@ -68,6 +153,20 @@ public class Laboratory {
 		return productionQueue.peek();
 		
 	}
+	
+	
+	
+	
+	/**
+
+	
+	
+	@return le prix de l'élément en début de file
+	 * 
+	 */
+	
+	
+	
 	
 	public int getCostProduction() {
 		
@@ -82,12 +181,20 @@ public class Laboratory {
 	
 	
 	
+	/**
+
+	
+	
+	enlève l'élément de la file
+	 * 
+	 */
+
+	
 	public void removeProductionQueue() {
 		
 		productionQueue.poll();
 		
 	}
-	
 	
 
 
@@ -95,6 +202,26 @@ public class Laboratory {
 		return productionQueue;
 	}
 
+	
+	/**
+
+	
+	
+	ajoute l'élément en fin de file range fois
+	
+	@param element
+		element à ajouté (Piker, knight, level ..)
+		
+	@param range
+	
+		nombre de fois que l'on rajoute l'élément
+	
+	
+	 * 
+	 */
+	
+	
+	
 
 	public void addProductionQueue(enumCastle element, int range) {
 		
@@ -109,11 +236,42 @@ public class Laboratory {
 		
 	}
 
+	
+	/**
+
+	
+	@return vrai si le laboratoire est en train de tourner ( il y a au moins un élément dans la file )
+	
+	 * 
+	 */
+	
+	
 
 
 	public boolean isRunning() {
 		return !(productionQueue.peek() == null);
 	}
+
+	
+	/**
+
+	vérifie la production en cours
+	
+	
+	@param currentNanoTime 
+	
+		temps actuel en nanoSeconds
+		
+	@param castlePlayer
+	
+		castle auquelle on rajoute un élément de type Piker Knight  ou on augmente de niveau si la production est terminée
+
+	
+	
+	 * 
+	 */
+	
+	
 
 	
 	public void checkProduction(long currentNanoTime, Castle castlePlayer) {
@@ -169,10 +327,38 @@ public class Laboratory {
 		
 		
 	}
+	
+	
+	/**
+
+	reset le Timer 
+
+
+
+	 * 
+	 */
+
+
+
 
 	public void resetTimer() {
 		this.resetTimer = true;
+
 	}
+
+
+	/**
+
+	@return le temps écoulé entre le début de la production et le temps actuel en second
+
+
+
+	 * 
+	 */
+
+
+
+
 
 	public double getElapsedSeconds() {
 		return (elapsedNanos * Math.pow(10, -9));

@@ -21,6 +21,12 @@ public class NotOwnedCastleWindow extends Window {
 
 	
 	
+	/**
+	
+	* appelle le super constructeur et la fonction fenêtre principale
+	* 
+	* 
+	*/
 
 
 
@@ -39,6 +45,14 @@ public class NotOwnedCastleWindow extends Window {
 	
 	
 	
+	/**
+	
+	* fenêtre principale
+	* 
+	* on ajoute le boutcon Attack et on lui associe son événement
+	*/
+	
+	
 
 	public void mainWindow() {
 		
@@ -55,6 +69,12 @@ public class NotOwnedCastleWindow extends Window {
 		
 	}
 
+	/**
+	
+	* événement du bouton Attack
+	* 
+	* on ajoute la hboxChoose et ses boutons associés en lui spécifiant le code de sortie
+	*/
 	
 
 
@@ -74,6 +94,15 @@ public class NotOwnedCastleWindow extends Window {
 	}
 	
 
+	
+
+	/**
+	
+	* événement des boutons Sign
+	* 
+	* on modifie le nombre de soldats temporaires et on vérifie si ce nombre est supérieur au nombre de soldats fixes
+	* 
+	*/
 
 
 
@@ -93,6 +122,11 @@ public class NotOwnedCastleWindow extends Window {
 	}
 	
 	
+	/**
+	
+	* si le nombre de soldats temporaires est supérieur au nombre de soldats fixes on ne peut pas confirmer
+	* 
+	*/
 	
 
 
@@ -105,6 +139,14 @@ public class NotOwnedCastleWindow extends Window {
 	}
 
 
+	/**
+	
+	* @return le château que l'on a choisit dans choose ( indexCastlePlayer())
+	*/
+	
+	
+	
+	
 
 
 	@Override

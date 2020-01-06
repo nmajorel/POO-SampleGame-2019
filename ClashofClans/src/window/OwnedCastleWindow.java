@@ -23,16 +23,83 @@ import java.util.List;
 public class OwnedCastleWindow extends Window implements managementButton{
 	
 	
+	/**
+	
+	* variable qui donne le montant ( gold ) utilisé dans la fenêtre
+	* 
+	* 
+	* 
+	* 
+	*/
+	
+	
 	private int nbGoldTmp;
+	
+	
+	/**
+	
+	* variable qui demande si on doit vérifier le montant utilisé
+	* 
+	* 
+	* 
+	* 
+	*/
 	
 	private boolean verifyNbGoldTmp;
 	
-	private boolean verifyNbSoldiersTmp;;
+	/**
+	
+	* variable qui demande si on doit vérifier le nombre de soldats temporaires
+	* 
+	* 
+	* 
+	* 
+	*/
+	
+	
+	private boolean verifyNbSoldiersTmp;
+	
+	
+	/**
+	
+	* variable qui vérifie si ont doit rajouter un texte spécifique
+	* 
+	* 
+	* 
+	* 
+	*/
+	
 	
 	private boolean isTextSign;
 	
 	
+	
+	/**
+	
+	* hashTable qui associe un enumCastle ( Piker, Knight, Catapult ) à son coût de production
+	* 
+	* 
+	* 
+	*/
+	
+	
+	
 	private Hashtable <enumCastle,Integer> htCostProduction = new Hashtable<enumCastle,Integer>();
+	
+/**
+	
+	 Constructeur
+	
+	* GoldTmp est égal au château sur lequel on clique ( un château de player )
+	* 
+	* on initialise les hashTables 
+	* 
+	* on appelle la fonction mainWindow
+	* 
+	* 
+	*/
+	
+	
 
 
 	public OwnedCastleWindow(Pane layer, Point2D point, double w, double h, Castle source, List<Castle> playerCastles) {
@@ -60,6 +127,17 @@ public class OwnedCastleWindow extends Window implements managementButton{
 
 
 	}
+	
+	/**
+	
+	* fenêtre principale
+	* 
+	* on ajoute les boutons Train, Upgrade, Transfer, CancelOneQueue, CancelAllQueue à leurs hbox respectives et on leur associe des événements
+	* 
+	* 
+	* 
+	* 
+	*/
 	
 
 	
@@ -125,6 +203,24 @@ public class OwnedCastleWindow extends Window implements managementButton{
 		
 		
 	}
+	
+	/**
+	
+	* génère une fenêtre spécifique qui ajoute un bouton confirm pour vérifie si le joueur souhaite bien modifie ces données
+	* 
+	* @param message
+	* 
+	* 	message de confirmation
+	* 
+	* @param exitCode
+	* 
+	* 	code de sortie pour le bouton confirm
+	* 
+	* 
+	* 
+	* 
+	*/
+	
 
 	
 	
@@ -146,6 +242,23 @@ public class OwnedCastleWindow extends Window implements managementButton{
 		htHBox.get(enumHBox.hboxConfirm).getChildren().add(new Text(message));
 		
 	}
+	
+	/**
+	
+	* actions du bouton Train
+	* 
+	* on appelle la fonction de sélection des troupes selectTroops
+	* 
+	* 
+	* @param c
+	* 	château avec lequel on souhaite entrainer des troupes.
+	* 
+	* 
+	* 
+	* 
+	*/
+	
+	
 
 	public void buttonTrainPressed(Castle c) {
 
@@ -165,6 +278,24 @@ public class OwnedCastleWindow extends Window implements managementButton{
 		
 	}
 	
+	
+/**
+	
+	*
+	* on appelle checkNbGoldTmp() ou  checkNbSoldiersTmp() ( changer la couleur du bouton Confirm ) si on doit vérifier ce prédicat à chaque fois
+	* on modife la valeur temporaire de gold
+	* 
+	* On modifie le texte variable, texte que l'on rajoute à la hbox ( hboxPikers, .... )
+	* 
+	* isTextSign ( bouton Train )
+	* 
+	* !isTextSign ( bouton Transfer )
+	* 
+	* 
+	* 
+	*/
+	
+
 
 	@Override
 	public void eventButtonSign(enumButton button, enumCastle indexElement, boolean sign, Castle c) {
@@ -207,6 +338,21 @@ public class OwnedCastleWindow extends Window implements managementButton{
 
 	}
 	
+	
+	
+	
+/**
+	
+	*
+	* même fonction que modifyNbSoldierTmp mais avec l'argent cette fois ci
+	* 
+	* 
+	* 
+	*/
+	
+	
+	
+	
 	public void modifyGoldTmp(Boolean plus, enumCastle indexElement, Castle c) {
 		
 		int val = htCostProduction.get(indexElement);
@@ -224,6 +370,29 @@ public class OwnedCastleWindow extends Window implements managementButton{
 		}
 
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+/**
+	
+	*
+	* modifie la couleur du bouton Confirm
+	* 
+	* vert si le montant dépensé est correct
+	* rouge dans le cas contraire
+	* 
+	* 
+	* 
+	*/
+	
+	
+	
+	
 
 	void checkNbGoldTmp(){
 
@@ -239,6 +408,22 @@ public class OwnedCastleWindow extends Window implements managementButton{
 		}
 
 	}
+	
+	
+/**
+	
+	*
+	* Soit on vérifie que le joueur ne dépense pas trop ( bouton Train )
+	* 
+	* Soit on vérifie que le nombre de soldats temporaires est correct ( bouton Transfer )
+	* 
+	* 
+	* 
+	*/
+	
+	
+	
+	
 
 
 	public boolean canConfirm() {
@@ -274,6 +459,16 @@ public class OwnedCastleWindow extends Window implements managementButton{
 		this.nbGoldTmp = nbGoldTmp;
 	}
 
+	
+	
+/**
+	
+	*
+		le château que l'on choisit pour la sélection des troupes est le château sur lequel on a cliqué
+	* 
+	* 
+	* 
+	*/
 
 
 	@Override

@@ -23,41 +23,175 @@ import static settings.Settings.*;
 
 public abstract class Window extends Sprite{
 	
-
+	/**
+	 * 
+	 * variable qui vérifie si on a quitté la fenêtre window
+	 * 
+	 */
 	
 	private boolean keepPlaying;
 	
+	
+	
+	/**
+	 * 
+	 * château sur lequel on a cliqué
+	 * 
+	 */
+	
+
 	private Castle castleClicked;
+	
+	
+	
+	/**
+	 * 
+	 * vbox de la barre de statut ( informations sur le château : nombre de piquiers, knights ... level )
+	 * 
+	 */
 	
 	
 	private VBox vboxStatusBar; 
 	
+	
+	
+	
+	/**
+	 * 
+	 *  Liste qui référencie les textes de la barre de statut
+	 * 
+	 */
+	
+	
 	private List<Text> statusBar = new ArrayList<Text>();
+	
+	
+	
+	
+	
+	/**
+	 * 
+	 *  Liste qui référencie les châteaux du joueur
+	 * 
+	 */
+	
+	
 
 	private List<Castle> playerCastles = new ArrayList<Castle>();
 	
 	
+	
+	/**
+	 * 
+	 *  code de sortie
+	 * 
+	 */
+	
+	
+	
 	private short exitCode;
+	
+	
+	
+	
+	/**
+	 * 
+	 *  hashtable qui associe un enumButton(Attack, Train ... ) à un bouton (javafx)
+	 * 
+	 */
+	
+	
+	
+	
 	
 	protected Hashtable <enumButton,Button> htButton = new Hashtable<enumButton,Button>();
 	
+	
+	/**
+	 * 
+	 *  hashtable qui associe un enumHBox(hboxAttack... ) à une HBox (javafx)
+	 * 
+	 */
+
+	
 	protected Hashtable <enumHBox,HBox> htHBox = new Hashtable<enumHBox,HBox>();
+	
+	/**
+	 * 
+	 *  hashtable qui associe un enumHBox(hboxAttack... ) à une VBox (javafx)
+	 * 
+	 */
+
+	
 	
 	protected Hashtable <enumHBox,VBox> htVBox = new Hashtable<enumHBox,VBox>();
 	
 	
+	
+	/**
+	 * 
+	 *  hashtable qui associe un enumCastle(Piker, Knight, level ) à un Texte ( variable ) (javafx)
+	 * 
+	 */
 
 	protected Hashtable <enumCastle,Text> htVariableData = new Hashtable<enumCastle,Text>();
 	
+	/**
+	 * 
+	 *  hashtable qui associe un enumCastle(Piker, Knight ) au nombre de soldats temporaires de la fenêtre
+	 * 
+	 */
+
+	
 	protected Hashtable <enumCastle,Integer> htNbSoldiersTmp = new Hashtable<enumCastle,Integer>();
+	
+	/**
+	 * 
+	 *  hashtable qui associe un enumCastle(Piker, Knight ) au nombre de soldats fixes d'un château
+	 * 
+	 */
+	
+	
 	
 	protected Hashtable <enumCastle,Integer> htNbSoldiers = new Hashtable<enumCastle,Integer>();
 	
+	
+	/**
+	 * 
+	 *  index du château que l'on modifie quand appuie sur les touches PrevCastle NextCastle
+	 * 
+	 */
+
+	
 	private int indexCastlePlayer;
+	
+	
+	/**
+	 * 
+	 *  variable qui vérifie si le nombre de soldats temporaires est correct
+	 * 
+	 */
+	
 	
 	protected boolean correctNbSoldiersTmp;
 	
+	
+	/**
+	 * 
+	 *  château que l'on choisit dans la fenêtre sélection des troupes
+	 * 
+	 */
+	
+	
 	protected Castle castleSelectTroops;
+	
+	
+	/**
+	 * 
+	 *  énumération qui énumère tout les boutons utilisables
+	 * 
+	 */
+	
 	
 	
 
@@ -94,6 +228,13 @@ public abstract class Window extends Sprite{
 		}
 		
 	}
+	
+	
+	/**
+	 * 
+	 *  énumération qui énumère toutes les hbox utilisables
+	 * 
+	 */
 
 
 	public enum enumHBox{
@@ -117,6 +258,16 @@ public abstract class Window extends Sprite{
 
 		
 	}
+	
+	
+	/**
+	 * 
+	 *  initialise les Hashtables
+	 *  
+	 *  
+	 *  initialie le bouton Suppr et ses événements
+	 * 
+	 */
 	
 
 	
@@ -189,6 +340,19 @@ public abstract class Window extends Sprite{
 			
 	}
 	
+	/**
+	 * 
+	 *  constructeur appelé par  OwnedCastleWindow
+	 *  
+	 *  message spécifique dans la barre de statut
+	 *  
+	 *  le nombre de soldats fixes est celui du château sur lequel on clique ( quand on appuie sur Train ou Transfer c'est à partir des ressources de ce château )
+	 * 
+	 */
+	
+	
+	
+	
 	public Window(Pane layer, Point2D point, double w, double h, Castle source, List<Castle> playerCastles) {
 
 		this(layer, point, w , h);
@@ -205,6 +369,16 @@ public abstract class Window extends Sprite{
 		
 
 	}
+	
+	
+	/**
+	 * 
+	 *  constructeur appelé par  NotOwnedCastleWindow
+	 *  
+	 *  message spécifique dans la barre de statut
+	 * 
+	 */
+	
 	
 
 
@@ -231,7 +405,7 @@ public abstract class Window extends Sprite{
 	* initialise la hastable de soldats fixes
 	*
 	* @param castle 
-	* 	château que utilise pour initialiser ces données
+	* 	château que l'on utilise pour initialiser ces données
 	*	
 	*
 
@@ -300,13 +474,10 @@ public abstract class Window extends Sprite{
 	* 
 	* 
 	
-		
 
 	*/
 	
 	
-	
-
 
 	private void initStatusBar() {
 
@@ -393,7 +564,7 @@ public abstract class Window extends Sprite{
 	
 /**
 	
-	* ajoute les boutons Sign ( + et - ) dans le noeud
+	* ajoute les boutons Sign ( + et - )  spécifiques à un soldat ( Piker, Knight ) dans le noeud
 	* 
 	* @param hbox 
 	* 	hbox qui reçoit le bouton
@@ -456,7 +627,7 @@ public abstract class Window extends Sprite{
 	* 
 	* @param indexElement
 	* 
-	* 	element ( piker, knight ...) que l'on incrémente ou décrémente
+	* 	element ( piker, knight ...) que l'on incrémente ou décrémente ( nombre de soldats temporaires )
 	* 
 	* @param sign
 	* 	
@@ -602,7 +773,7 @@ public abstract class Window extends Sprite{
 	
 /**
 	
-	* 	ajoute le bouton confirm au noeud
+	* 	ajoute le bouton confirm au noeud, couleur à vert de base
 	* 
 	* 	@param width
 	* 
@@ -728,14 +899,8 @@ public abstract class Window extends Sprite{
 	
 	* 	vérifie si le nombre de soldats temporaires ( de la fenêtre ) ne dépasse pas le nombre de soldats fixes ( selon le château, htNbSoldiers est fixé par un château)
 
-	* 	@param plus
-
-	* 		si vrai on incrémente dans le cas contraire on décrémente
+	* 		si vrai la couleur du bouton confirm passe à vert, rouge dans le cas contraire
 	* 
-	* 
-	* 	@param indexSoldier
-	* 
-	* 		quel nombre de soldats temporaires on modifie ( Piker, Knight , .. )
 
 	*/	
 	
@@ -771,8 +936,14 @@ public abstract class Window extends Sprite{
 	
 	
 	
+	/**
 	
-	
+		genère la fenêtre qui permet de choisir un château parmis les chateaux de Player
+	* ajoute le bouton choose  et les boutons associés à hboxChoose, on ajoute en même temps une barre de statut ( choisir quel château on utilise )
+	* 
+	* 
+
+	*/	
 	
 	
 	public void addButtonChoose() {
@@ -790,6 +961,24 @@ public abstract class Window extends Sprite{
 		addHBoxLayer(htHBox.get(enumHBox.hboxChoose), getX()+width/16, (getY()+height)-height/4, width - (width/8), height/16, width/16);
 		
 	}
+	
+	
+	/**
+	
+	
+	* événement pour le bouton choose et les boutons associés, modifie indexCastlePlayer ( index du château que l'on souhaite utiliser ), modifie la barre de statut selon le château
+	* 
+	* @param message
+	* 	
+	* 	message que l'on souhaite afficher en plus du texte habituel
+	* 
+	* @param exitCode
+	* 
+	* 	code de sortie
+	* 
+
+	*/	
+	
 	
 	
 	
@@ -819,6 +1008,20 @@ public abstract class Window extends Sprite{
 
 	}
 	
+	
+	/**
+	
+	
+	* buttonChoosePressed appelle selectTroops et initialise la hastable htVariableData ( Texte ) avec les données du château sélectionné ( castleSelectTroops() )
+	* 
+
+	* @param exitCode
+	* 
+	* 	code de sortie
+	* 
+
+	*/	
+	
 
 	
 	public void buttonChoosePressed(short exitCode) {
@@ -842,8 +1045,37 @@ public abstract class Window extends Sprite{
 
 	}
 	
+	/**
+	
+	
+	* château que l'on choisit pour la sélection des troupes, différent selon les sous-classes
+	* 
+
+	* @return un château
+	* 
+
+	*/	
+	
+	
 	
 	protected abstract Castle castleSelectTroops();
+	
+	
+	/**
+	
+	
+	* fonction qui initialise la fenêtre de selection des troupes ( boutons + , - confirm ... , textes associés )
+	* 
+	* @param castlePlayer
+	* 
+	* 	château sélectionné
+	* 
+	* @param exitCode
+	* 
+	* code de sortie
+	* 
+
+	*/	
 	
 	
 	public void selectTroops(Castle castlePlayer, short exitCode) {
