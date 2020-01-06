@@ -11,9 +11,9 @@ public class Neutral extends Castle {
 	private static String[] dukes_names  = { "Tyrion Lannister", "Ramsay Bolton", "Arya Stark", 
 											"Theon Grejoy", "Edgar Targaeryan", "Knight King"};
 	
-	private final static int MAX_PIKERS = 15;
-	private final static int MAX_KNIGHT = 10;
-	private final static int MAX_CATAPULT = 7;
+	private final static int MAX_PIKERS = 1;
+	private final static int MAX_KNIGHT = 1;
+	private final static int MAX_CATAPULT = 1;
 	
 	public Neutral(Pane layer, Point2D point, double w, double h) {
 		super(layer, point, Color.DIMGREY, w, h);

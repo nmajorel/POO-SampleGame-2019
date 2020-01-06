@@ -109,7 +109,8 @@ public abstract class Castle extends Sprite{
 	
 	public void drawId() {
 
-		getLayer().getChildren().add( hbox_id );	
+		if(!getLayer().getChildren().contains(hbox_id))
+			getLayer().getChildren().add( hbox_id );	
 		Text text = new Text(""+id);
 		text.setFont(Font.font("Verdana", FontWeight.LIGHT, 20));
 		hbox_id.relocate(getX()+getWidth()/2, getY()+getHeight()/2);

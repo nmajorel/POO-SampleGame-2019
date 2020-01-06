@@ -4,10 +4,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
 
 import javafx.animation.AnimationTimer;
 
@@ -26,7 +23,6 @@ import management.OrderSupport;
 import static settings.Settings.*;
 
 import shape.Point2D;
-import shape.Rectangle;
 import sprite.Sprite;
 import static sprite.castle.Castle.canIncome;
 import sprite.castle.Castle;
@@ -86,7 +82,6 @@ public class Main extends Application {
     
 	private int nb_lands = 0;
     private int nb_ennemies = 1;    
-    
 	Text hudTexts[] = new Text[6000];
 	
 	HBox hboxHUD = new HBox();
@@ -137,23 +132,11 @@ public class Main extends Application {
 					player.getCastles().forEach(sprite -> sprite.move());
 					player.getCastles().forEach(sprite -> sprite.updateUI());
 					
+					actionEnnemy(currentNanoTime);
 					
-					for(int i =0; i< player.getCastles().size(); i++) {
-						Castle castle = player.getCastles().get(i);
-						if(castle.getOrder()!=null) {
-							continueOrders(castle);
-							castle.getOrder().forEach(order -> order.getTroops().forEach(sprite -> sprite.updateUI()) );
-							
-						}
-						
-						Laboratory lab = castle.getLab();
-						if(castle.getLab().isRunning()) {
-							
-							lab.checkProduction(currentNanoTime, castle);
-							
-						}	
-						
-					}
+					
+					checkOrders(player.getCastles(), currentNanoTime);
+					ennemies.forEach(ennemy -> checkOrders(ennemy.getCastles(), currentNanoTime));
 					
 					checkIncome(currentNanoTime);
 					
@@ -230,8 +213,10 @@ public class Main extends Application {
 		allCastles.addAll(player.getCastles());
 
 		createOtherCastles();
-
+		
+		System.out.println("Allcatsles : " + allCastles.size());
 		createHUD();
+		createSaveHBbox();
 	       
         scene.setOnMouseClicked(
                 new EventHandler<MouseEvent>()
@@ -403,16 +388,13 @@ public class Main extends Application {
 										Castle source = ownedCastleWindow.getCastleClicked();
 										Castle castleTransfer = player.getCastles().get(ownedCastleWindow.getIndexCastlePlayer());
 
-
-										if(source.getId() != castleTransfer.getId()) {
-
-											source.setNbPikers(source.getNbPikers() - nbPikers);
-											source.setNbKnights(source.getNbKnights() - nbKnights);
-											source.setNbCatapults(source.getNbCatapults() - nbCatapults);
-
-											source.addOrder(new OrderSupport(source,castleTransfer, nbPikers, nbKnights, nbCatapults));
-
-										}
+										source.setNbPikers(source.getNbPikers() - nbPikers);
+										source.setNbKnights(source.getNbKnights() - nbKnights);
+										source.setNbCatapults(source.getNbCatapults() - nbCatapults);
+										
+										source.addOrder(new OrderSupport(source,castleTransfer, nbPikers, nbKnights, nbCatapults));
+										
+										
 										
 									}
 										
@@ -440,9 +422,6 @@ public class Main extends Application {
 
 		
 	}
-	
-	
-
 
 	private void createOtherCastles() {
 		
@@ -456,7 +435,7 @@ public class Main extends Application {
 			p = nextAvailableLand();
 		}	
 		for(int i =0; i<nb_ennemies; i++) {
-			Castle c = new Taken(playfieldLayer, p, SIZE_CASTLE, SIZE_CASTLE, Color.CRIMSON);
+			Castle c = new Taken(playfieldLayer, p, SIZE_CASTLE, SIZE_CASTLE, Color.CRIMSON, "Cersei Lannister");
 			ennemies.add(new Ennemy(c));
 			otherCastles.add(c);
 			allCastles.add(c);
@@ -503,12 +482,13 @@ public class Main extends Application {
 			if (sprite.isRemovable()) {
 				sprite.removeFromLayer();
 				iter.remove();
+				//spriteList.remove(sprite);
 			}
 		}
 			
 	}
 	
-	public void continueOrders( Castle c) {
+	public void continueOrders( Castle c, ArrayList<Castle> listCastles) {
 		
 		for(Order order : c.getOrder() ) {
 			if(order.ost_move()) {
@@ -520,20 +500,62 @@ public class Main extends Application {
 				int level = target.getLevel();
 				int income = target.getIncome();
 				int id = target.getId();
-
-				removeSprites(otherCastles);
+				boolean other_contain = false;
+				int other_id = 0;
+				boolean contain_all = false;
+				
+				if(allCastles.contains(target)) {
+					contain_all =true;
+				}
+				if(otherCastles.contains(target)) {
+					other_id = otherCastles.indexOf(target);
+					removeSprites(otherCastles);
+					other_contain = true;
+				}
+				
+				removeSprites(player.getCastles());
+				
+				ennemies.forEach( ennemy -> removeSprites(ennemy.getCastles()));
+				
+				removeSprites(allCastles);
 				
 				Castle castle = new Taken(playfieldLayer, point, w, w, duke, gold, level, income, id, c.getColor());
-
-				player.addCastles(castle );
-				allCastles.set(target.getId()-1, castle);
+				
+				if(contain_all) {
+					listCastles.add(castle );
+					allCastles.add(id-1, castle);
+					
+					if(other_contain && listCastles!=player.getCastles()) {
+						otherCastles.add(other_id, castle);
+					}
+				}
 				
 			}
 		}
 		c.removeOrders();
 	}
 
+	private void actionEnnemy(long currentNanoTime) {
+		ennemies.forEach(ennemy -> ennemy.setCastleToAttack(allCastles));
+		ennemies.forEach(ennemy -> ennemy.checkAction(currentNanoTime));
+	}
 	
+	private void checkOrders( ArrayList<Castle> Castles, long currentNanoTime) {
+		
+		for(int i =0; i< Castles.size(); i++) {
+			Castle castle = Castles.get(i);
+			if(castle.getOrder()!=null) {
+				continueOrders(castle, Castles);
+				castle.getOrder().forEach(order -> order.getTroops().forEach(sprite -> sprite.updateUI()) );
+				
+			}
+			Laboratory lab = castle.getLab();
+			if(castle.getLab().isRunning()) {
+				
+				lab.checkProduction(currentNanoTime, castle);
+			}	
+		}
+	}
 	
 	public void createHUD() {
 	
@@ -560,7 +582,7 @@ public class Main extends Application {
 	}
 	
 	
-	private void updateHUD() {
+	public void updateHUD() {
 		
 		
 		for(int i = 0; i < allCastles.size(); i++) {
@@ -612,6 +634,7 @@ public class Main extends Application {
 			}
 			
 			hudTexts[i].setText("\n\nCastle "+ (i+1) +"\t\t \n"+string);
+			System.out.println("Allcatsles : " + allCastles.size());
 
 		}
 	}

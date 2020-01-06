@@ -4,21 +4,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import javafx.scene.paint.Color;
 import management.Laboratory;
 import management.Order;
 import management.OrderAttack;
 import settings.Settings;
 import sprite.castle.Castle;
 import sprite.castle.Castle.enumCastle;
+import sprite.soldier.Soldier;
  
 public class Ennemy {
 
-	private List<Castle> castles = new ArrayList<Castle>();
+	private ArrayList<Castle> castles = new ArrayList<Castle>();
 	private boolean resetTimer;
     private long lastUpdate;
     private long elapsedNanos;
-    private static final int NB_ROUNDS_ACTION = 2;
+    private static final int NB_ROUNDS_ACTION = 1;
     Castle target;
 	
 	public Ennemy(Castle castle) {
@@ -49,61 +49,69 @@ public class Ennemy {
 	}
 		
 	private void doAction() {
-		int rnd = new Random().nextInt(3);
+		int rnd = new Random().nextInt(10);
 		Random random = new Random();
-		switch(rnd) {
-			case 0: 
-				Castle c = castles.get(random.nextInt(castles.size()));
-				Laboratory lab = c.getLab();
-				int nbPikers = random.nextInt(c.getNbPikers());
-				int nbKnights = random.nextInt(c.getNbKnights());
-				int nbCatapults = random.nextInt(c.getNbCatapults());
-				int i = 0;
-				boolean no_valid = true;
-				while(i>100 || no_valid) {
-					int cost = nbPikers*100 + nbKnights*500 + nbCatapults*1000;
-					if(cost <= c.getGold()) {
-						lab.addProductionQueue(enumCastle.Piker, nbPikers);
-						lab.addProductionQueue(enumCastle.Knight, nbKnights);
-						lab.addProductionQueue(enumCastle.Catapult, nbCatapults);
-						no_valid = false;
-					}
-					nbPikers = random.nextInt(c.getNbPikers());
-					nbKnights = random.nextInt(c.getNbKnights());
-					nbCatapults = random.nextInt(c.getNbCatapults());
-					i++;
+		if(rnd<=2) {
+			Castle c = castles.get(random.nextInt(castles.size()));
+			Laboratory lab = c.getLab();			
+			int gold = c.getGold();
+			int pikers = 1 + random.nextInt(10);
+			int knights = random.nextInt(5);
+			int catapults = random.nextInt(3);
+			int i = 0;
+			boolean no_valid = true;
+			int cost;
+			while(i<100 && no_valid) {
+				cost = pikers*Soldier.COST[Settings.PIKER] + knights*Soldier.COST[Settings.KNIGHT] + catapults*Soldier.COST[Settings.CATAPULT];
+				if(cost <= gold) {
+					lab.addProductionQueue(enumCastle.Piker, pikers);
+					lab.addProductionQueue(enumCastle.Knight, knights);
+					lab.addProductionQueue(enumCastle.Catapult, catapults);
+					c.setGold(gold - cost);
+					no_valid = false;
 				}
-				break;
-				
-			case 1:
+				pikers = 1 + random.nextInt(10);
+				knights = random.nextInt(5);
+				catapults = random.nextInt(3);
+				i++;
+			}
+		}else {
+			if(rnd==3 || rnd==4) {
 				Castle c_up = castles.get(random.nextInt(castles.size()));
 				Laboratory lab_up = c_up.getLab();
 				lab_up.addProductionQueue(enumCastle.Level, 1);
-				break;
-				
-			case 2:
-				Castle c_attack = castles.get(random.nextInt(castles.size()));
-				int pikers = random.nextInt(c_attack.getNbPikers());
-				int knights = random.nextInt(c_attack.getNbKnights());
-				int catapults = random.nextInt(c_attack.getNbCatapults());
-				Order order = new OrderAttack(c_attack, getCastleToAttack(), pikers, knights, catapults);
-				c_attack.addOrder(order);
-				break;
-			
-			default: break;
+			}else {
+				if(rnd>4 && rnd<9) {
+					Castle c = castles.get(random.nextInt(castles.size()));
+					int nbPikers = c.getNbPikers();
+					int nbKnights = c.getNbKnights();
+					int nbCatapults = c.getNbCatapults();
+					int pikers = (nbPikers==0)? 0 : random.nextInt(nbPikers);
+					int knights = (nbKnights==0)? 0 : random.nextInt(nbKnights);
+					int catapults = (nbCatapults==0)? 0 : random.nextInt(nbCatapults);
+					c.setNbAllTroops(nbPikers - pikers, nbKnights - knights, nbCatapults - catapults);
+					c.addOrder(new OrderAttack(c, getCastleToAttack(), pikers, knights, catapults));
+				}
+			}
 		}
 		
 	}
 	
-	public void setCastleToAttack( ArrayList<Castle> castles) {
-		target = castles.get(new Random().nextInt(castles.size()));
+	public void setCastleToAttack( ArrayList<Castle> othercastles) {
+		ArrayList<Castle> targets = new ArrayList<Castle>();
+		for(int i =0; i< othercastles.size(); i++) {
+			if(!this.castles.contains(othercastles.get(i)) ){
+				targets.add(othercastles.get(i));
+			}
+		}
+		target = targets.get(new Random().nextInt(targets.size()));
 	}
 	
 	public Castle getCastleToAttack() {
 		return target;
 	}
 
-	public List<Castle> getCastles() {
+	public ArrayList<Castle> getCastles() {
 		return castles;
 	}
 
