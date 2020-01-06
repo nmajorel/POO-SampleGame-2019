@@ -2,7 +2,6 @@ package sprite;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -154,6 +153,19 @@ public abstract class Sprite {
 	
 	public Color getColor() {
 		return color;
+	}
+	
+	public static void removeSprites(ArrayList<? extends Sprite> spriteList) {
+		Iterator<? extends Sprite> iter = spriteList.iterator();
+		while (iter.hasNext()) {
+			Sprite sprite = iter.next();
+
+			if (sprite.isRemovable()) {
+				sprite.removeFromLayer();
+				iter.remove();
+			}
+		}
+			
 	}
 
 }

@@ -2,23 +2,24 @@ package management;
 
 import java.util.Random;
 
+import settings.Settings;
 import sprite.castle.Castle;
-import sprite.soldier.Catapult;
-import sprite.soldier.Knight;
-import sprite.soldier.Piker;
 import sprite.soldier.Soldier;
 
 public class OrderAttack extends Order{
 
 	public OrderAttack(Castle source, Castle target, int nbPikers, int nbKnights, int nbCatapults) {
 		super(source, target, nbPikers, nbKnights, nbCatapults);
-		// TODO Auto-generated constructor stub
+		mode = Settings.EXIT_ATTACK;
 	}
 
-	@Override
+	/**
+	 * Effectue l'attaque du soldat tant que la bataille n'est pas fini <br>
+	 * Si le nombre de troupes du château attaqué à 0, effectue la fonction battleEnd()
+	 */
 	protected void whenArrived(Soldier soldier) {
 		
-		if(!battle_won) {
+		if(!battleWon_or_transferDone) {
 			
 			if(apply_damage(soldier.getDamage(), soldier.getType())) {
 				battleEnd();
@@ -31,7 +32,13 @@ public class OrderAttack extends Order{
 	}
 
 	
-	
+	/**
+	 * Applique des points de dégats aléatoires aux troupes du château target <br>
+	 * Supprime un soldat du type <b>type</b> dans du tableau <b>nb_soldiers_created</b>
+	 * @param damage : les dégats à appliquer
+	 * @param type : le type du soldat à supprimer une fois les dégâts appliqués
+	 * @return True si le nombre de troupes de target est égale 0, false sinon
+	 */
 	private  boolean apply_damage(int damage, int type) {
 		int [] tab = {target.getNbPikers(), target.getNbKnights(), target.getNbCatapults()};
 		System.out.println("pikers : " + tab[0] + "  knights : " + tab[1] + "  catapults : " + tab[2]);
@@ -61,15 +68,16 @@ public class OrderAttack extends Order{
 	}
 	
 	
-	
+	/**
+	 * Termine la bataille en effaçant tout ce qui est doit être supprimé <br>
+	 * Les soldats encore en vie retournent au château source 
+	 */
 	private void battleEnd() {
 		System.out.println("Fini!");
 		target.remove();
-		battle_won = true;
+		battleWon_or_transferDone = true;
 		this.remove();
-		source.setNbPikers(source.getNbPikers() + nb_soldiers_created[0]);
-		source.setNbKnights(source.getNbKnights() + nb_soldiers_created[1]);
-		source.setNbCatapults(source.getNbCatapults() + nb_soldiers_created[2]);
+		ost_return();
 	}
 	
 	

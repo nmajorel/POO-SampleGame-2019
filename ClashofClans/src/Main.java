@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 
 import javafx.animation.AnimationTimer;
@@ -193,7 +195,15 @@ public class Main extends Application {
 		}
 		
 	}
-
+	/**
+	 * Charge le jeu en créant :
+	 * <ul>
+	 * <li> La classe Player </li>
+	 * <li> Les espaces libres pour placer des châteaux (Land)</li>
+	 * <li> Les autres châteaux</li>
+	 * <li> L'événement de la souris pour le joueur</li>
+	 * </ul> 
+	 */
 	private void loadGame() {
 
 		input = new Input(scene);
@@ -201,7 +211,7 @@ public class Main extends Application {
 		
 		createLands();
 		
-		player = new Player(playfieldLayer, input, new Taken(playfieldLayer, nextAvailableLand(), SIZE_CASTLE, SIZE_CASTLE));
+		player = new Player(playfieldLayer, new Taken(playfieldLayer, nextAvailableLand(), SIZE_CASTLE, SIZE_CASTLE));
 		
 		
 		player.addCastles(new Taken(playfieldLayer, nextAvailableLand(), SIZE_CASTLE, SIZE_CASTLE));
@@ -214,7 +224,6 @@ public class Main extends Application {
 
 		createOtherCastles();
 		
-		System.out.println("Allcatsles : " + allCastles.size());
 		createHUD();
 		createSaveHBbox();
 	       
@@ -422,7 +431,9 @@ public class Main extends Application {
 
 		
 	}
-
+	/**
+	 * Crée les châteaux neutres et ajoute le dernier château à l'ennemi
+	 */
 	private void createOtherCastles() {
 		
 		Point2D p = nextAvailableLand();
@@ -442,7 +453,9 @@ public class Main extends Application {
 			p = nextAvailableLand();
 		}
 	}
-	
+	/**
+	 * Crée des espaces libres où des châteaux peuvent être placés
+	 */
 	private void createLands() {
 		
 		for(double x = DISTANCE_BETWEEN_CASTLES_WIDTH ; x < SCENE_WIDTH ; x = x + SIZE_LAND + DISTANCE_BETWEEN_CASTLES_WIDTH ) {
@@ -453,8 +466,11 @@ public class Main extends Application {
 		}
 		
 	}
-	
+	/**
+	 * @return Retourne le point d'un espace libre 
+	 */
 	private Point2D nextAvailableLand () {
+		Collections.shuffle(lands);
 		Iterator<Land> itr = lands.iterator();
 		while(itr.hasNext() ) {
 			Land element = (Land) itr.next();
@@ -473,73 +489,67 @@ public class Main extends Application {
 	    }
 		return null;
 	}
-	
-	public void removeSprites(ArrayList<? extends Sprite> spriteList) {
-		Iterator<? extends Sprite> iter = spriteList.iterator();
-		while (iter.hasNext()) {
-			Sprite sprite = iter.next();
-
-			if (sprite.isRemovable()) {
-				sprite.removeFromLayer();
-				iter.remove();
-				//spriteList.remove(sprite);
-			}
-		}
-			
-	}
-	
+	/**
+	 * Applique la progression des ordres du château c
+	 * @param c : le château source des ordres
+	 * @param listCastles : la liste qui contient c 
+	 */
 	public void continueOrders( Castle c, ArrayList<Castle> listCastles) {
 		
 		for(Order order : c.getOrder() ) {
-			if(order.ost_move()) {
-				Castle target = order.getTarget();
-				double w = Settings.SIZE_CASTLE;
-				Point2D point = new Point2D(target.getP());
-				String duke = c.getDuke();
-				int gold = target.getGold();
-				int level = target.getLevel();
-				int income = target.getIncome();
-				int id = target.getId();
-				boolean other_contain = false;
-				int other_id = 0;
-				boolean contain_all = false;
-				
-				if(allCastles.contains(target)) {
-					contain_all =true;
-				}
-				if(otherCastles.contains(target)) {
-					other_id = otherCastles.indexOf(target);
-					removeSprites(otherCastles);
-					other_contain = true;
-				}
-				
-				removeSprites(player.getCastles());
-				
-				ennemies.forEach( ennemy -> removeSprites(ennemy.getCastles()));
-				
-				removeSprites(allCastles);
-				
-				Castle castle = new Taken(playfieldLayer, point, w, w, duke, gold, level, income, id, c.getColor());
-				
-				if(contain_all) {
+			if(allCastles.contains(order.getTarget())) {
+				if(order.ost_move() && order instanceof OrderAttack) { // Si la bataille est gagné par c
+					Castle target = order.getTarget();
+					double w = Settings.SIZE_CASTLE;
+					Point2D point = new Point2D(target.getP());
+					String duke = c.getDuke();
+					int gold = target.getGold();
+					int level = target.getLevel();
+					int income = target.getIncome();
+					int id = target.getId();
+					boolean other_contain = false;
+					
+					if(otherCastles.contains(c)) {
+						other_contain = true;
+					}
+					// On supprime target dans toutes les listes où elle est contenue et on le remplace par castle
+					Sprite.removeSprites(otherCastles);
+					
+					Sprite.removeSprites(player.getCastles());
+					
+					ennemies.forEach( ennemy -> Sprite.removeSprites(ennemy.getCastles()));
+					
+					Sprite.removeSprites(allCastles);
+					
+					Castle castle = new Taken(playfieldLayer, point, w, w, duke, gold, level, income, id, c.getColor());
+					
 					listCastles.add(castle );
 					allCastles.add(id-1, castle);
 					
-					if(other_contain && listCastles!=player.getCastles()) {
-						otherCastles.add(other_id, castle);
+					if(other_contain) {
+						otherCastles.add(castle);
 					}
+					
 				}
-				
+			}else {		// Si au cours d'une attaque target est déjà pris par un autre duc, le retrait des troupes est annoncé
+				order.order_back();
 			}
 		}
 		c.removeOrders();
 	}
-
+	/**
+	 * Choisi un château cible pour l'ennemi et une action à réaliser 
+	 * @param currentNanoTime : Le temps actuel du jeu
+	 */
 	private void actionEnnemy(long currentNanoTime) {
 		ennemies.forEach(ennemy -> ennemy.setCastleToAttack(allCastles));
 		ennemies.forEach(ennemy -> ennemy.checkAction(currentNanoTime));
 	}
-	
+	/**
+	 * Actualise les ordres et la production du laboratoire pour chaque château de Castles
+	 * @param Castles
+	 * @param currentNanoTime
+	 */
 	private void checkOrders( ArrayList<Castle> Castles, long currentNanoTime) {
 		
 		for(int i =0; i< Castles.size(); i++) {
@@ -556,7 +566,9 @@ public class Main extends Application {
 			}	
 		}
 	}
-	
+	/**
+	 * Crée la barre d'information des châteaux du jeu
+	 */
 	public void createHUD() {
 	
 		hboxHUD.relocate(0, 0);
@@ -581,7 +593,9 @@ public class Main extends Application {
 	
 	}
 	
-	
+	/**
+	 * Actualise la barre d'information des châteaux du jeu
+	 */
 	public void updateHUD() {
 		
 		
@@ -634,7 +648,6 @@ public class Main extends Application {
 			}
 			
 			hudTexts[i].setText("\n\nCastle "+ (i+1) +"\t\t \n"+string);
-			System.out.println("Allcatsles : " + allCastles.size());
 
 		}
 	}

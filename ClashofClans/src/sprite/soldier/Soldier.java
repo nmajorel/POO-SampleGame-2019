@@ -9,6 +9,7 @@ import sprite.Sprite;
 
 public class Soldier extends Sprite {
 	
+	/** Variables statics contenant les informations des soldats en fonction du type (qui est l'indice)	**/
 	public static final int [] HEALTH = { 2, 3, 5 } ;
 	public static final int [] COST =  { 100, 500, 1000}  ;
 	public static final int [] TIME_PRODUCTION = { 5, 20, 50}  ;
@@ -33,7 +34,7 @@ public class Soldier extends Sprite {
 		super(layer, point, colors[type][new Random().nextInt(colors[type].length)], w, h);
 		
 		this.health = HEALTH[type];
-		this.production_cost = COST[type];
+		this.setProduction_cost(COST[type]);
 		this.productionRound = TIME_PRODUCTION[type];
 		this.speed = SPEED[type];
 		this.damage = DAMAGE[type];
@@ -47,7 +48,15 @@ public class Soldier extends Sprite {
 		
 	}
 	
-	// Return true if the soldier arrive to the destination
+/**
+	
+	* Applique un déplacement du soldat 
+	* @param destination : le point vers lequel le déplacement est dirigé
+	* @param alignement : une valeur qui sera ajouté à l'abscisse X du point <br>
+	*    				permet de décaler le soldat de alignement pixels à partir du point
+	* @return True si le soldat a atteint la destination, false sinon    
+
+	*/
 	public boolean move(Point2D destination, double alignement) {
 		double x = destination.getX()+alignement,
 		y = destination.getY(),
@@ -79,7 +88,7 @@ public class Soldier extends Sprite {
 	public double getSpeed() {
 		return speed;
 	}
-
+	
 	public boolean isLeft_the_castle() {
 		return left_the_castle;
 	}
@@ -106,6 +115,14 @@ public class Soldier extends Sprite {
 
 	public int getDamage() {
 		return damage;
+	}
+
+	public int getProduction_cost() {
+		return production_cost;
+	}
+
+	public void setProduction_cost(int production_cost) {
+		this.production_cost = production_cost;
 	}
 
 

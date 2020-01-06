@@ -1,11 +1,8 @@
 package ennemy;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
-
 import management.Laboratory;
-import management.Order;
 import management.OrderAttack;
 import settings.Settings;
 import sprite.castle.Castle;
@@ -29,6 +26,10 @@ public class Ennemy {
 
 	}
 
+	/**
+	* Choisi une action aléatoire toutes les NB_ROUNDS_ACTION tours
+	* @param currentNanoTime : le temps actuel du jeu
+	**/
 	public void checkAction(long currentNanoTime) {
 		
 		if(resetTimer) {
@@ -47,7 +48,17 @@ public class Ennemy {
 			
 		}
 	}
-		
+	
+	/**
+	 * Fait une de 3 actions possibles pour un ennemi.<br>
+	 * Avec chacun une probabilité d'être exécuté <br>
+	 * <ul> 
+	 * <li> Produire des troupes : 30% </li>
+	 * <li> Augmenter le niveau du château : 20% </li>
+	 * <li> Attaquer un château aléatoire : 40% </li>
+	 * <li> Ne rien faire : 10% </li>
+	 * </ul>
+	 */
 	private void doAction() {
 		int rnd = new Random().nextInt(10);
 		Random random = new Random();
@@ -97,6 +108,10 @@ public class Ennemy {
 		
 	}
 	
+	/**
+	 * Choisi une cible qui n'appartient pas à l'objet Ennemy parmi la liste de châteaux passé en paramètre 
+	 * @param othercastles : liste de châteaux
+	 */
 	public void setCastleToAttack( ArrayList<Castle> othercastles) {
 		ArrayList<Castle> targets = new ArrayList<Castle>();
 		for(int i =0; i< othercastles.size(); i++) {
